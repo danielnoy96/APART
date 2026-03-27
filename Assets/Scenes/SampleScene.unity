@@ -486,7 +486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::player
   rb: {fileID: 707433761}
   playerInput: {fileID: 707433764}
-  speed: 2
+  speed: 3
   jumpForce: 20
   jumpCutMultiplier: 0.5
   normalGravity: 6
@@ -494,6 +494,12 @@ MonoBehaviour:
   jumpGravity: 4
   facingDirection: 1
   moveInput: {x: 0, y: 0}
+  coyoteTime: 0.1
+  jumpBufferTime: 0.1
+  apexHangGravityMultiplier: 0.5
+  apexHangVelocityThreshold: 1
+  maxFallSpeed: 0
+  maxRiseSpeed: 0
   groundCheck: {fileID: 399728962}
   groundCheckRadius: 0.5
   groundLayer:

@@ -17,8 +17,26 @@ public class player : MonoBehaviour
     public int facingDirection = 1;
     //Inputs
     public Vector2 moveInput;
-    private bool jumpPressed;
-    private bool jumpReleased;
+
+    [Header("Jump Feel (Celeste-like)")]
+    [Tooltip("Allows jumping for a short time after walking off a ledge. (Celeste 'coyote time' is ~0.1s)")]
+    public float coyoteTime = 0.1f;
+    [Tooltip("Queues a jump pressed slightly before landing. (Celeste jump buffer is ~0.1s)")]
+    public float jumpBufferTime = 0.1f;
+    [Tooltip("While holding jump near the apex, gravity is scaled by this multiplier. (Celeste uses half gravity)")]
+    [Range(0.05f, 1f)]
+    public float apexHangGravityMultiplier = 0.5f;
+    [Tooltip("How close to 0 vertical speed counts as the jump apex for apex hang. (Tune to your units)")]
+    public float apexHangVelocityThreshold = 1f;
+    [Tooltip("Optional clamp for vertical speed (terminal velocity). Set <= 0 to disable.")]
+    public float maxFallSpeed = 0f;
+    [Tooltip("Optional clamp for max upward speed. Set <= 0 to disable.")]
+    public float maxRiseSpeed = 0f;
+
+    private float coyoteTimer;
+    private float jumpBufferTimer;
+    private bool jumpHeld;
+    private bool jumpCutQueued;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -29,15 +47,21 @@ public class player : MonoBehaviour
 
     private void Start()
     {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
         rb.gravityScale = normalGravity;
     }
 
     void FixedUpdate()
     {
-        ApplyVariableGravity();
         CheckGrounded();
+        UpdateJumpTimers();
         HandleMovement();
         HandleJump();
+        ApplyVariableGravity();
+        ClampVerticalSpeed();
     }
 
 
@@ -49,20 +73,28 @@ public class player : MonoBehaviour
 
     private void HandleJump()
     {
-       if (jumpPressed && isGrounded)
+        if (jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            jumpPressed = false;
-            jumpReleased = false;
+            PerformJump();
         }
-        if (jumpReleased)
+
+        if (jumpCutQueued)
         {
-            if (rb.linearVelocity.y > 0) //if still going up
+            if (rb.linearVelocity.y > 0f) // still going up
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
             }
-                jumpReleased = false;
+            jumpCutQueued = false;
         }
+    }
+
+
+    private void PerformJump()
+    {
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
+        jumpCutQueued = false;
     }
 
 
@@ -74,24 +106,68 @@ public class player : MonoBehaviour
 
     void ApplyVariableGravity()
     {
+        float gravityScale;
         if (rb.linearVelocity.y < -0.1f) //falling
         {
-            rb.gravityScale = fallGravity;
+            gravityScale = fallGravity;
         }
-        else if (rb.linearVelocity.y > 0.1f ) //rising 
+        else if (rb.linearVelocity.y > 0.1f) //rising 
         {
-            rb.gravityScale = jumpGravity;
+            gravityScale = jumpGravity;
         }
         else //normal gravity
         {
-            rb.gravityScale = normalGravity;
+            gravityScale = normalGravity;
         }
+
+        // Celeste-style subtle apex hang: while holding jump near the top, apply reduced gravity.
+        if (!isGrounded && jumpHeld && apexHangVelocityThreshold > 0f && Mathf.Abs(rb.linearVelocity.y) <= apexHangVelocityThreshold)
+        {
+            gravityScale *= apexHangGravityMultiplier;
+        }
+
+        rb.gravityScale = gravityScale;
     }
 
 
     void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+    }
+
+
+    private void UpdateJumpTimers()
+    {
+        if (isGrounded)
+        {
+            coyoteTimer = coyoteTime;
+        }
+        else
+        {
+            coyoteTimer = Mathf.Max(0f, coyoteTimer - Time.fixedDeltaTime);
+        }
+
+        jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - Time.fixedDeltaTime);
+    }
+
+
+    private void ClampVerticalSpeed()
+    {
+        if (maxFallSpeed <= 0f && maxRiseSpeed <= 0f)
+        {
+            return;
+        }
+
+        Vector2 velocity = rb.linearVelocity;
+        if (maxFallSpeed > 0f)
+        {
+            velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
+        }
+        if (maxRiseSpeed > 0f)
+        {
+            velocity.y = Mathf.Min(velocity.y, maxRiseSpeed);
+        }
+        rb.linearVelocity = velocity;
     }
 
 
@@ -120,12 +196,13 @@ public class player : MonoBehaviour
     {
         if (value.isPressed)
         {
-            jumpPressed = true;
-            jumpReleased = false;
+            jumpHeld = true;
+            jumpBufferTimer = jumpBufferTime;
         }
         else //button is released
         {
-            jumpReleased = true;
+            jumpHeld = false;
+            jumpCutQueued = true;
         }
     }
 
