@@ -1,0 +1,612 @@
+fileFormatVersion: 2
+guid: 08d7cab51781eec4fa2bff428e189723
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: b2a9591990af98743ba3ff7cf1000886, type: 3}
+  textureImporterSettings:
+    alphaSource: 1
+    mipMapMode: 0
+    enableMipMap: 1
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+    convertToNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 516256c5523b3914e86cfce04ff1b131
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+    spritePosition: {x: 0, y: 0}
+  multiSpriteImportData: []
+  layeredSpriteImportData:
+  - name: tree branch
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 3161
+      y: 1357
+      width: 692
+      height: 473
+    spriteID: fd14bda81317b954b802e58ac9eed274
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3161, y: 1357}
+    spritePosition: {x: 6548, y: 103}
+  - name: small stump 4
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 973
+      y: 3072
+      width: 974
+      height: 405
+    spriteID: 20afb0f6071d73241957bf416651a7aa
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 973, y: 3072}
+    spritePosition: {x: 7344, y: 1458}
+  - name: small stump 3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 3387
+      y: 2087
+      width: 644
+      height: 568
+    spriteID: 8043d49480a947f4aa0e74908cb7bf54
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3387, y: 2087}
+    spritePosition: {x: 7759, y: 80}
+  - name: tree 2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 1357
+      width: 1993
+      height: 1320
+    spriteID: b63205f930afef94ba85884cffee9053
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 1357}
+    spritePosition: {x: 6459, y: 364}
+  - name: small stump 2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1955
+      y: 3072
+      width: 1404
+      height: 228
+    spriteID: 98e8e2ffa7419a54c9eeb8617b2601d3
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1955, y: 3072}
+    spritePosition: {x: 4562, y: 41}
+  - name: small stump
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1747
+      y: 2685
+      width: 1346
+      height: 309
+    spriteID: 41f1ade583c8ad241a13aaa0b3852321
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1747, y: 2685}
+    spritePosition: {x: 4518, y: 378}
+  - name: tree 1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 2092
+      height: 1345
+    spriteID: 163aaca7f551df44388f3f238405361b
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 4196, y: 606}
+  - name: stump 6
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 3072
+      width: 961
+      height: 473
+    spriteID: d713a3572afd3e04482227009f5ffed5
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 3072}
+    spritePosition: {x: 2767, y: 103}
+  - name: stump 5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2104
+      y: 703
+      width: 1390
+      height: 578
+    spriteID: 2c6db7cff5bcaf54c9dfaa5c5129c6df
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2104, y: 703}
+    spritePosition: {x: 2477, y: 655}
+  - name: stump 4
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2005
+      y: 2087
+      width: 1374
+      height: 571
+    spriteID: d4f72da5edfb8284989a8baf487104d1
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2005, y: 2087}
+    spritePosition: {x: 2493, y: 1374}
+  - name: stump 1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2104
+      y: 4
+      width: 1313
+      height: 691
+    spriteID: 434b3c529287c4946870558557ff0c7d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2104, y: 4}
+    spritePosition: {x: 324, y: 876}
+  - name: stump 2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2005
+      y: 1357
+      width: 1148
+      height: 722
+    spriteID: be68ec88cd83cbb4aa6617cd5929f095
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2005, y: 1357}
+    spritePosition: {x: 489, y: 1318}
+  - name: stump 3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 2685
+      width: 1735
+      height: 379
+    spriteID: e72243fbf675eee429dc1870380cac87
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 2685}
+    spritePosition: {x: 116, y: 269}
+  spriteImportData: []
+  rigSpriteImportData: []
+  sharedRigSpriteImportData: []
+  mosaicSpriteImportData: []
+  sharedRigCharacterData:
+    bones: []
+    parts: []
+    dimension: {x: 0, y: 0}
+    characterGroups: []
+    pivot: {x: 0, y: 0}
+    boneReadOnly: 0
+  characterData:
+    bones: []
+    parts: []
+    dimension: {x: 0, y: 0}
+    characterGroups: []
+    pivot: {x: 0, y: 0}
+    boneReadOnly: 0
+  platformSettings: []
+  mosaicLayers: 1
+  characterMode: 1
+  documentPivot: {x: 0, y: 0}
+  documentAlignment: 7
+  importHiddenLayers: 0
+  layerMappingOption: 2
+  generatePhysicsShape: 0
+  paperDollMode: 0
+  keepDupilcateSpriteName: 1
+  generateTileAssets: 0
+  tilePaletteCellLayout: 0
+  tilePaletteHexagonLayout: 0
+  tilePaletteCellSize: {x: 1, y: 1, z: 0}
+  tilePaletteCellSizing: 0
+  transparencySortMode: 0
+  transparencySortAxis: {x: 0, y: 0, z: 1}
+  tileTemplate: {instanceID: 0}
+  padding: 4
+  spriteSizeExpand: 0
+  skeletonAssetReferenceID: 
+  pipeline: {instanceID: 0}
+  pipelineVersion: 
+  spriteCategoryList:
+    categories: []
+  spritePackingTag: 
+  resliceFromLayer: 0
+  pSDLayerImportSetting: []
+  psdLayers:
+  - name: Artboard 4
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: 1b291de3dcb8eca4aa67efa0bb5aa3b2
+    layerID: 125
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: tree branch
+    spriteName: tree branch
+    isGroup: 0
+    parentIndex: 0
+    spriteID: fd14bda81317b954b802e58ac9eed274
+    layerID: 127
+    mosaicPosition: {x: 3161, y: 1357}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: small stump 4
+    spriteName: small stump 4
+    isGroup: 0
+    parentIndex: 0
+    spriteID: 20afb0f6071d73241957bf416651a7aa
+    layerID: 129
+    mosaicPosition: {x: 973, y: 3072}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: small stump 3
+    spriteName: small stump 3
+    isGroup: 0
+    parentIndex: 0
+    spriteID: 8043d49480a947f4aa0e74908cb7bf54
+    layerID: 128
+    mosaicPosition: {x: 3387, y: 2087}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: tree 2
+    spriteName: tree 2
+    isGroup: 0
+    parentIndex: 0
+    spriteID: b63205f930afef94ba85884cffee9053
+    layerID: 124
+    mosaicPosition: {x: 4, y: 1357}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Artboard 3
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: e97a2296c1fd38e41a99a838b278d592
+    layerID: 118
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: small stump 2
+    spriteName: small stump 2
+    isGroup: 0
+    parentIndex: 5
+    spriteID: 98e8e2ffa7419a54c9eeb8617b2601d3
+    layerID: 131
+    mosaicPosition: {x: 1955, y: 3072}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: small stump
+    spriteName: small stump
+    isGroup: 0
+    parentIndex: 5
+    spriteID: 41f1ade583c8ad241a13aaa0b3852321
+    layerID: 130
+    mosaicPosition: {x: 1747, y: 2685}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: tree 1
+    spriteName: tree 1
+    isGroup: 0
+    parentIndex: 5
+    spriteID: 163aaca7f551df44388f3f238405361b
+    layerID: 123
+    mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Artboard 2
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: e5f4a429a4fbf5a4c8c63772969ab3be
+    layerID: 116
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: stump 6
+    spriteName: stump 6
+    isGroup: 0
+    parentIndex: 9
+    spriteID: d713a3572afd3e04482227009f5ffed5
+    layerID: 122
+    mosaicPosition: {x: 4, y: 3072}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: stump 5
+    spriteName: stump 5
+    isGroup: 0
+    parentIndex: 9
+    spriteID: 2c6db7cff5bcaf54c9dfaa5c5129c6df
+    layerID: 121
+    mosaicPosition: {x: 2104, y: 703}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: stump 4
+    spriteName: stump 4
+    isGroup: 0
+    parentIndex: 9
+    spriteID: d4f72da5edfb8284989a8baf487104d1
+    layerID: 120
+    mosaicPosition: {x: 2005, y: 2087}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Artboard 1
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: 2381d2dd5d8cb5545bfa7b7b86c07520
+    layerID: 3
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: stump 1
+    spriteName: stump 1
+    isGroup: 0
+    parentIndex: 13
+    spriteID: 434b3c529287c4946870558557ff0c7d
+    layerID: 8
+    mosaicPosition: {x: 2104, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: stump 2
+    spriteName: stump 2
+    isGroup: 0
+    parentIndex: 13
+    spriteID: be68ec88cd83cbb4aa6617cd5929f095
+    layerID: 5
+    mosaicPosition: {x: 2005, y: 1357}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: stump 3
+    spriteName: stump 3
+    isGroup: 0
+    parentIndex: 13
+    spriteID: e72243fbf675eee429dc1870380cac87
+    layerID: 7
+    mosaicPosition: {x: 4, y: 2685}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  mosaicPSDLayers: []
+  rigPSDLayers: []
+  sharedRigPSDLayers: []
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  spriteSizeExpandChanged: 0
+  generateGOHierarchy: 0
+  textureAssetName: 
+  prefabAssetName: 
+  spriteLibAssetName: 
+  skeletonAssetName: 
+  secondarySpriteTextures: []

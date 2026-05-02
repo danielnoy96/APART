@@ -14,7 +14,7 @@ TagManager:
   - Ground
   - forground
   - background
-  - 
+  - background blur
   - 
   - 
   - 
@@ -40,6 +40,27 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: background 3
+    uniqueID: 451574259
+    locked: 0
+  - name: background 2
+    uniqueID: 378244743
+    locked: 0
+  - name: FogForBackground2
+    uniqueID: 1551606713
+    locked: 0
+  - name: background
+    uniqueID: 1752478715
+    locked: 0
+  - name: FogForBackground
+    uniqueID: 983623341
+    locked: 0
+  - name: ground
+    uniqueID: 26673157
+    locked: 0
+  - name: forground
+    uniqueID: 3963190481
     locked: 0
   m_RenderingLayers:
   - Default

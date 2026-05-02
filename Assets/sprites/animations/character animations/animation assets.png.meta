@@ -83,6 +83,9 @@ TextureImporter:
   - first:
       213: 8933691805013380826
     second: animation assets_26
+  - first:
+      213: -2110577717352043571
+    second: animation assets_27
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -150,7 +153,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -195,9 +198,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1501
-        width: 499
-        height: 499
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -216,10 +219,10 @@ TextureImporter:
       name: animation assets_1
       rect:
         serializedVersion: 2
-        x: 499
-        y: 1501
-        width: 499
-        height: 499
+        x: 500
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -238,10 +241,10 @@ TextureImporter:
       name: animation assets_2
       rect:
         serializedVersion: 2
-        x: 998
-        y: 1501
-        width: 499
-        height: 499
+        x: 1000
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -260,10 +263,10 @@ TextureImporter:
       name: animation assets_3
       rect:
         serializedVersion: 2
-        x: 1497
-        y: 1501
-        width: 499
-        height: 499
+        x: 1500
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -282,10 +285,10 @@ TextureImporter:
       name: animation assets_4
       rect:
         serializedVersion: 2
-        x: 1996
-        y: 1501
-        width: 499
-        height: 499
+        x: 2000
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -304,10 +307,10 @@ TextureImporter:
       name: animation assets_5
       rect:
         serializedVersion: 2
-        x: 2495
-        y: 1501
-        width: 499
-        height: 499
+        x: 2500
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -326,10 +329,10 @@ TextureImporter:
       name: animation assets_6
       rect:
         serializedVersion: 2
-        x: 2994
-        y: 1501
-        width: 499
-        height: 499
+        x: 3000
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -348,10 +351,10 @@ TextureImporter:
       name: animation assets_7
       rect:
         serializedVersion: 2
-        x: 3493
-        y: 1501
-        width: 499
-        height: 499
+        x: 3500
+        y: 3500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -371,9 +374,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1002
-        width: 499
-        height: 499
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -392,10 +395,10 @@ TextureImporter:
       name: animation assets_9
       rect:
         serializedVersion: 2
-        x: 499
-        y: 1002
-        width: 499
-        height: 499
+        x: 500
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -414,10 +417,10 @@ TextureImporter:
       name: animation assets_10
       rect:
         serializedVersion: 2
-        x: 998
-        y: 1002
-        width: 499
-        height: 499
+        x: 1000
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -436,10 +439,10 @@ TextureImporter:
       name: animation assets_11
       rect:
         serializedVersion: 2
-        x: 1497
-        y: 1002
-        width: 499
-        height: 499
+        x: 1500
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -458,10 +461,10 @@ TextureImporter:
       name: animation assets_12
       rect:
         serializedVersion: 2
-        x: 1996
-        y: 1002
-        width: 499
-        height: 499
+        x: 2000
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -480,10 +483,10 @@ TextureImporter:
       name: animation assets_13
       rect:
         serializedVersion: 2
-        x: 2495
-        y: 1002
-        width: 499
-        height: 499
+        x: 2500
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -502,10 +505,10 @@ TextureImporter:
       name: animation assets_14
       rect:
         serializedVersion: 2
-        x: 2994
-        y: 1002
-        width: 499
-        height: 499
+        x: 3000
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -524,10 +527,10 @@ TextureImporter:
       name: animation assets_15
       rect:
         serializedVersion: 2
-        x: 3493
-        y: 1002
-        width: 499
-        height: 499
+        x: 3500
+        y: 3000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -547,9 +550,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 503
-        width: 499
-        height: 499
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -568,10 +571,10 @@ TextureImporter:
       name: animation assets_17
       rect:
         serializedVersion: 2
-        x: 499
-        y: 503
-        width: 499
-        height: 499
+        x: 500
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -590,10 +593,10 @@ TextureImporter:
       name: animation assets_18
       rect:
         serializedVersion: 2
-        x: 998
-        y: 503
-        width: 499
-        height: 499
+        x: 1000
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -612,10 +615,10 @@ TextureImporter:
       name: animation assets_19
       rect:
         serializedVersion: 2
-        x: 1497
-        y: 503
-        width: 499
-        height: 499
+        x: 1500
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -634,10 +637,10 @@ TextureImporter:
       name: animation assets_20
       rect:
         serializedVersion: 2
-        x: 1996
-        y: 503
-        width: 499
-        height: 499
+        x: 2000
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -656,10 +659,10 @@ TextureImporter:
       name: animation assets_21
       rect:
         serializedVersion: 2
-        x: 2495
-        y: 503
-        width: 499
-        height: 499
+        x: 2500
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -678,10 +681,10 @@ TextureImporter:
       name: animation assets_22
       rect:
         serializedVersion: 2
-        x: 2994
-        y: 503
-        width: 499
-        height: 499
+        x: 3000
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -700,10 +703,10 @@ TextureImporter:
       name: animation assets_23
       rect:
         serializedVersion: 2
-        x: 3493
-        y: 503
-        width: 499
-        height: 499
+        x: 3500
+        y: 2500
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -723,9 +726,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 4
-        width: 499
-        height: 499
+        y: 2000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -744,10 +747,10 @@ TextureImporter:
       name: animation assets_25
       rect:
         serializedVersion: 2
-        x: 499
-        y: 4
-        width: 499
-        height: 499
+        x: 500
+        y: 2000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -766,10 +769,10 @@ TextureImporter:
       name: animation assets_26
       rect:
         serializedVersion: 2
-        x: 998
-        y: 4
-        width: 499
-        height: 499
+        x: 1000
+        y: 2000
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -784,11 +787,187 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: animation assets_27
+      rect:
+        serializedVersion: 2
+        x: 1500
+        y: 2000
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcb60669fb8b5b2e0800000000000000
+      internalID: -2110577717352043571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_28
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2000
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70fffb5c22042e44fb882c40ee3f7cbc
+      internalID: 647829052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_29
+      rect:
+        serializedVersion: 2
+        x: 2500
+        y: 2000
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 653c7d7ce3abb6f44af8a63910732656
+      internalID: -1681820299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_30
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 2000
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e48441fdb66c5f4c81780a155cee4f2
+      internalID: 1947069625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_31
+      rect:
+        serializedVersion: 2
+        x: 3500
+        y: 2000
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98e9d9806db00c04ea874b878b7e628f
+      internalID: 1323100269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d4d8036a5548784ca7b98565edceadd
+      internalID: -1767164370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_33
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 1500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3bffc35714773845852a9e0a38647bc
+      internalID: 1540105506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_34
+      rect:
+        serializedVersion: 2
+        x: 1000
+        y: 1500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b714effe53526e2419e5ed54ef9e49f6
+      internalID: 695845897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d9c919800b9a1cb44b67af9b84c98f93
+    spriteID: b64b3d56746d7be49b6599aa36933637
     internalID: 0
     vertices: []
     indices: 
@@ -798,7 +977,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":499.0,"y":499.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":500.0,"y":500.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       animation assets_0: -1199015087534495359
       animation assets_1: 2927122725476568908
@@ -820,7 +999,15 @@ TextureImporter:
       animation assets_24: -4032184289491775683
       animation assets_25: -1132476806889382540
       animation assets_26: 8933691805013380826
+      animation assets_27: -2110577717352043571
+      animation assets_28: 647829052
+      animation assets_29: -1681820299
       animation assets_3: -8498518165879737047
+      animation assets_30: 1947069625
+      animation assets_31: 1323100269
+      animation assets_32: -1767164370
+      animation assets_33: 1540105506
+      animation assets_34: 695845897
       animation assets_4: -7309658307780174376
       animation assets_5: 4813861940160713370
       animation assets_6: 6915219113896767494
