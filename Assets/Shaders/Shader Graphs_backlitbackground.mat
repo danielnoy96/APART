@@ -54,12 +54,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Glow_Intensity: 5.23
+    - _Glow_Intensity: 2.02
     - _Glow_Softness: 0.73
-    - _Glow_Width: 0.09
+    - _Glow_Width: 0.33
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _Inner_Tint: {r: 0.11049783, g: 0.9496855, b: 0.28806654, a: 0.654902}
+    - _Inner_Tint: {r: 0.18772085, g: 0.10980389, b: 0.9490196, a: 0.654902}
     - _glowcolor: {r: 1, g: 0.89954376, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

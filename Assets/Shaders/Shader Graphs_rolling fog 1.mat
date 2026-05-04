@@ -32,7 +32,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: _colorfog
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -50,11 +50,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _fogsize: 2
+    - _fogsize: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _colorblend: {r: 1, g: 1, b: 1, a: 0.2980392}
-    - _colorfog: {r: 0, g: 0.766062, b: 1, a: 1}
-    - _fogspeed: {r: 0.1, g: 0.1, b: 0, a: 0}
+    - _colorfog: {r: 1, g: 0.80605805, b: 0.58805025, a: 1}
+    - _fogspeed: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

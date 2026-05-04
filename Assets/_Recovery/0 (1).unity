@@ -357,7 +357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 19224117}
   - component: {fileID: 19224116}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -448,7 +448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 29012941}
   - component: {fileID: 29012942}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: bush 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -812,7 +812,7 @@ GameObject:
   m_Component:
   - component: {fileID: 49413068}
   - component: {fileID: 49413069}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1267,7 +1267,7 @@ GameObject:
   m_Component:
   - component: {fileID: 60968602}
   - component: {fileID: 60968603}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1540,7 +1540,7 @@ GameObject:
   m_Component:
   - component: {fileID: 68883565}
   - component: {fileID: 68883566}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1722,7 +1722,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90212294}
   - component: {fileID: 90212295}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1813,7 +1813,7 @@ GameObject:
   m_Component:
   - component: {fileID: 93351806}
   - component: {fileID: 93351807}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2079,7 +2079,7 @@ GameObject:
   m_Component:
   - component: {fileID: 110252249}
   - component: {fileID: 110252250}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2170,7 +2170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 117198441}
   - component: {fileID: 117198442}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2261,7 +2261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 122060948}
   - component: {fileID: 122060949}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 3 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2443,7 +2443,7 @@ GameObject:
   m_Component:
   - component: {fileID: 135341469}
   - component: {fileID: 135341470}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2534,7 +2534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 137313823}
   - component: {fileID: 137313824}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2807,7 +2807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 150033251}
   - component: {fileID: 150033252}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 7 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3262,7 +3262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 170056856}
   - component: {fileID: 170056857}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3444,7 +3444,7 @@ GameObject:
   m_Component:
   - component: {fileID: 172755657}
   - component: {fileID: 172755658}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3717,7 +3717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 189388961}
   - component: {fileID: 189388962}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3808,7 +3808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 193948854}
   - component: {fileID: 193948855}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: Layer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4081,7 +4081,7 @@ GameObject:
   m_Component:
   - component: {fileID: 225952014}
   - component: {fileID: 225952015}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: forground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4191,7 +4191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 233587655}
   - component: {fileID: 233587656}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4282,7 +4282,7 @@ GameObject:
   m_Component:
   - component: {fileID: 234510481}
   - component: {fileID: 234510482}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 1 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4464,7 +4464,7 @@ GameObject:
   m_Component:
   - component: {fileID: 236072837}
   - component: {fileID: 236072838}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: Layer 7 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4555,7 +4555,7 @@ GameObject:
   m_Component:
   - component: {fileID: 246823163}
   - component: {fileID: 246823164}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4828,7 +4828,7 @@ GameObject:
   m_Component:
   - component: {fileID: 256853845}
   - component: {fileID: 256853846}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: background 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4881,7 +4881,7 @@ GameObject:
   m_Component:
   - component: {fileID: 258624161}
   - component: {fileID: 258624162}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: Layer 3 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5154,7 +5154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 266948625}
   - component: {fileID: 266948626}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5427,7 +5427,7 @@ GameObject:
   m_Component:
   - component: {fileID: 285038708}
   - component: {fileID: 285038709}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5828,7 +5828,7 @@ GameObject:
   m_Component:
   - component: {fileID: 325202101}
   - component: {fileID: 325202102}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6010,7 +6010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 333022885}
   - component: {fileID: 333022886}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6101,7 +6101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 335387202}
   - component: {fileID: 335387203}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6240,7 +6240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 345184495}
   - component: {fileID: 345184496}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: tree 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6513,7 +6513,7 @@ GameObject:
   m_Component:
   - component: {fileID: 366936642}
   - component: {fileID: 366936643}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6695,7 +6695,7 @@ GameObject:
   m_Component:
   - component: {fileID: 383779348}
   - component: {fileID: 383779349}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6786,7 +6786,7 @@ GameObject:
   m_Component:
   - component: {fileID: 390202222}
   - component: {fileID: 390202223}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 17 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6877,7 +6877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 395290693}
   - component: {fileID: 395290694}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6967,7 +6967,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 396585090}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: back tree 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7040,7 +7040,7 @@ GameObject:
   m_Component:
   - component: {fileID: 403549748}
   - component: {fileID: 403549749}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7131,7 +7131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 404978924}
   - component: {fileID: 404978925}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7314,7 +7314,7 @@ GameObject:
   - component: {fileID: 407034584}
   - component: {fileID: 407034583}
   m_Layer: 9
-  m_Name: blur effect static
+  m_Name: blur effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7453,7 +7453,7 @@ GameObject:
   m_Component:
   - component: {fileID: 423832335}
   - component: {fileID: 423832336}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7726,7 +7726,7 @@ GameObject:
   m_Component:
   - component: {fileID: 443228392}
   - component: {fileID: 443228393}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7817,7 +7817,7 @@ GameObject:
   m_Component:
   - component: {fileID: 444349873}
   - component: {fileID: 444349872}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: background 2 light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7950,7 +7950,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2551
+    m_Bits: 503
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -8014,7 +8014,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 2551
+    m_Bits: 503
   m_VolumeTrigger: {fileID: 516239798}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
@@ -8246,7 +8246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 452806412}
   - component: {fileID: 452806413}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8337,7 +8337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 455578484}
   - component: {fileID: 455578485}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8428,7 +8428,7 @@ GameObject:
   m_Component:
   - component: {fileID: 458295705}
   - component: {fileID: 458295706}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8519,7 +8519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 463283236}
   - component: {fileID: 463283237}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8609,7 +8609,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 478563912}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: backtree 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9329,7 +9329,7 @@ GameObject:
   m_Component:
   - component: {fileID: 516511123}
   - component: {fileID: 516511124}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9547,7 +9547,6 @@ MonoBehaviour:
   m_CameraType: 0
   m_Cameras:
   - {fileID: 1130689492}
-  - {fileID: 749748889}
   - {fileID: 444679150}
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -9612,7 +9611,7 @@ Camera:
   field of view: 50.6
   orthographic: 0
   orthographic size: 5
-  m_Depth: 10
+  m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -9644,7 +9643,6 @@ Transform:
   - {fileID: 953617330}
   - {fileID: 444679154}
   - {fileID: 1130689496}
-  - {fileID: 749748885}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &519420033
@@ -9770,55 +9768,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!1 &534711025
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 534711027}
-  - component: {fileID: 534711026}
-  m_Layer: 10
-  m_Name: blur effect background 2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &534711026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 534711025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: 2aae3c5ebdf39884592b914dc3425d1a, type: 2}
---- !u!4 &534711027
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 534711025}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &539869483
 GameObject:
   m_ObjectHideFlags: 0
@@ -9829,7 +9778,7 @@ GameObject:
   m_Component:
   - component: {fileID: 539869484}
   - component: {fileID: 539869485}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: vine 1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9920,7 +9869,7 @@ GameObject:
   m_Component:
   - component: {fileID: 542516724}
   - component: {fileID: 542516725}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: branch 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10011,7 +9960,7 @@ GameObject:
   m_Component:
   - component: {fileID: 552032407}
   - component: {fileID: 552032408}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10102,7 +10051,7 @@ GameObject:
   m_Component:
   - component: {fileID: 556729188}
   - component: {fileID: 556729189}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10284,7 +10233,7 @@ GameObject:
   m_Component:
   - component: {fileID: 570178886}
   - component: {fileID: 570178887}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10557,7 +10506,7 @@ GameObject:
   m_Component:
   - component: {fileID: 590351451}
   - component: {fileID: 590351452}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11144,7 +11093,7 @@ GameObject:
   m_Component:
   - component: {fileID: 634470767}
   - component: {fileID: 634470768}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 7 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11326,7 +11275,7 @@ GameObject:
   m_Component:
   - component: {fileID: 641593644}
   - component: {fileID: 641593645}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11417,7 +11366,7 @@ GameObject:
   m_Component:
   - component: {fileID: 647184769}
   - component: {fileID: 647184770}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11598,7 +11547,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 651603307}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: backtree 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11665,7 +11614,7 @@ GameObject:
   m_Component:
   - component: {fileID: 653190068}
   - component: {fileID: 653190069}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11931,7 +11880,7 @@ GameObject:
   m_Component:
   - component: {fileID: 670829712}
   - component: {fileID: 670829713}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: stump 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12204,7 +12153,7 @@ GameObject:
   m_Component:
   - component: {fileID: 684826511}
   - component: {fileID: 684826512}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: small stump 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12295,7 +12244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 687007382}
   - component: {fileID: 687007383}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12568,7 +12517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 690730411}
   - component: {fileID: 690730412}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: vine 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12750,7 +12699,7 @@ GameObject:
   m_Component:
   - component: {fileID: 703869842}
   - component: {fileID: 703869843}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13370,7 +13319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 729521278}
   - component: {fileID: 729521279}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13461,7 +13410,7 @@ GameObject:
   m_Component:
   - component: {fileID: 729627537}
   - component: {fileID: 729627538}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: tree 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13677,7 +13626,7 @@ GameObject:
   m_Component:
   - component: {fileID: 736257912}
   - component: {fileID: 736257913}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13859,7 +13808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 741553082}
   - component: {fileID: 741553083}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14040,7 +13989,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 746818484}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: backtree1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14129,7 +14078,7 @@ GameObject:
   m_Component:
   - component: {fileID: 747367731}
   - component: {fileID: 747367732}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14210,176 +14159,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!1 &749748884
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 749748885}
-  - component: {fileID: 749748889}
-  - component: {fileID: 749748888}
-  - component: {fileID: 749748887}
-  - component: {fileID: 749748886}
-  m_Layer: 10
-  m_Name: camera blur background 2
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &749748885
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749748884}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 519420032}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &749748886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749748884}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBrain
-  ShowDebugText: 0
-  ShowCameraFrustum: 1
-  IgnoreTimeScale: 0
-  WorldUpOverride: {fileID: 0}
-  ChannelMask: -1
-  UpdateMethod: 2
-  BlendUpdateMethod: 1
-  LensModeOverride:
-    Enabled: 0
-    DefaultMode: 2
-  DefaultBlend:
-    Style: 1
-    Time: 2
-    CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  CustomBlends: {fileID: 0}
---- !u!114 &749748887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749748884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 1
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  m_VolumeTrigger: {fileID: 534711027}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_AllowHDROutput: 1
-  m_UseScreenCoordOverride: 0
-  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
-    m_JitterScale: 1
-    m_MipBias: 0
-    m_VarianceClampScale: 0.9
-    m_ContrastAdaptiveSharpening: 0
-  m_Version: 2
---- !u!81 &749748888
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749748884}
-  m_Enabled: 1
---- !u!20 &749748889
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749748884}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 4
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 50.6
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 0
-  m_HDR: 1
-  m_AllowMSAA: 0
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 0
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
 --- !u!1 &753317934
 GameObject:
   m_ObjectHideFlags: 0
@@ -14481,7 +14260,7 @@ GameObject:
   m_Component:
   - component: {fileID: 754619222}
   - component: {fileID: 754619223}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14572,7 +14351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 760328764}
   - component: {fileID: 760328765}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14663,7 +14442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 762005827}
   - component: {fileID: 762005828}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14754,7 +14533,7 @@ GameObject:
   m_Component:
   - component: {fileID: 781311593}
   - component: {fileID: 781311594}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 6 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14845,7 +14624,7 @@ GameObject:
   m_Component:
   - component: {fileID: 787715957}
   - component: {fileID: 787715958}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14936,7 +14715,7 @@ GameObject:
   m_Component:
   - component: {fileID: 791019353}
   - component: {fileID: 791019354}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15027,7 +14806,7 @@ GameObject:
   m_Component:
   - component: {fileID: 801842864}
   - component: {fileID: 801842863}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Forground Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15111,7 +14890,7 @@ GameObject:
   m_Component:
   - component: {fileID: 803076381}
   - component: {fileID: 803076382}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15202,7 +14981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 803147275}
   - component: {fileID: 803147274}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 2 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15293,7 +15072,7 @@ GameObject:
   m_Component:
   - component: {fileID: 807823401}
   - component: {fileID: 807823402}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15384,7 +15163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 812967449}
   - component: {fileID: 812967450}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15475,7 +15254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 820775055}
   - component: {fileID: 820775054}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15764,7 +15543,7 @@ GameObject:
   m_Component:
   - component: {fileID: 826030255}
   - component: {fileID: 826030256}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15855,7 +15634,7 @@ GameObject:
   m_Component:
   - component: {fileID: 834643290}
   - component: {fileID: 834643291}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16037,7 +15816,7 @@ GameObject:
   m_Component:
   - component: {fileID: 842622606}
   - component: {fileID: 842622607}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16128,7 +15907,7 @@ GameObject:
   m_Component:
   - component: {fileID: 843721692}
   - component: {fileID: 843721693}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: Layer 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16219,7 +15998,7 @@ GameObject:
   m_Component:
   - component: {fileID: 846053957}
   - component: {fileID: 846053958}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16310,7 +16089,7 @@ GameObject:
   m_Component:
   - component: {fileID: 848682486}
   - component: {fileID: 848682487}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: stump 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16401,7 +16180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 864255129}
   - component: {fileID: 864255130}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16492,7 +16271,7 @@ GameObject:
   m_Component:
   - component: {fileID: 870370674}
   - component: {fileID: 870370675}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16583,7 +16362,7 @@ GameObject:
   m_Component:
   - component: {fileID: 877963091}
   - component: {fileID: 877963092}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16674,7 +16453,7 @@ GameObject:
   m_Component:
   - component: {fileID: 882974743}
   - component: {fileID: 882974744}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 7 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16765,7 +16544,7 @@ GameObject:
   m_Component:
   - component: {fileID: 886371332}
   - component: {fileID: 886371333}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17129,7 +16908,7 @@ GameObject:
   m_Component:
   - component: {fileID: 901031361}
   - component: {fileID: 901031362}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17220,7 +16999,7 @@ GameObject:
   m_Component:
   - component: {fileID: 909231869}
   - component: {fileID: 909231870}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17402,7 +17181,7 @@ GameObject:
   m_Component:
   - component: {fileID: 912841187}
   - component: {fileID: 912841188}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17493,7 +17272,7 @@ GameObject:
   m_Component:
   - component: {fileID: 923433614}
   - component: {fileID: 923433615}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17584,7 +17363,7 @@ GameObject:
   m_Component:
   - component: {fileID: 923440927}
   - component: {fileID: 923440928}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: stump 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18130,7 +17909,7 @@ GameObject:
   m_Component:
   - component: {fileID: 951821670}
   - component: {fileID: 951821671}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18312,7 +18091,7 @@ GameObject:
   m_Component:
   - component: {fileID: 961756466}
   - component: {fileID: 961756467}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18403,7 +18182,7 @@ GameObject:
   m_Component:
   - component: {fileID: 961872886}
   - component: {fileID: 961872887}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18494,7 +18273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 968074891}
   - component: {fileID: 968074892}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18585,7 +18364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 974292427}
   - component: {fileID: 974292428}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18905,7 +18684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 997992411}
   - component: {fileID: 997992412}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18996,7 +18775,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1001043147}
   - component: {fileID: 1001043148}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19360,7 +19139,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1019334118}
   - component: {fileID: 1019334117}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19542,7 +19321,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1022321034}
   - component: {fileID: 1022321035}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19724,7 +19503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1028054339}
   - component: {fileID: 1028054340}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 6 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19815,7 +19594,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1046373207}
   - component: {fileID: 1046373208}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19997,7 +19776,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1058281113}
   - component: {fileID: 1058281114}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20221,7 +20000,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1061049901}
   - component: {fileID: 1061049902}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20312,7 +20091,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1062716291}
   - component: {fileID: 1062716292}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20585,7 +20364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1072801741}
   - component: {fileID: 1072801742}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20712,7 +20491,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1078284809}
   - component: {fileID: 1078284810}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20803,7 +20582,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1088334552}
   - component: {fileID: 1088334553}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 3 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20894,7 +20673,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1098183110}
   - component: {fileID: 1098183111}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: tree 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21076,7 +20855,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1100774573}
   - component: {fileID: 1100774574}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21167,7 +20946,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1103974563}
   - component: {fileID: 1103974564}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21258,7 +21037,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1105048850}
   - component: {fileID: 1105048851}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21440,7 +21219,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1108901605}
   - component: {fileID: 1108901606}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21713,7 +21492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1119029597}
   - component: {fileID: 1119029598}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21804,7 +21583,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1119556153}
   - component: {fileID: 1119556154}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 2 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22081,7 +21860,7 @@ GameObject:
   - component: {fileID: 1130689494}
   - component: {fileID: 1130689493}
   m_Layer: 9
-  m_Name: camera blur static
+  m_Name: camera blur
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22247,7 +22026,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1131794575}
   - component: {fileID: 1131794574}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: Layer 8 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22429,7 +22208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1134681732}
   - component: {fileID: 1134681733}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22520,7 +22299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1137920070}
   - component: {fileID: 1137920071}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22611,7 +22390,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1143361914}
   - component: {fileID: 1143361915}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22702,7 +22481,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1158878500}
   - component: {fileID: 1158878501}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22884,7 +22663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1163871078}
   - component: {fileID: 1163871079}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22975,7 +22754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1177257984}
   - component: {fileID: 1177257985}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: tree 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23066,7 +22845,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1177318512}
   - component: {fileID: 1177318513}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23157,7 +22936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1177721806}
   - component: {fileID: 1177721807}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23248,7 +23027,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1183076341}
   - component: {fileID: 1183076342}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23750,7 +23529,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1216922783}
   - component: {fileID: 1216922782}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 7 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23841,7 +23620,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1217658934}
   - component: {fileID: 1217658935}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23932,7 +23711,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1217958742}
   - component: {fileID: 1217958743}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24205,7 +23984,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1223879521}
   - component: {fileID: 1223879522}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24296,7 +24075,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1225172124}
   - component: {fileID: 1225172125}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: branch 11 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24569,7 +24348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238211794}
   - component: {fileID: 1238211795}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24660,7 +24439,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1254103367}
   - component: {fileID: 1254103368}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25024,7 +24803,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1265297616}
   - component: {fileID: 1265297617}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25115,7 +24894,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1275901102}
   - component: {fileID: 1275901103}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: small stump 4 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25206,7 +24985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1278426576}
   - component: {fileID: 1278426577}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: Layer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25411,7 +25190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1282393416}
   - component: {fileID: 1282393417}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25555,7 +25334,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1306584180}
   - component: {fileID: 1306584181}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25737,7 +25516,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1311246907}
   - component: {fileID: 1311246908}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25828,7 +25607,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1326055409}
   - component: {fileID: 1326055410}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26010,7 +25789,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1335015000}
   - component: {fileID: 1335015001}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26101,7 +25880,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1335575190}
   - component: {fileID: 1335575191}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 7 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26283,7 +26062,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1353703944}
   - component: {fileID: 1353703945}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: branch 11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26465,7 +26244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1357066198}
   - component: {fileID: 1357066199}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26556,7 +26335,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1361586225}
   - component: {fileID: 1361586226}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26647,7 +26426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1384195030}
   - component: {fileID: 1384195031}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26738,7 +26517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1384844454}
   - component: {fileID: 1384844455}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27011,7 +26790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1419001116}
   - component: {fileID: 1419001117}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: branch 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27102,7 +26881,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1421291335}
   - component: {fileID: 1421291336}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27193,7 +26972,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1433281754}
   - component: {fileID: 1433281755}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27284,7 +27063,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1434582527}
   - component: {fileID: 1434582528}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27375,7 +27154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1436854705}
   - component: {fileID: 1436854706}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27466,7 +27245,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1441577171}
   - component: {fileID: 1441577172}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27557,7 +27336,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1446591717}
   - component: {fileID: 1446591718}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 10 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27921,7 +27700,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1482178016}
   - component: {fileID: 1482178015}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28103,7 +27882,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1510098501}
   - component: {fileID: 1510098502}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: bush 1 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28285,7 +28064,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1510461323}
   - component: {fileID: 1510461324}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28467,7 +28246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1518113503}
   - component: {fileID: 1518113504}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: vine 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28558,7 +28337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1524810696}
   - component: {fileID: 1524810697}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: Layer 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28740,7 +28519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1538291413}
   - component: {fileID: 1538291414}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28831,7 +28610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1540866327}
   - component: {fileID: 1540866326}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28922,7 +28701,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1545364237}
   - component: {fileID: 1545364238}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29195,7 +28974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1564222149}
   - component: {fileID: 1564222150}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29286,7 +29065,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1564804700}
   - component: {fileID: 1564804701}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29377,7 +29156,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1567805451}
   - component: {fileID: 1567805452}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29468,7 +29247,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1573716385}
   - component: {fileID: 1573716386}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29741,7 +29520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1582594962}
   - component: {fileID: 1582594963}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29923,7 +29702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1599362728}
   - component: {fileID: 1599362729}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30196,7 +29975,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1617692932}
   - component: {fileID: 1617692933}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30286,7 +30065,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1623475459}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: backtree 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30335,7 +30114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1630120956}
   - component: {fileID: 1630120957}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: branch 17 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30510,7 +30289,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1638638971}
   - component: {fileID: 1638638972}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30692,7 +30471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1651296869}
   - component: {fileID: 1651296870}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: vine 1 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30783,7 +30562,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1651396872}
   - component: {fileID: 1651396873}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 3 + 5 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30965,7 +30744,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1659050748}
   - component: {fileID: 1659050749}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31056,7 +30835,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1662385537}
   - component: {fileID: 1662385538}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: small stump 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31147,7 +30926,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1665694162}
   - component: {fileID: 1665694163}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31329,7 +31108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1677454419}
   - component: {fileID: 1677454420}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31784,7 +31563,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1705130120}
   - component: {fileID: 1705130121}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31966,7 +31745,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1712450573}
   - component: {fileID: 1712450574}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32148,7 +31927,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1721536331}
   - component: {fileID: 1721536332}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32239,7 +32018,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1725170448}
   - component: {fileID: 1725170449}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32330,7 +32109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1728652686}
   - component: {fileID: 1728652687}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32421,7 +32200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1760868219}
   - component: {fileID: 1760868220}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33058,7 +32837,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1782714300}
   - component: {fileID: 1782714301}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: tree 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33149,7 +32928,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1785041741}
   - component: {fileID: 1785041742}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33421,7 +33200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1808063857}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: BACKTREE 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33482,7 +33261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1809285096}
   - component: {fileID: 1809285097}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 3 + 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33573,7 +33352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1813416672}
   - component: {fileID: 1813416673}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33664,7 +33443,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1824068243}
   - component: {fileID: 1824068242}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33755,7 +33534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1832824646}
   - component: {fileID: 1832824647}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: stump 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34210,7 +33989,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1857119103}
   - component: {fileID: 1857119104}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34301,7 +34080,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1858331085}
   - component: {fileID: 1858331086}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 7 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34392,7 +34171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1863578580}
   - component: {fileID: 1863578581}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34574,7 +34353,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1881840834}
   - component: {fileID: 1881840835}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34665,7 +34444,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1888024366}
   - component: {fileID: 1888024367}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: vine 3 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34938,7 +34717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1901060520}
   - component: {fileID: 1901060521}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35211,7 +34990,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1910386251}
   - component: {fileID: 1910386252}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35302,7 +35081,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1913409342}
   - component: {fileID: 1913409343}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35393,7 +35172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1925682411}
   - component: {fileID: 1925682412}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: Layer 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35484,7 +35263,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1927265891}
   - component: {fileID: 1927265892}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: stump 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35666,7 +35445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1942014642}
   - component: {fileID: 1942014643}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35757,7 +35536,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1942389217}
   - component: {fileID: 1942389218}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 3 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35939,7 +35718,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1947481601}
   - component: {fileID: 1947481602}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36394,7 +36173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1972337801}
   - component: {fileID: 1972337802}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36576,7 +36355,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1982217137}
   - component: {fileID: 1982217138}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: Layer 8 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36758,7 +36537,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1989737694}
   - component: {fileID: 1989737695}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36849,7 +36628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1992244468}
   - component: {fileID: 1992244469}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36940,7 +36719,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2002130094}
   - component: {fileID: 2002130095}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37030,7 +36809,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2002967393}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: noise branches
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37065,7 +36844,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2010197161}
   - component: {fileID: 2010197162}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: Layer 3 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37156,7 +36935,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2012730940}
   - component: {fileID: 2012730941}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: bush 1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37429,7 +37208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2023618005}
   - component: {fileID: 2023618006}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: bush 6 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37520,7 +37299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2032292934}
   - component: {fileID: 2032292935}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37934,7 +37713,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2046500181}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: backtree 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37986,7 +37765,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2052473425}
   - component: {fileID: 2052473426}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38168,7 +37947,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2066136647}
   - component: {fileID: 2066136648}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38259,7 +38038,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2066380342}
   - component: {fileID: 2066380343}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38623,7 +38402,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2073080001}
   - component: {fileID: 2073080002}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: branch 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38896,7 +38675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2095349866}
   - component: {fileID: 2095349867}
-  m_Layer: 11
+  m_Layer: 6
   m_Name: small stump 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39078,7 +38857,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2104192314}
   - component: {fileID: 2104192315}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39169,7 +38948,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2106700996}
   - component: {fileID: 2106700997}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39516,7 +39295,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2121376324}
   - component: {fileID: 2121376325}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Layer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39607,7 +39386,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2131108448}
   - component: {fileID: 2131108449}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: stump 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39789,7 +39568,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2135034401}
   - component: {fileID: 2135034402}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39971,7 +39750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2138073920}
   - component: {fileID: 2138073921}
-  m_Layer: 11
+  m_Layer: 8
   m_Name: bush 1 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40153,7 +39932,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2146844344}
   - component: {fileID: 2146844345}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: bush 3 + 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40257,4 +40036,3 @@ SceneRoots:
   - {fileID: 452410137}
   - {fileID: 516239798}
   - {fileID: 407034584}
-  - {fileID: 534711027}
