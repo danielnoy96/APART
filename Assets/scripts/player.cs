@@ -9,6 +9,12 @@ public class player : MonoBehaviour
     public PlayerInput playerInput;
     public Animator anim;
 
+    [Header("FSM (Runtime)")]
+    [HideInInspector] public PlayerState currentState;
+    [HideInInspector] public PlayerIdleState idleState;
+    [HideInInspector] public PlayerMoveState moveState;
+    [HideInInspector] public PlayerJumpState jumpState;
+
     [Header("Movement Variables")]
     public float speed;
     public float jumpForce;
@@ -35,10 +41,10 @@ public class player : MonoBehaviour
     [Tooltip("Optional clamp for max upward speed. Set <= 0 to disable.")]
     public float maxRiseSpeed = 0f;
 
-    private float coyoteTimer;
-    private float jumpBufferTimer;
-    private bool jumpHeld;
-    private bool jumpCutQueued;
+    [HideInInspector] public float coyoteTimer;
+    [HideInInspector] public float jumpBufferTimer;
+    [HideInInspector] public bool jumpHeld;
+    [HideInInspector] public bool jumpCutQueued;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -46,6 +52,16 @@ public class player : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
 
+    public bool IsGrounded => isGrounded;
+
+    private void Awake()
+    {
+        idleState = new PlayerIdleState(this);
+        moveState = new PlayerMoveState(this);
+        jumpState = new PlayerJumpState(this);
+
+        ChangeState(idleState);
+    }
 
     private void Start()
     {
@@ -59,133 +75,20 @@ public class player : MonoBehaviour
     void FixedUpdate()
     {
         CheckGrounded();
-        UpdateJumpTimers();
-        HandleMovement();
-        HandleJump();
-        ApplyVariableGravity();
-        ClampVerticalSpeed();
+        currentState.FixedUpdate();
     }
-
-
-    private void HandleMovement()
-    {
-        float targetSpeed = moveInput.x * speed;
-        rb.linearVelocity = new Vector2(1 * targetSpeed, rb.linearVelocity.y);
-    }
-
-    private void HandleJump()
-    {
-        if (jumpBufferTimer > 0f && coyoteTimer > 0f)
-        {
-            PerformJump();
-        }
-
-        if (jumpCutQueued)
-        {
-            if (rb.linearVelocity.y > 0f) // still going up
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
-            }
-            jumpCutQueued = false;
-        }
-    }
-
-
-    private void PerformJump()
-    {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        jumpBufferTimer = 0f;
-        coyoteTimer = 0f;
-        jumpCutQueued = false;
-    }
-
 
     void Update()
     {
-        Flip();
-        HandleAnimations();
+        currentState.Update();
     }
-
-
-    void ApplyVariableGravity()
-    {
-        float gravityScale;
-        if (rb.linearVelocity.y < -0.1f) //falling
-        {
-            gravityScale = fallGravity;
-        }
-        else if (rb.linearVelocity.y > 0.1f) //rising 
-        {
-            gravityScale = jumpGravity;
-        }
-        else //normal gravity
-        {
-            gravityScale = normalGravity;
-        }
-
-        // Celeste-style subtle apex hang: while holding jump near the top, apply reduced gravity.
-        if (!isGrounded && jumpHeld && apexHangVelocityThreshold > 0f && Mathf.Abs(rb.linearVelocity.y) <= apexHangVelocityThreshold)
-        {
-            gravityScale *= apexHangGravityMultiplier;
-        }
-
-        rb.gravityScale = gravityScale;
-    }
-
 
     void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     }
 
-    void HandleAnimations()
-    {
-        anim.SetBool("isJumping", rb.linearVelocity.y > .1f);
-        anim.SetBool("isGrounded", isGrounded);
-
-        anim.SetFloat("yVelocity", rb.linearVelocity.y);
-
-        anim.SetBool("isIdle", Mathf.Abs(moveInput.x) < 0.1f && isGrounded);
-        anim.SetBool("isRunning", Mathf.Abs(moveInput.x) > 0.1f && isGrounded);
-    }
-
-
-    private void UpdateJumpTimers()
-    {
-        if (isGrounded)
-        {
-            coyoteTimer = coyoteTime;
-        }
-        else
-        {
-            coyoteTimer = Mathf.Max(0f, coyoteTimer - Time.fixedDeltaTime);
-        }
-
-        jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - Time.fixedDeltaTime);
-    }
-
-
-    private void ClampVerticalSpeed()
-    {
-        if (maxFallSpeed <= 0f && maxRiseSpeed <= 0f)
-        {
-            return;
-        }
-
-        Vector2 velocity = rb.linearVelocity;
-        if (maxFallSpeed > 0f)
-        {
-            velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
-        }
-        if (maxRiseSpeed > 0f)
-        {
-            velocity.y = Mathf.Min(velocity.y, maxRiseSpeed);
-        }
-        rb.linearVelocity = velocity;
-    }
-
-
-    void Flip()
+    public void Flip()
     {
         if(moveInput.x > 0.1d)
         {
@@ -199,6 +102,17 @@ public class player : MonoBehaviour
         transform.localScale = new Vector3(facingDirection, 1, 1);
     }
 
+    public void ChangeState(PlayerState newState)
+    {
+        if (newState == null)
+        {
+            return;
+        }
+
+        currentState?.Exit();
+        currentState = newState;
+        currentState.Enter();
+    }
 
 
     public void OnMove (InputValue value)
