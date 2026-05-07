@@ -9,7 +9,12 @@ public abstract class PlayerState
         this.player = player;
     }
 
-    protected Rigidbody2D Rb => player.rb;
+    public virtual void Enter() { }
+    public virtual void Exit() { }
+    public virtual void Update() { }
+    public virtual void FixedUpdate() { }
+
+    protected Rigidbody2D RB => player.rb;
     protected Animator Anim => player.anim;
 
     protected Vector2 MoveInput
@@ -18,13 +23,25 @@ public abstract class PlayerState
         set => player.moveInput = value;
     }
 
-    protected int FacingDirection
+    // Input state (mapped onto existing variables; no new gameplay variables introduced).
+    protected bool JumpHeld
     {
-        get => player.facingDirection;
-        set => player.facingDirection = value;
+        get => player.jumpHeld;
+        set => player.jumpHeld = value;
     }
 
-    protected bool IsGrounded => player.IsGrounded;
+    // "Pressed" is represented by the existing jump buffer timer being active.
+    protected bool JumpPressed
+    {
+        get => player.jumpBufferTimer > 0f;
+        set => player.jumpBufferTimer = value ? player.jumpBufferTime : 0f;
+    }
+
+    protected bool JumpReleased
+    {
+        get => player.jumpCutQueued;
+        set => player.jumpCutQueued = value;
+    }
 
     protected float CoyoteTimer
     {
@@ -38,123 +55,18 @@ public abstract class PlayerState
         set => player.jumpBufferTimer = value;
     }
 
-    protected bool JumpHeld
-    {
-        get => player.jumpHeld;
-        set => player.jumpHeld = value;
-    }
+    protected bool IsGrounded => player.IsGrounded;
 
-    protected bool JumpCutQueued
-    {
-        get => player.jumpCutQueued;
-        set => player.jumpCutQueued = value;
-    }
-
-    protected float Speed => player.speed;
-    protected float JumpForce => player.jumpForce;
-    protected float JumpCutMultiplier => player.jumpCutMultiplier;
-    protected float NormalGravity => player.normalGravity;
-    protected float FallGravity => player.fallGravity;
-    protected float JumpGravity => player.jumpGravity;
-    protected float CoyoteTime => player.coyoteTime;
-    protected float JumpBufferTime => player.jumpBufferTime;
-    protected float ApexHangGravityMultiplier => player.apexHangGravityMultiplier;
-    protected float ApexHangVelocityThreshold => player.apexHangVelocityThreshold;
-    protected float MaxFallSpeed => player.maxFallSpeed;
-    protected float MaxRiseSpeed => player.maxRiseSpeed;
-
-    public virtual void Enter() { }
-    public virtual void Exit() { }
-    public virtual void Update() { }
-    public virtual void FixedUpdate() { }
-
-    protected void PerFramePipeline()
+    protected void Flip()
     {
         player.Flip();
-        HandleAnimations();
     }
 
-    protected void FixedTickPipeline()
-    {
-        UpdateJumpTimers();
-        HandleMovement();
-        HandleJump();
-        ApplyVariableGravity();
-        ClampVerticalSpeed();
-    }
-
-    private void HandleMovement()
-    {
-        float targetSpeed = MoveInput.x * Speed;
-        Rb.linearVelocity = new Vector2(1 * targetSpeed, Rb.linearVelocity.y);
-    }
-
-    private void HandleJump()
-    {
-        if (JumpBufferTimer > 0f && CoyoteTimer > 0f)
-        {
-            PerformJump();
-        }
-
-        if (JumpCutQueued)
-        {
-            if (Rb.linearVelocity.y > 0f) // still going up
-            {
-                Rb.linearVelocity = new Vector2(Rb.linearVelocity.x, Rb.linearVelocity.y * JumpCutMultiplier);
-            }
-            JumpCutQueued = false;
-        }
-    }
-
-    private void PerformJump()
-    {
-        Rb.linearVelocity = new Vector2(Rb.linearVelocity.x, JumpForce);
-        JumpBufferTimer = 0f;
-        CoyoteTimer = 0f;
-        JumpCutQueued = false;
-    }
-
-    private void ApplyVariableGravity()
-    {
-        float gravityScale;
-        if (Rb.linearVelocity.y < -0.1f) //falling
-        {
-            gravityScale = FallGravity;
-        }
-        else if (Rb.linearVelocity.y > 0.1f) //rising
-        {
-            gravityScale = JumpGravity;
-        }
-        else //normal gravity
-        {
-            gravityScale = NormalGravity;
-        }
-
-        // Celeste-style subtle apex hang: while holding jump near the top, apply reduced gravity.
-        if (!IsGrounded && JumpHeld && ApexHangVelocityThreshold > 0f && Mathf.Abs(Rb.linearVelocity.y) <= ApexHangVelocityThreshold)
-        {
-            gravityScale *= ApexHangGravityMultiplier;
-        }
-
-        Rb.gravityScale = gravityScale;
-    }
-
-    private void HandleAnimations()
-    {
-        Anim.SetBool("isJumping", Rb.linearVelocity.y > .1f);
-        Anim.SetBool("isGrounded", IsGrounded);
-
-        Anim.SetFloat("yVelocity", Rb.linearVelocity.y);
-
-        Anim.SetBool("isIdle", Mathf.Abs(MoveInput.x) < 0.1f && IsGrounded);
-        Anim.SetBool("isRunning", Mathf.Abs(MoveInput.x) > 0.1f && IsGrounded);
-    }
-
-    private void UpdateJumpTimers()
+    protected void UpdateJumpTimers()
     {
         if (IsGrounded)
         {
-            CoyoteTimer = CoyoteTime;
+            CoyoteTimer = player.coyoteTime;
         }
         else
         {
@@ -164,23 +76,67 @@ public abstract class PlayerState
         JumpBufferTimer = Mathf.Max(0f, JumpBufferTimer - Time.fixedDeltaTime);
     }
 
-    private void ClampVerticalSpeed()
+    protected void ApplyHorizontalMovement()
     {
-        if (MaxFallSpeed <= 0f && MaxRiseSpeed <= 0f)
+        if (player.IsKnockbackLocked)
         {
             return;
         }
 
-        Vector2 velocity = Rb.linearVelocity;
-        if (MaxFallSpeed > 0f)
+        float targetSpeed = MoveInput.x * player.speed;
+        RB.linearVelocity = new Vector2(targetSpeed, RB.linearVelocity.y);
+    }
+
+    protected void ApplyIdleHorizontalVelocity()
+    {
+        if (player.IsKnockbackLocked)
         {
-            velocity.y = Mathf.Max(velocity.y, -MaxFallSpeed);
+            return;
         }
-        if (MaxRiseSpeed > 0f)
+
+        RB.linearVelocity = new Vector2(0f, RB.linearVelocity.y);
+    }
+
+    protected void ApplyVariableGravity()
+    {
+        float gravityScale;
+        if (RB.linearVelocity.y < -0.1f)
         {
-            velocity.y = Mathf.Min(velocity.y, MaxRiseSpeed);
+            gravityScale = player.fallGravity;
         }
-        Rb.linearVelocity = velocity;
+        else if (RB.linearVelocity.y > 0.1f)
+        {
+            gravityScale = player.jumpGravity;
+        }
+        else
+        {
+            gravityScale = player.normalGravity;
+        }
+
+        if (!IsGrounded && JumpHeld && player.apexHangVelocityThreshold > 0f && Mathf.Abs(RB.linearVelocity.y) <= player.apexHangVelocityThreshold)
+        {
+            gravityScale *= player.apexHangGravityMultiplier;
+        }
+
+        RB.gravityScale = gravityScale;
+    }
+
+    protected void ClampVerticalSpeed()
+    {
+        if (player.maxFallSpeed <= 0f && player.maxRiseSpeed <= 0f)
+        {
+            return;
+        }
+
+        Vector2 velocity = RB.linearVelocity;
+        if (player.maxFallSpeed > 0f)
+        {
+            velocity.y = Mathf.Max(velocity.y, -player.maxFallSpeed);
+        }
+        if (player.maxRiseSpeed > 0f)
+        {
+            velocity.y = Mathf.Min(velocity.y, player.maxRiseSpeed);
+        }
+        RB.linearVelocity = velocity;
     }
 }
-

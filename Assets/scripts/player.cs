@@ -8,12 +8,18 @@ public class player : MonoBehaviour
     public Rigidbody2D rb;
     public PlayerInput playerInput;
     public Animator anim;
+    public Combat combat;
+    public Stamina stamina;
+    public Health health;
 
-    [Header("FSM (Runtime)")]
-    [HideInInspector] public PlayerState currentState;
-    [HideInInspector] public PlayerIdleState idleState;
-    [HideInInspector] public PlayerMoveState moveState;
-    [HideInInspector] public PlayerJumpState jumpState;
+    [Header("FSM")]
+    public PlayerIdleState idleState;
+    public PlayerMoveState moveState;
+    public PlayerJumpState jumpState;
+    public PlayerAttackState attackState;
+    public PlayerDashState dashState;
+    public PlayerLifeDrainState lifeDrainState;
+    public PlayerState currentState;
 
     [Header("Movement Variables")]
     public float speed;
@@ -45,6 +51,68 @@ public class player : MonoBehaviour
     [HideInInspector] public float jumpBufferTimer;
     [HideInInspector] public bool jumpHeld;
     [HideInInspector] public bool jumpCutQueued;
+    [HideInInspector] public bool attackPressed;
+    [HideInInspector] public bool dashPressed;
+    [HideInInspector] public bool lifeDrainPressed;
+
+    [Header("Dash Settings")]
+    public float dashSpeed = 14f;
+    public float dashDuration = 0.15f;
+    public float dashCost = 20f;
+    public float dashCooldown = 0.5f;
+    public float dashEndLag = 0f;
+    public bool dashIgnoreGravity = false;
+    [Tooltip("If false, dash forces vertical velocity to 0 during the dash (more classic horizontal air-dash).")]
+    public bool dashPreserveVerticalVelocity = false;
+
+    [Header("Dash Animation Params (Optional)")]
+    [Tooltip("Trigger parameter to start the dash animation. Leave empty if unused.")]
+    public string dashTriggerParam = "";
+    [Tooltip("Bool parameter for 'isDashing'. Leave empty if unused.")]
+    public string dashBoolParam = "";
+
+    private float nextDashTime;
+
+    public float DashSpeed => dashSpeed;
+    public float DashDuration => dashDuration;
+    public float DashCost => dashCost;
+    public float DashCooldown => dashCooldown;
+    public float DashEndLag => dashEndLag;
+    public bool DashIgnoreGravity => dashIgnoreGravity;
+    public bool DashPreserveVerticalVelocity => dashPreserveVerticalVelocity;
+    public bool CanDash => Time.time >= nextDashTime && !(currentState is PlayerDashState) && stamina != null && stamina.HasStamina(dashCost);
+
+    [Header("Debug")]
+    [Tooltip("Logs input callbacks (useful to verify PlayerInput 'Send Messages' is wired).")]
+    public bool logInputCallbacks = false;
+
+    [Header("Damage / Invincibility")]
+    [Tooltip("Seconds of invincibility after taking damage.")]
+    public float invincibilityDuration = 0.5f;
+
+    private bool isInvincible;
+    private float invincibilityTimer;
+
+    private float knockbackLockTimer;
+    public bool IsKnockbackLocked => knockbackLockTimer > 0f;
+
+    [Header("Combat Animation Params (Optional)")]
+    [Tooltip("Trigger parameter to start the attack animation. Leave empty if your Animator uses a different setup.")]
+    public string attackTriggerParam = "";
+    [Tooltip("Bool parameter for 'isAttacking'. Leave empty if unused.")]
+    public string attackBoolParam = "";
+
+    [Header("Life Drain")]
+    public Transform drainCheckPoint;
+    public float drainCheckRadius = 0.35f;
+    public LayerMask drainableLayer;
+    [HideInInspector] public DrainableCorpse currentDrainTarget;
+
+    [Header("Life Drain Animation Params (Optional)")]
+    [Tooltip("Trigger parameter to start the life drain animation. Leave empty if unused.")]
+    public string lifeDrainTriggerParam = "";
+    [Tooltip("Bool parameter for 'isLifeDraining'. Leave empty if unused.")]
+    public string lifeDrainBoolParam = "";
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -52,38 +120,105 @@ public class player : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
 
-    public bool IsGrounded => isGrounded;
 
     private void Awake()
-    {
-        idleState = new PlayerIdleState(this);
-        moveState = new PlayerMoveState(this);
-        jumpState = new PlayerJumpState(this);
-
-        ChangeState(idleState);
-    }
-
-    private void Start()
     {
         if (rb == null)
         {
             rb = GetComponent<Rigidbody2D>();
         }
+        if (anim == null)
+        {
+            anim = GetComponent<Animator>();
+        }
+        if (combat == null)
+        {
+            combat = GetComponent<Combat>();
+            if (combat == null)
+            {
+                combat = GetComponentInChildren<Combat>();
+            }
+        }
+        if (stamina == null)
+        {
+            stamina = GetComponent<Stamina>();
+            if (stamina == null)
+            {
+                stamina = GetComponentInChildren<Stamina>();
+            }
+        }
+        if (health == null)
+        {
+            health = GetComponent<Health>();
+            if (health == null)
+            {
+                health = GetComponentInChildren<Health>();
+            }
+        }
+
         rb.gravityScale = normalGravity;
+
+        idleState = new PlayerIdleState(this);
+        moveState = new PlayerMoveState(this);
+        jumpState = new PlayerJumpState(this);
+        attackState = new PlayerAttackState(this);
+        dashState = new PlayerDashState(this);
+        lifeDrainState = new PlayerLifeDrainState(this);
+
+        ChangeState(idleState);
+    }
+
+    public void ChangeState(PlayerState newState)
+    {
+        if (currentState != null)
+        {
+            currentState.Exit();
+        }
+
+        currentState = newState;
+        currentState.Enter();
     }
 
     void FixedUpdate()
     {
         CheckGrounded();
-        currentState.FixedUpdate();
+        currentState?.FixedUpdate();
     }
 
     void Update()
     {
-        currentState.Update();
+        currentState?.Update();
+
+        if (isInvincible)
+        {
+            invincibilityTimer -= Time.deltaTime;
+            if (invincibilityTimer <= 0f)
+            {
+                isInvincible = false;
+                if (logInputCallbacks)
+                {
+                    Debug.Log("Player is no longer invincible", this);
+                }
+            }
+        }
+
+        if (knockbackLockTimer > 0f)
+        {
+            knockbackLockTimer -= Time.deltaTime;
+        }
     }
 
-    void CheckGrounded()
+    private void LateUpdate()
+    {
+        // One-frame button press semantics for state transitions.
+        attackPressed = false;
+        dashPressed = false;
+        lifeDrainPressed = false;
+    }
+
+    public bool IsGrounded => isGrounded;
+
+    public void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     }
@@ -102,17 +237,6 @@ public class player : MonoBehaviour
         transform.localScale = new Vector3(facingDirection, 1, 1);
     }
 
-    public void ChangeState(PlayerState newState)
-    {
-        if (newState == null)
-        {
-            return;
-        }
-
-        currentState?.Exit();
-        currentState = newState;
-        currentState.Enter();
-    }
 
 
     public void OnMove (InputValue value)
@@ -134,10 +258,142 @@ public class player : MonoBehaviour
         }
     }
 
+    public void OnAttack(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            if (logInputCallbacks)
+            {
+                Debug.Log("OnAttack fired (pressed)", this);
+            }
+            attackPressed = true;
+        }
+    }
+
+    // Reuse the existing "Sprint" action as Dash for now (Input System Send Messages calls OnSprint).
+    public void OnSprint(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            if (logInputCallbacks)
+            {
+                Debug.Log("OnSprint fired (pressed) -> Dash", this);
+            }
+            dashPressed = true;
+        }
+    }
+
+    // Reuse existing "Interact" action as Life Drain input (Input System Send Messages calls OnInteract).
+    public void OnInteract(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            if (logInputCallbacks)
+            {
+                Debug.Log("OnInteract fired (pressed) -> LifeDrain", this);
+            }
+            lifeDrainPressed = true;
+        }
+    }
+
+    public void OnAttackAnimationFinished()
+    {
+        if (currentState is PlayerAttackState attack)
+        {
+            attack.OnAttackAnimationFinished();
+        }
+    }
+
+    public void StartDashCooldown()
+    {
+        nextDashTime = Time.time + Mathf.Max(0f, dashCooldown);
+    }
+
+    public bool TryTakeDamage(int damage)
+    {
+        if (damage <= 0)
+        {
+            return false;
+        }
+
+        if (isInvincible)
+        {
+            if (logInputCallbacks)
+            {
+                Debug.Log("Player is invincible", this);
+            }
+            return false;
+        }
+
+        if (health == null || health.IsDead)
+        {
+            return false;
+        }
+
+        health.TakeDamage(damage);
+
+        if (invincibilityDuration > 0f)
+        {
+            isInvincible = true;
+            invincibilityTimer = invincibilityDuration;
+            if (logInputCallbacks)
+            {
+                Debug.Log("Player is invincible", this);
+            }
+        }
+
+        return true;
+    }
+
+    public void StartKnockbackLock(float duration)
+    {
+        if (duration <= 0f)
+        {
+            return;
+        }
+
+        knockbackLockTimer = Mathf.Max(knockbackLockTimer, duration);
+    }
+
+    public DrainableCorpse GetDrainableCorpse()
+    {
+        currentDrainTarget = null;
+
+        if (drainCheckPoint == null)
+        {
+            return null;
+        }
+
+        Collider2D hit = Physics2D.OverlapCircle(drainCheckPoint.position, drainCheckRadius, drainableLayer);
+        if (hit == null)
+        {
+            return null;
+        }
+
+        DrainableCorpse corpse = hit.GetComponentInParent<DrainableCorpse>();
+        if (corpse == null || corpse.IsDrained)
+        {
+            return null;
+        }
+
+        currentDrainTarget = corpse;
+        return corpse;
+    }
+
 
     private void OnDrawGizmosSelected()
     {
+        if (groundCheck == null)
+        {
+            return;
+        }
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+
+        if (drainCheckPoint != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(drainCheckPoint.position, drainCheckRadius);
+        }
     }
 }
