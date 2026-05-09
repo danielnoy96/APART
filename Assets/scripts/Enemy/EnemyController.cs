@@ -47,6 +47,8 @@ public class EnemyController : MonoBehaviour
     private Transform contactDamageSensorTransform;
     private Vector3 contactSensorInitialLocalPos;
     private bool contactSensorHasInitial;
+    private CrashKonijn.Goap.Runtime.GoapActionProvider goapActionProvider;
+    private CrashKonijn.Agent.Runtime.AgentBehaviour goapAgentBehaviour;
 
     private void Awake()
     {
@@ -97,6 +99,9 @@ public class EnemyController : MonoBehaviour
 
         spawnPosition = transform.position;
         state = State.Patrol;
+
+        goapActionProvider = GetComponent<CrashKonijn.Goap.Runtime.GoapActionProvider>();
+        goapAgentBehaviour = GetComponent<CrashKonijn.Agent.Runtime.AgentBehaviour>();
     }
 
     private void OnEnable()
@@ -157,6 +162,9 @@ public class EnemyController : MonoBehaviour
     // GOAP action will call Patrol() later.
     public void Patrol()
     {
+        if (state != State.Dead)
+            state = State.Patrol;
+
         float targetX;
 
         if (Time.time < idleUntilTime)
@@ -205,6 +213,9 @@ public class EnemyController : MonoBehaviour
     // GOAP action will call ChasePlayer() later.
     public void ChasePlayer()
     {
+        if (state != State.Dead)
+            state = State.Chase;
+
         if (player == null)
         {
             state = State.Patrol;

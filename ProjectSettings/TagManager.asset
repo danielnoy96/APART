@@ -17,9 +17,9 @@ TagManager:
   - background blur
   - background 2
   - forground blur
-  - 
-  - 
-  - 
+  - Enemy
+  - Player
+  - EnemyDamageTrigger
   - 
   - 
   - 
@@ -47,14 +47,8 @@ TagManager:
   - name: background 2
     uniqueID: 378244743
     locked: 0
-  - name: FogForBackground2
-    uniqueID: 1551606713
-    locked: 0
   - name: background
     uniqueID: 1752478715
-    locked: 0
-  - name: FogForBackground
-    uniqueID: 983623341
     locked: 0
   - name: ground
     uniqueID: 26673157

@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Game.GOAP.Sensors
 {
     // Provides HasTarget world state as 1/0.
+    [GoapId("game.goap.worldsensor.has_player_target")]
     public class HasPlayerTargetSensor : LocalWorldSensorBase
     {
         private player cachedPlayer;

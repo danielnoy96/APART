@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875fbfa2d1734285b353878b31467c98, type: 3}
+  m_Name: CapabilityConfigScriptable
+  m_EditorClassIdentifier: CrashKonijn.Goap.Runtime::CrashKonijn.Goap.Runtime.CapabilityConfigScriptable
+  goals:
+  - goal:
+      <Name>k__BackingField: PatrolGoal
+      <Id>k__BackingField: game.goap.goal.patrol
+    baseCost: 1
+    conditions:
+    - worldKey:
+        <Name>k__BackingField: IsPlayerInRange
+        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+      comparison: 0
+      amount: 1
+  - goal:
+      <Name>k__BackingField: ChasePlayerGoal
+      <Id>k__BackingField: game.goap.goal.chase_player
+    baseCost: 1
+    conditions:
+    - worldKey:
+        <Name>k__BackingField: IsPlayerInRange
+        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+      comparison: 3
+      amount: 1
+  actions:
+  - action:
+      <Name>k__BackingField: PatrolAction
+      <Id>k__BackingField: game.goap.action.patrol
+    target:
+      <Name>k__BackingField: PlayerTarget
+      <Id>k__BackingField: game.goap.targetkey.player
+    properties:
+      rid: 4994295344011935960
+    baseCost: 1
+    stoppingDistance: 0.1
+    validateTarget: 1
+    requiresTarget: 0
+    validateConditions: 1
+    moveMode: 0
+    conditions: []
+    effects:
+    - worldKey:
+        <Name>k__BackingField: IsPlayerInRange
+        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+      effect: 0
+  - action:
+      <Name>k__BackingField: ChasePlayerAction
+      <Id>k__BackingField: game.goap.action.chase_player
+    target:
+      <Name>k__BackingField: PlayerTarget
+      <Id>k__BackingField: game.goap.targetkey.player
+    properties:
+      rid: 4994295344011935961
+    baseCost: 1
+    stoppingDistance: 5
+    validateTarget: 1
+    requiresTarget: 1
+    validateConditions: 1
+    moveMode: 0
+    conditions: []
+    effects:
+    - worldKey:
+        <Name>k__BackingField: IsPlayerInRange
+        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+      effect: 1
+  worldSensors:
+  - sensor:
+      <Name>k__BackingField: HasPlayerTargetSensor
+      <Id>k__BackingField: game.goap.worldsensor.has_player_target
+    worldKey:
+      <Name>k__BackingField: HasTarget
+      <Id>k__BackingField: game.goap.worldkey.has_target
+  - sensor:
+      <Name>k__BackingField: PlayerDistanceSensor
+      <Id>k__BackingField: game.goap.worldsensor.player_distance
+    worldKey:
+      <Name>k__BackingField: IsPlayerInRange
+      <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+  targetSensors:
+  - sensor:
+      <Name>k__BackingField: PlayerTargetResolver
+      <Id>k__BackingField: game.goap.targetsensor.player_resolver
+    targetKey:
+      <Name>k__BackingField: PlayerTarget
+      <Id>k__BackingField: game.goap.targetkey.player
+  multiSensors: []
+  generatorScriptable: {fileID: 11400000, guid: b0fb5a56df42c904582b9225449e0617, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4994295344011935960
+      type: {class: EmptyActionProperties, ns: CrashKonijn.Agent.Runtime, asm: CrashKonijn.Agent.Runtime}
+      data: 
+    - rid: 4994295344011935961
+      type: {class: EmptyActionProperties, ns: CrashKonijn.Agent.Runtime, asm: CrashKonijn.Agent.Runtime}
+      data: 

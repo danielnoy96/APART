@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0857b2a53377458ebec6c4b1179e3c5a, type: 3}
+  m_Name: Game.GOAP
+  m_EditorClassIdentifier: CrashKonijn.Goap.Runtime::CrashKonijn.Goap.Runtime.GeneratorScriptable
+  nameSpace: Game.GOAP
+  scripts:
+    goals:
+    - <Name>k__BackingField: ChasePlayerGoal
+      fullName: Game.GOAP.Goals.ChasePlayerGoal, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Goals/ChasePlayerGoal.cs
+      <Id>k__BackingField: game.goap.goal.chase_player
+    - <Name>k__BackingField: PatrolGoal
+      fullName: Game.GOAP.Goals.PatrolGoal, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Goals/PatrolGoal.cs
+      <Id>k__BackingField: game.goap.goal.patrol
+    actions:
+    - <Name>k__BackingField: ChasePlayerAction
+      fullName: Game.GOAP.Actions.ChasePlayerAction, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Actions/ChasePlayerAction.cs
+      <Id>k__BackingField: game.goap.action.chase_player
+    - <Name>k__BackingField: PatrolAction
+      fullName: Game.GOAP.Actions.PatrolAction, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Actions/PatrolAction.cs
+      <Id>k__BackingField: game.goap.action.patrol
+    worldSensors:
+    - <Name>k__BackingField: HasPlayerTargetSensor
+      fullName: Game.GOAP.Sensors.HasPlayerTargetSensor, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Sensors/HasPlayerTargetSensor.cs
+      <Id>k__BackingField: game.goap.worldsensor.has_player_target
+    - <Name>k__BackingField: PlayerDistanceSensor
+      fullName: Game.GOAP.Sensors.PlayerDistanceSensor, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Sensors/PlayerDistanceSensor.cs
+      <Id>k__BackingField: game.goap.worldsensor.player_distance
+    worldKeys:
+    - <Name>k__BackingField: HasTarget
+      fullName: Game.GOAP.WorldKeys.HasTarget, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/HasTarget.cs
+      <Id>k__BackingField: game.goap.worldkey.has_target
+    - <Name>k__BackingField: IsChasing
+      fullName: Game.GOAP.WorldKeys.IsChasing, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsChasing.cs
+      <Id>k__BackingField: game.goap.worldkey.is_chasing
+    - <Name>k__BackingField: IsPatrolling
+      fullName: Game.GOAP.WorldKeys.IsPatrolling, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsPatrolling.cs
+      <Id>k__BackingField: game.goap.worldkey.is_patrolling
+    - <Name>k__BackingField: IsPlayerInRange
+      fullName: Game.GOAP.WorldKeys.IsPlayerInRange, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsPlayerInRange.cs
+      <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+    targetSensors:
+    - <Name>k__BackingField: PlayerTargetResolver
+      fullName: Game.GOAP.Targets.PlayerTargetResolver, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Targets/PlayerTargetResolver.cs
+      <Id>k__BackingField: game.goap.targetsensor.player_resolver
+    targetKeys:
+    - <Name>k__BackingField: PlayerTarget
+      fullName: Game.GOAP.Targets.PlayerTarget, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Targets/PlayerTarget.cs
+      <Id>k__BackingField: game.goap.targetkey.player
+    multiSensors: []

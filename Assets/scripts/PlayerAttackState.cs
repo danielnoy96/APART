@@ -4,8 +4,12 @@ public class PlayerAttackState : PlayerState
 {
     public PlayerAttackState(player player) : base(player) { }
 
+    private float enterTime;
+
     public override void Enter()
     {
+        enterTime = Time.time;
+
         // Start attack animation (parameter names are inspector-configured on the Player).
         if (player.anim != null)
         {
@@ -30,6 +34,19 @@ public class PlayerAttackState : PlayerState
         if (player.combat != null)
         {
             player.combat.BeginAttack();
+        }
+    }
+
+    public override void Update()
+    {
+        // If the animation event (Combat.AttackAnimationFinished -> player.OnAttackAnimationFinished) isn't wired,
+        // fall back to ending the state once the attack cooldown has elapsed. This prevents "stuck" controls.
+        if (Time.time - enterTime < 0.05f)
+            return;
+
+        if (player.combat == null || player.combat.CanAttack)
+        {
+            OnAttackAnimationFinished();
         }
     }
 

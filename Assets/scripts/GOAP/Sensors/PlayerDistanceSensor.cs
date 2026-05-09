@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Game.GOAP.Sensors
 {
     // Sense IsPlayerInRange using Vector2.Distance (no triggers).
+    [GoapId("game.goap.worldsensor.player_distance")]
     public class PlayerDistanceSensor : LocalWorldSensorBase
     {
         private player cachedPlayer;

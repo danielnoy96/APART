@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Game.GOAP.Actions
 {
     // GOAP action will call EnemyController.ChasePlayer() later (executor owns movement).
+    [GoapId("game.goap.action.chase_player")]
     public class ChasePlayerAction : GoapActionBase<ChasePlayerAction.Data>
     {
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
@@ -14,6 +15,10 @@ namespace Game.GOAP.Actions
             {
                 return ActionRunState.Stop;
             }
+
+            var bridge = data.Controller.GetComponent<Game.GOAP.EnemyGoapAgentBridge>();
+            if (bridge != null && bridge.DebugLog && (Time.frameCount % 30 == 0))
+                Debug.Log("[GOAP] ChasePlayerAction.Perform", data.Controller);
 
             data.Controller.ChasePlayer();
             return ActionRunState.Continue;
@@ -31,4 +36,3 @@ namespace Game.GOAP.Actions
         }
     }
 }
-

@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Game.GOAP.Targets
 {
     // Provides the player Transform as a GOAP target.
+    [GoapId("game.goap.targetsensor.player_resolver")]
     public class PlayerTargetResolver : LocalTargetSensorBase
     {
         private player cachedPlayer;

@@ -13,8 +13,8 @@ public class EnemyBrain : MonoBehaviour
 
     private void Awake()
     {
-        // If GOAP is present, this temporary brain should be disabled to avoid double-driving the enemy.
-        if (GetComponent<GoapActionProvider>() != null)
+        // Always GOAP policy: if GOAP is present, legacy brain must never run.
+        if (GetComponent<GoapActionProvider>() != null || GetComponent<AgentTypeBehaviour>() != null || GetComponent<Game.GOAP.EnemyGoapAgentBridge>() != null)
         {
             enabled = false;
             return;

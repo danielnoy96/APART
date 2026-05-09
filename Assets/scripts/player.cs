@@ -120,6 +120,10 @@ public class player : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
 
+    private static readonly int IsGroundedParam = Animator.StringToHash("isGrounded");
+    private static readonly int IsJumpingParam = Animator.StringToHash("isJumping");
+    private static readonly int YVelocityParam = Animator.StringToHash("yVelocity");
+
 
     private void Awake()
     {
@@ -182,6 +186,7 @@ public class player : MonoBehaviour
     void FixedUpdate()
     {
         CheckGrounded();
+        SyncAnimatorMovementParams();
         currentState?.FixedUpdate();
     }
 
@@ -221,6 +226,18 @@ public class player : MonoBehaviour
     public void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+    }
+
+    private void SyncAnimatorMovementParams()
+    {
+        if (anim == null || rb == null)
+            return;
+
+        // These parameters exist in `Assets/sprites/animations/character animations/sprite.controller`.
+        // If a different controller is used, Unity will ignore unknown parameters.
+        anim.SetBool(IsGroundedParam, isGrounded);
+        anim.SetBool(IsJumpingParam, !isGrounded);
+        anim.SetFloat(YVelocityParam, rb.linearVelocity.y);
     }
 
     public void Flip()
