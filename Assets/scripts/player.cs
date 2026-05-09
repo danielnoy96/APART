@@ -60,6 +60,8 @@ public class player : MonoBehaviour
     public float dashDuration = 0.15f;
     public float dashCost = 20f;
     public float dashCooldown = 0.5f;
+    [Tooltip("Seconds to smoothly reduce horizontal velocity after the dash ends. Set to 0 for instant stop.")]
+    public float dashEndEaseOutDuration = 0.06f;
     public float dashEndLag = 0f;
     public bool dashIgnoreGravity = false;
     [Tooltip("If false, dash forces vertical velocity to 0 during the dash (more classic horizontal air-dash).")]
@@ -77,6 +79,7 @@ public class player : MonoBehaviour
     public float DashDuration => dashDuration;
     public float DashCost => dashCost;
     public float DashCooldown => dashCooldown;
+    public float DashEndEaseOutDuration => dashEndEaseOutDuration;
     public float DashEndLag => dashEndLag;
     public bool DashIgnoreGravity => dashIgnoreGravity;
     public bool DashPreserveVerticalVelocity => dashPreserveVerticalVelocity;

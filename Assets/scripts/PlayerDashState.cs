@@ -6,6 +6,8 @@ public class PlayerDashState : PlayerState
     private float endLagEndTime;
     private int dashDirection;
     private float previousGravityScale;
+    private float easeOutEndTime;
+    private float dashStartXVelocity;
 
     public PlayerDashState(player player) : base(player) { }
 
@@ -22,15 +24,19 @@ public class PlayerDashState : PlayerState
         player.dashPressed = false;
 
         dashDirection = GetDashDirection();
+        dashStartXVelocity = dashDirection * player.DashSpeed;
         dashEndTime = Time.time + player.DashDuration;
+
+        float easeOutDuration = Mathf.Max(0f, player.DashEndEaseOutDuration);
+        easeOutEndTime = dashEndTime + easeOutDuration;
 
         if (player.DashEndLag > 0f)
         {
-            endLagEndTime = dashEndTime + player.DashEndLag;
+            endLagEndTime = easeOutEndTime + player.DashEndLag;
         }
         else
         {
-            endLagEndTime = dashEndTime;
+            endLagEndTime = easeOutEndTime;
         }
 
         if (player.anim != null)
@@ -79,6 +85,16 @@ public class PlayerDashState : PlayerState
         if (Time.time < dashEndTime)
         {
             ApplyDashVelocity();
+        }
+        else if (Time.time < easeOutEndTime)
+        {
+            // Ease out: smoothly reduce horizontal movement, preserve vertical feel.
+            float duration = Mathf.Max(0.0001f, player.DashEndEaseOutDuration);
+            float t = Mathf.Clamp01((Time.time - dashEndTime) / duration);
+            // Cubic ease-out (fast at start, gentle at end).
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            float x = Mathf.Lerp(dashStartXVelocity, 0f, eased);
+            RB.linearVelocity = new Vector2(x, RB.linearVelocity.y);
         }
         else if (Time.time < endLagEndTime)
         {
