@@ -10,14 +10,9 @@ public class PlayerAttackState : PlayerState
     {
         enterTime = Time.time;
 
-        // Start attack animation (parameter names are inspector-configured on the Player).
+        // Start attack animation (parameter name is inspector-configured on the Player).
         if (player.anim != null)
         {
-            if (!string.IsNullOrWhiteSpace(player.attackTriggerParam))
-            {
-                player.anim.SetTrigger(player.attackTriggerParam);
-            }
-
             if (!string.IsNullOrWhiteSpace(player.attackBoolParam))
             {
                 player.anim.SetBool(player.attackBoolParam, true);
@@ -55,11 +50,6 @@ public class PlayerAttackState : PlayerState
         if (player.anim != null && !string.IsNullOrWhiteSpace(player.attackBoolParam))
         {
             player.anim.SetBool(player.attackBoolParam, false);
-        }
-
-        if (player.anim != null && !string.IsNullOrWhiteSpace(player.attackTriggerParam))
-        {
-            player.anim.ResetTrigger(player.attackTriggerParam);
         }
     }
 

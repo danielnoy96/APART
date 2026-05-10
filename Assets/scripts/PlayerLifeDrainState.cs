@@ -29,10 +29,6 @@ public class PlayerLifeDrainState : PlayerState
 
         if (player.anim != null)
         {
-            if (!string.IsNullOrWhiteSpace(player.lifeDrainTriggerParam))
-            {
-                player.anim.SetTrigger(player.lifeDrainTriggerParam);
-            }
             if (!string.IsNullOrWhiteSpace(player.lifeDrainBoolParam))
             {
                 player.anim.SetBool(player.lifeDrainBoolParam, true);
@@ -53,11 +49,6 @@ public class PlayerLifeDrainState : PlayerState
         if (player.anim != null && !string.IsNullOrWhiteSpace(player.lifeDrainBoolParam))
         {
             player.anim.SetBool(player.lifeDrainBoolParam, false);
-        }
-
-        if (player.anim != null && !string.IsNullOrWhiteSpace(player.lifeDrainTriggerParam))
-        {
-            player.anim.ResetTrigger(player.lifeDrainTriggerParam);
         }
 
         targetCorpse = null;
@@ -122,4 +113,3 @@ public class PlayerLifeDrainState : PlayerState
         }
     }
 }
-

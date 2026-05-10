@@ -37,6 +37,10 @@ public class EnemyController : MonoBehaviour
     [Tooltip("Float parameter for speed (e.g. speed). Leave empty if unused.")]
     [SerializeField] private string speedFloatParam = "";
 
+    [Header("Debug")]
+    [Tooltip("Logs when EnemyController is overriding velocity (useful to debug knockback being canceled).")]
+    [SerializeField] private bool logVelocityOverrides = false;
+
     private State state;
     private Vector2 spawnPosition;
     private int patrolIndex;
@@ -49,6 +53,8 @@ public class EnemyController : MonoBehaviour
     private bool contactSensorHasInitial;
     private CrashKonijn.Goap.Runtime.GoapActionProvider goapActionProvider;
     private CrashKonijn.Agent.Runtime.AgentBehaviour goapAgentBehaviour;
+
+    public KnockbackReceiver KnockbackReceiver => knockbackReceiver;
 
     private void Awake()
     {
@@ -135,6 +141,10 @@ public class EnemyController : MonoBehaviour
         if (knockbackReceiver != null && knockbackReceiver.IsKnockbackActive)
         {
             // Respect knockback: do not override velocity while being knocked back.
+            if (logVelocityOverrides && rb != null)
+            {
+                Debug.Log($"EnemyController({name}) knockback active; skipping override v={rb.linearVelocity}", this);
+            }
             return;
         }
 
@@ -317,6 +327,10 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (logVelocityOverrides)
+        {
+            Debug.Log($"EnemyController({name}) overriding vx -> {xVelocity} (knockActive={(knockbackReceiver != null && knockbackReceiver.IsKnockbackActive)}) prev={rb.linearVelocity}", this);
+        }
         rb.linearVelocity = new Vector2(xVelocity, rb.linearVelocity.y);
     }
 

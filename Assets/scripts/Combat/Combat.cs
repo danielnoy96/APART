@@ -99,10 +99,28 @@ public class Combat : MonoBehaviour
                 Debug.Log($"Hit {health.gameObject.name} for {damage}", health.gameObject);
             }
 
-            KnockbackReceiver knockback = health.GetComponentInParent<KnockbackReceiver>();
+            // Prefer the EnemyController's configured receiver (avoids mismatches when enemies have multiple receivers).
+            KnockbackReceiver knockback = null;
+            EnemyController enemyController = health.GetComponentInParent<EnemyController>();
+            if (enemyController != null)
+            {
+                knockback = enemyController.KnockbackReceiver;
+            }
+
+            if (knockback == null)
+            {
+                // Fallback: KnockbackReceiver may live on the root (player) or on a child (enemy rigs).
+                knockback = health.GetComponentInParent<KnockbackReceiver>();
+                if (knockback == null)
+                {
+                    knockback = health.GetComponentInChildren<KnockbackReceiver>(true);
+                }
+            }
             if (knockback != null)
             {
-                Vector2 source = attackPoint != null ? (Vector2)attackPoint.position : (Vector2)transform.position;
+                // Use attacker/root position as the source. Using attackPoint can end up *inside* the target,
+                // producing unstable directions and "mostly knock-up" results.
+                Vector2 source = (Vector2)transform.position;
                 knockback.ApplyKnockback(source);
             }
         }

@@ -65,7 +65,12 @@ public class ContactDamage : MonoBehaviour
         {
             if (player.TryTakeDamage(damageAmount))
             {
+                // KnockbackReceiver may be on the root or a child.
                 KnockbackReceiver knockback = player.GetComponentInParent<KnockbackReceiver>();
+                if (knockback == null)
+                {
+                    knockback = player.GetComponentInChildren<KnockbackReceiver>(true);
+                }
                 if (knockback != null)
                 {
                     Vector2 source = selfCollider != null
