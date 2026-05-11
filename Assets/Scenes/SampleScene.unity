@@ -7103,7 +7103,7 @@ Transform:
   m_GameObject: {fileID: 399879495}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.57, y: -1.92, z: 0}
+  m_LocalPosition: {x: 2.04, y: -1.97, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7398,7 +7398,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &407034583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9274,7 +9274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &516239797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9865,7 +9865,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &534711026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13325,19 +13325,22 @@ MonoBehaviour:
   attackPressed: 0
   dashPressed: 0
   lifeDrainPressed: 0
-  dashSpeed: 14
-  dashDuration: 0.15
+  dashSpeed: 13
+  dashDuration: 0.5
   dashCost: 20
   dashCooldown: 0.5
+  dashEndEaseOutDuration: 0.4
   dashEndLag: 0
   dashIgnoreGravity: 0
   dashPreserveVerticalVelocity: 0
   dashTriggerParam: 
-  dashBoolParam: 
+  dashBoolParam: isDashing
+  dashAnimHoldSeconds: 0.71
   logInputCallbacks: 1
   invincibilityDuration: 0.5
   attackTriggerParam: 
-  attackBoolParam: 
+  attackBoolParam: isAttacking
+  attackAnimHoldSeconds: 0.5
   drainCheckPoint: {fileID: 0}
   drainCheckRadius: 0.35
   drainableLayer:
@@ -13412,10 +13415,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c523fef9f8272504cb6baab555360d7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnockbackReceiver
+  logKnockback: 0
   knockbackForce: 15
-  knockbackUpwardForce: 10
-  knockbackDuration: 0.2
-  minHorizontalFactor: 0.718
+  knockbackUpwardForce: 25
+  knockbackDuration: 0.3
+  minHorizontalFactor: 0.515
 --- !u!114 &707433767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25460,7 +25464,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 26673157
   m_SortingLayer: 4
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: -8830246600973551332, guid: fa87d9d068175a64089ef51be04be333, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -25696,7 +25700,7 @@ Transform:
   m_GameObject: {fileID: 1278767538}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.98, z: 0}
+  m_LocalPosition: {x: 0.21, y: 0.04, z: 0}
   m_LocalScale: {x: 0.57, y: 0.57, z: 0.57}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -39213,6 +39217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c523fef9f8272504cb6baab555360d7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnockbackReceiver
+  logKnockback: 0
   knockbackForce: 15
   knockbackUpwardForce: 10
   knockbackDuration: 0.2
@@ -39298,6 +39303,7 @@ MonoBehaviour:
   idleTimeAtPatrolPoint: 0.5
   moveBoolParam: 
   speedFloatParam: 
+  logVelocityOverrides: 0
 --- !u!70 &2074028611
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

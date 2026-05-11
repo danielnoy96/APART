@@ -15,7 +15,7 @@ public class PlayerAttackState : PlayerState
         {
             if (!string.IsNullOrWhiteSpace(player.attackBoolParam))
             {
-                player.anim.SetBool(player.attackBoolParam, true);
+                player.HoldAnimatorBool(player.attackBoolParam, player.attackAnimHoldSeconds);
             }
         }
 
@@ -47,10 +47,7 @@ public class PlayerAttackState : PlayerState
 
     public override void Exit()
     {
-        if (player.anim != null && !string.IsNullOrWhiteSpace(player.attackBoolParam))
-        {
-            player.anim.SetBool(player.attackBoolParam, false);
-        }
+        // Animator bool is cleared by the timed hold in player.HoldAnimatorBool to ensure the clip can play fully.
     }
 
     public override void FixedUpdate()

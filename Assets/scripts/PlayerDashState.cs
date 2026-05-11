@@ -43,7 +43,7 @@ public class PlayerDashState : PlayerState
         {
             if (!string.IsNullOrWhiteSpace(player.dashBoolParam))
             {
-                player.anim.SetBool(player.dashBoolParam, true);
+                player.HoldAnimatorBool(player.dashBoolParam, player.dashAnimHoldSeconds);
             }
         }
 
@@ -58,11 +58,6 @@ public class PlayerDashState : PlayerState
 
     public override void Exit()
     {
-        if (player.anim != null && !string.IsNullOrWhiteSpace(player.dashBoolParam))
-        {
-            player.anim.SetBool(player.dashBoolParam, false);
-        }
-
         if (player.DashIgnoreGravity)
         {
             RB.gravityScale = previousGravityScale;

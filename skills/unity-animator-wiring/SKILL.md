@@ -48,14 +48,19 @@ Target controller(s):
 Steps:
 1. Add parameter(s) (`isX` bool).
 2. Add/choose state(s) (e.g. `X`) and assign the clip.
-3. Create transitions:
-   - From locomotion (Idle/Run/Jump sub-state machine) into `X` using the parameter condition.
-   - From `X` back to locomotion:
-     - Either via **Exit Time** (for fixed-length clips), or
-     - Via a condition such as `isX == false` (recommended when state exits are code-controlled).
-4. Keep transitions simple:
-   - Prefer short transition durations for snappy actions.
-   - Avoid ambiguous transitions where multiple states can win at the same time unless you intentionally set priorities.
+3. Create transitions that match the **current APART controller style**:
+   - **Any State → X** when `isX == true`
+     - Turn **OFF** “Can Transition To Self” on this transition (otherwise the state can restart every frame and you’ll see only the first frame).
+     - Keep transition duration very small (snappy) unless you intentionally want blending.
+   - **X → idle** when `isX == false` AND `isIdle == true`
+   - **X → running** when `isX == false` AND `isRunning == true`
+   - (Optional) If you later want airborne exits, add routes that use `isJumping/isGrounded` and target the Jump sub-state machine; right now the controller is primarily locomotion (idle/running) + a Jump sub-state machine.
+4. Verify you do **not** accidentally create duplicate Any State transitions to the same action state.
+   - If you see multiple Any State → X transitions, delete extras or make sure all of them have “Can Transition To Self” OFF.
+
+What “locomotion” means in this project:
+- `isIdle` and `isRunning` are driven by the active `PlayerIdleState` / `PlayerMoveState` (plus their per-frame updates).
+- `isGrounded`, `isJumping`, and `yVelocity` are driven centrally in `player.SyncAnimatorMovementParams()`.
 
 ### C) Update code (FSM + animator parameter wiring)
 
@@ -76,6 +81,45 @@ Where to follow existing examples:
 - Attack bool in `C:\Users\USER\APART\Assets\scripts\PlayerAttackState.cs`
 - Dash bool in `C:\Users\USER\APART\Assets\scripts\PlayerDashState.cs`
 - Life drain bool in `C:\Users\USER\APART\Assets\scripts\PlayerLifeDrainState.cs`
+
+## Animator Controller “Recipe” (copy/paste checklist)
+
+Use this when you open the Animator window and want a deterministic, repeatable setup.
+
+### Recipe: Add an action state (Dash/Attack/etc.)
+
+Given:
+- Action state name: `X` (e.g. `dash`, `attack`)
+- Bool parameter: `isX` (e.g. `isDashing`, `isAttacking`)
+
+Do:
+1. Parameters tab: add `isX` (Bool).
+2. Create state `X` and assign the `X.anim` clip.
+3. Add transition **Any State → X**
+   - Condition: `isX` == true
+   - Has Exit Time: OFF
+   - Transition Duration: near 0
+   - **Can Transition To Self: OFF**  ← critical (prevents “only first frame”)
+4. Add transition **X → idle**
+   - Conditions: `isX` == false AND `isIdle` == true
+   - Has Exit Time: OFF (state ends when code clears the bool)
+5. Add transition **X → running**
+   - Conditions: `isX` == false AND `isRunning` == true
+   - Has Exit Time: OFF
+6. Sanity check:
+   - While playing, when you set `isX` true it should enter `X` once and keep playing.
+   - When code sets `isX` false, it should exit to idle/running depending on your locomotion bools.
+
+### Known pitfall (and the fix)
+
+Symptom:
+- Action animation only shows the first frame / keeps snapping back to frame 1.
+
+Cause (common in APART if the Animator graph is edited quickly):
+- More than one Any State → X transition exists, or “Can Transition To Self” is ON on Any State → X, so the Animator restarts X repeatedly while `isX` is true.
+
+Fix:
+- Ensure there is only one Any State → X transition, and it has “Can Transition To Self” OFF.
 
 #### Player animator “always-on” params
 

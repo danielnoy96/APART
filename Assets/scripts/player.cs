@@ -71,7 +71,9 @@ public class player : MonoBehaviour
     [Tooltip("Trigger parameter to start the dash animation. Leave empty if unused.")]
     public string dashTriggerParam = "";
     [Tooltip("Bool parameter for 'isDashing'. Leave empty if unused.")]
-    public string dashBoolParam = "";
+    public string dashBoolParam = "isDashing";
+    [Tooltip("Seconds to keep the dash animation bool true so the dash clip can play fully (even if the dash gameplay state ends earlier).")]
+    public float dashAnimHoldSeconds = 0.71f;
 
     private float nextDashTime;
 
@@ -103,7 +105,11 @@ public class player : MonoBehaviour
     [Tooltip("Trigger parameter to start the attack animation. Leave empty if your Animator uses a different setup.")]
     public string attackTriggerParam = "";
     [Tooltip("Bool parameter for 'isAttacking'. Leave empty if unused.")]
-    public string attackBoolParam = "";
+    public string attackBoolParam = "isAttacking";
+    [Tooltip("Seconds to keep the attack animation bool true so the attack clip can play fully (even if the attack gameplay state ends earlier).")]
+    public float attackAnimHoldSeconds = 0.5f;
+
+    private Coroutine animatorBoolHoldRoutine;
 
     [Header("Life Drain")]
     public Transform drainCheckPoint;
@@ -173,6 +179,39 @@ public class player : MonoBehaviour
         lifeDrainState = new PlayerLifeDrainState(this);
 
         ChangeState(idleState);
+    }
+
+    public void HoldAnimatorBool(string boolParam, float seconds)
+    {
+        if (anim == null || string.IsNullOrWhiteSpace(boolParam))
+        {
+            return;
+        }
+
+        if (animatorBoolHoldRoutine != null)
+        {
+            StopCoroutine(animatorBoolHoldRoutine);
+            animatorBoolHoldRoutine = null;
+        }
+
+        anim.SetBool(boolParam, true);
+
+        if (seconds > 0f)
+        {
+            animatorBoolHoldRoutine = StartCoroutine(HoldAnimatorBoolRoutine(boolParam, seconds));
+        }
+    }
+
+    private System.Collections.IEnumerator HoldAnimatorBoolRoutine(string boolParam, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        if (anim != null && !string.IsNullOrWhiteSpace(boolParam))
+        {
+            anim.SetBool(boolParam, false);
+        }
+
+        animatorBoolHoldRoutine = null;
     }
 
     public void ChangeState(PlayerState newState)
