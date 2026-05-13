@@ -8,6 +8,9 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Health health;
     [SerializeField] private Stamina stamina;
 
+    [Header("Face (optional)")]
+    [SerializeField] private HudFaceGraphic faceGraphic;
+
     [Header("Health Bar (assign one)")]
     [SerializeField] private Image healthFillImage;
     [SerializeField] private Slider healthSlider;
@@ -97,7 +100,11 @@ public class PlayerHUD : MonoBehaviour
             return;
         }
 
-        SetBar(healthFillImage, healthSlider, health.CurrentHealth, health.MaxHealth);
+        float value01 = SetBar(healthFillImage, healthSlider, health.CurrentHealth, health.MaxHealth);
+        if (faceGraphic != null)
+        {
+            faceGraphic.Health01 = value01;
+        }
     }
 
     private void RefreshStamina()
@@ -110,7 +117,7 @@ public class PlayerHUD : MonoBehaviour
         SetBar(staminaFillImage, staminaSlider, stamina.CurrentStamina, stamina.MaxStamina);
     }
 
-    private static void SetBar(Image fillImage, Slider slider, float current, float max)
+    private static float SetBar(Image fillImage, Slider slider, float current, float max)
     {
         float value01 = max > 0f ? Mathf.Clamp01(current / max) : 0f;
 
@@ -125,5 +132,7 @@ public class PlayerHUD : MonoBehaviour
             slider.maxValue = max;
             slider.value = current;
         }
+
+        return value01;
     }
 }
