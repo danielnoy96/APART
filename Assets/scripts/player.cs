@@ -68,8 +68,6 @@ public class player : MonoBehaviour
     public bool dashPreserveVerticalVelocity = false;
 
     [Header("Dash Animation Params (Optional)")]
-    [Tooltip("Trigger parameter to start the dash animation. Leave empty if unused.")]
-    public string dashTriggerParam = "";
     [Tooltip("Bool parameter for 'isDashing'. Leave empty if unused.")]
     public string dashBoolParam = "isDashing";
     [Tooltip("Seconds to keep the dash animation bool true so the dash clip can play fully (even if the dash gameplay state ends earlier).")]
@@ -102,8 +100,6 @@ public class player : MonoBehaviour
     public bool IsKnockbackLocked => knockbackLockTimer > 0f;
 
     [Header("Combat Animation Params (Optional)")]
-    [Tooltip("Trigger parameter to start the attack animation. Leave empty if your Animator uses a different setup.")]
-    public string attackTriggerParam = "";
     [Tooltip("Bool parameter for 'isAttacking'. Leave empty if unused.")]
     public string attackBoolParam = "isAttacking";
     [Tooltip("Seconds to keep the attack animation bool true so the attack clip can play fully (even if the attack gameplay state ends earlier).")]
@@ -118,8 +114,6 @@ public class player : MonoBehaviour
     [HideInInspector] public DrainableCorpse currentDrainTarget;
 
     [Header("Life Drain Animation Params (Optional)")]
-    [Tooltip("Trigger parameter to start the life drain animation. Leave empty if unused.")]
-    public string lifeDrainTriggerParam = "";
     [Tooltip("Bool parameter for 'isLifeDraining'. Leave empty if unused.")]
     public string lifeDrainBoolParam = "";
 

@@ -327,6 +327,17 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        // GOAP actions (and other callers) may call Patrol()/ChasePlayer() directly each frame.
+        // Those calls must not cancel knockback by overriding X velocity while knockback is active.
+        if (knockbackReceiver != null && knockbackReceiver.IsKnockbackActive)
+        {
+            if (logVelocityOverrides)
+            {
+                Debug.Log($"EnemyController({name}) skip vx override due to knockback (requested={xVelocity}) v={rb.linearVelocity}", this);
+            }
+            return;
+        }
+
         if (logVelocityOverrides)
         {
             Debug.Log($"EnemyController({name}) overriding vx -> {xVelocity} (knockActive={(knockbackReceiver != null && knockbackReceiver.IsKnockbackActive)}) prev={rb.linearVelocity}", this);
