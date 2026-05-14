@@ -16,6 +16,12 @@ public class Enemy : MonoBehaviour
     [Tooltip("Disable this GameObject when health reaches 0 (if no death animation is used).")]
     [SerializeField] private bool disableOnDeath = true;
 
+    [Header("Life Drain Corpse")]
+    [Tooltip("Corpse stored HP = round(MaxHealth * ratio), clamped to min/max.")]
+    [SerializeField] private float corpseHealRatio = 0.3f;
+    [SerializeField] private int minCorpseHeal = 1;
+    [SerializeField] private int maxCorpseHeal = 8;
+
     private void Awake()
     {
         if (health == null)
@@ -75,7 +81,13 @@ public class Enemy : MonoBehaviour
         }
 
         // Leave a drainable corpse in the scene (do not destroy immediately).
-        EnsureDrainableCorpse();
+        DrainableCorpse corpse = EnsureDrainableCorpse();
+        if (corpse != null && health != null)
+        {
+            int computedHeal = Mathf.RoundToInt(health.MaxHealth * corpseHealRatio);
+            computedHeal = Mathf.Clamp(computedHeal, Mathf.Max(0, minCorpseHeal), Mathf.Max(0, maxCorpseHeal));
+            corpse.ConfigureHealAmount(computedHeal);
+        }
         DisableContactDamage();
 
         // Disable this Enemy behavior so it stops reacting/acting as an enemy.
@@ -104,7 +116,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void EnsureDrainableCorpse()
+    private DrainableCorpse EnsureDrainableCorpse()
     {
         DrainableCorpse corpse = GetComponent<DrainableCorpse>();
         if (corpse == null)
@@ -113,6 +125,7 @@ public class Enemy : MonoBehaviour
         }
 
         corpse.enabled = true;
+        return corpse;
     }
 
     private void DisableContactDamage()

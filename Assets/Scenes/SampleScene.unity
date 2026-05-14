@@ -13287,11 +13287,11 @@ MonoBehaviour:
   invincibilityDuration: 0.5
   attackBoolParam: isAttacking
   attackAnimHoldSeconds: 0.5
-  drainCheckPoint: {fileID: 0}
+  drainCheckPoint: {fileID: 399728962}
   drainCheckRadius: 0.35
   drainableLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   currentDrainTarget: {fileID: 0}
   lifeDrainBoolParam: 
   groundCheck: {fileID: 399728962}
@@ -13344,7 +13344,6 @@ MonoBehaviour:
   player: {fileID: 707433763}
   health: {fileID: 707433767}
   stamina: {fileID: 707433768}
-  faceGraphic: {fileID: 0}
   healthFillImage: {fileID: 1358812029}
   healthSlider: {fileID: 0}
   staminaFillImage: {fileID: 2073230250}
@@ -13378,8 +13377,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3490cc296d3003844bb4fbef6a1225a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 10
-  currentHealth: 10
+  maxHealth: 100
+  currentHealth: 100
 --- !u!114 &707433768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39739,7 +39738,7 @@ MonoBehaviour:
   damageableLayer:
     serializedVersion: 2
     m_Bits: 8192
-  damage: 1
+  damage: 3
   attackCooldown: 0.25
   logHits: 0
   debugInstantAttack: 0
@@ -39757,8 +39756,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3490cc296d3003844bb4fbef6a1225a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 10
-  currentHealth: 10
+  maxHealth: 30
+  currentHealth: 30
 --- !u!114 &2074028609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39776,6 +39775,9 @@ MonoBehaviour:
   hurtTriggerParam: 
   deathTriggerParam: 
   disableOnDeath: 1
+  corpseHealRatio: 0.3
+  minCorpseHeal: 1
+  maxCorpseHeal: 8
 --- !u!114 &2074028610
 MonoBehaviour:
   m_ObjectHideFlags: 0
