@@ -85,6 +85,21 @@ public class player : MonoBehaviour
     public bool DashPreserveVerticalVelocity => dashPreserveVerticalVelocity;
     public bool CanDash => Time.time >= nextDashTime && !(currentState is PlayerDashState) && stamina != null && stamina.HasStamina(dashCost);
 
+    [Header("Stamina Costs")]
+    [Tooltip("Stamina spent instantly when starting an attack.")]
+    public float attackCost = 10f;
+    [Tooltip("Stamina spent instantly when performing a jump (only when the jump impulse is applied).")]
+    public float jumpCost = 10f;
+    [Tooltip("Stamina spent repeatedly while Life Drain is active.")]
+    public float lifeDrainStaminaCostPerTick = 2f;
+    [Tooltip("Seconds between stamina ticks while Life Drain is active.")]
+    public float lifeDrainStaminaTickInterval = 0.2f;
+
+    public float AttackCost => attackCost;
+    public float JumpCost => jumpCost;
+    public float LifeDrainStaminaCostPerTick => lifeDrainStaminaCostPerTick;
+    public float LifeDrainStaminaTickInterval => lifeDrainStaminaTickInterval;
+
     [Header("Debug")]
     [Tooltip("Logs input callbacks (useful to verify PlayerInput 'Send Messages' is wired).")]
     public bool logInputCallbacks = false;
@@ -115,7 +130,7 @@ public class player : MonoBehaviour
 
     [Header("Life Drain Animation Params (Optional)")]
     [Tooltip("Bool parameter for 'isLifeDraining'. Leave empty if unused.")]
-    public string lifeDrainBoolParam = "";
+    public string lifeDrainBoolParam = "isLifeDraining";
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -161,6 +176,12 @@ public class player : MonoBehaviour
             {
                 health = GetComponentInChildren<Health>();
             }
+        }
+
+        // Scene/prefab overrides can serialize this as empty; default to the controller param we use.
+        if (string.IsNullOrWhiteSpace(lifeDrainBoolParam))
+        {
+            lifeDrainBoolParam = "isLifeDraining";
         }
 
         rb.gravityScale = normalGravity;

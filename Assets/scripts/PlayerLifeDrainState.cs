@@ -5,6 +5,7 @@ public class PlayerLifeDrainState : PlayerState
     private DrainableCorpse targetCorpse;
     private float drainEndTime;
     private float nextProgressLogTime;
+    private float nextStaminaSpendTime;
 
     public PlayerLifeDrainState(player player) : base(player) { }
 
@@ -40,6 +41,14 @@ public class PlayerLifeDrainState : PlayerState
         float duration = Mathf.Max(0f, targetCorpse.DrainDuration);
         drainEndTime = Time.time + duration;
         nextProgressLogTime = Time.time;
+        nextStaminaSpendTime = Time.time;
+
+        float tickCost = Mathf.Max(0f, player.LifeDrainStaminaCostPerTick);
+        if (tickCost > 0f && player.stamina != null && !player.stamina.HasStamina(tickCost))
+        {
+            TransitionOut();
+            return;
+        }
 
         Debug.Log("Life drain in progress");
     }
@@ -67,6 +76,20 @@ public class PlayerLifeDrainState : PlayerState
         {
             TransitionOut();
             return;
+        }
+
+        float tickInterval = Mathf.Max(0.01f, player.LifeDrainStaminaTickInterval);
+        float tickCost = Mathf.Max(0f, player.LifeDrainStaminaCostPerTick);
+        if (tickCost > 0f && player.stamina != null && Time.time >= nextStaminaSpendTime)
+        {
+            if (!player.stamina.TrySpend(tickCost))
+            {
+                TransitionOut();
+                return;
+            }
+
+            // Advance in fixed steps to avoid "catching up" with many spends in one frame.
+            nextStaminaSpendTime = Time.time + tickInterval;
         }
 
         // Optional: log progress periodically (avoid spamming every frame).

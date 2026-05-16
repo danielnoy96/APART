@@ -8,6 +8,12 @@ public class PlayerAttackState : PlayerState
 
     public override void Enter()
     {
+        if (player.stamina != null && !player.stamina.TrySpend(player.AttackCost))
+        {
+            TransitionOut();
+            return;
+        }
+
         enterTime = Time.time;
 
         // Start attack animation (parameter name is inspector-configured on the Player).
@@ -66,6 +72,31 @@ public class PlayerAttackState : PlayerState
         if (JumpBufferTimer > 0f && CoyoteTimer > 0f)
         {
             // Jump state will apply the impulse on Enter (as in the current controller).
+            player.ChangeState(player.jumpState);
+            return;
+        }
+
+        if (Mathf.Abs(MoveInput.x) > 0.1f)
+        {
+            player.ChangeState(player.moveState);
+        }
+        else
+        {
+            player.ChangeState(player.idleState);
+        }
+    }
+
+    private void TransitionOut()
+    {
+        // If jump is buffered and allowed, prefer jumping.
+        if (JumpBufferTimer > 0f && CoyoteTimer > 0f)
+        {
+            player.ChangeState(player.jumpState);
+            return;
+        }
+
+        if (!IsGrounded)
+        {
             player.ChangeState(player.jumpState);
             return;
         }

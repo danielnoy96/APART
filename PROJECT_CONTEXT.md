@@ -2,7 +2,7 @@
 
 > Purpose: keep a persistent, repo-local snapshot of the current setup, decisions, and known friction points so we can refer back without re-explaining everything each time.
 >
-> Last updated: 2026-05-07
+> Last updated: 2026-05-16
 
 ## High-level goals (what we’re building)
 - **CrashKonijn GOAP v3.1.2** is the GOAP system (not a custom/LLamaAcademy re-implementation).
@@ -106,6 +106,7 @@ Player root must have:
 Inspector fields to assign:
 - `groundCheck`, `groundLayer`
 - LifeDrain: `drainCheckPoint`, `drainCheckRadius`, `drainableLayer`
+- LifeDrain animation param: `lifeDrainBoolParam` defaults to `"isLifeDraining"` (and is forced to that value at runtime if serialized as empty).
 Input actions expected (Send Messages):
 - `Attack` → `OnAttack`
 - `Sprint` → `OnSprint` (dash)
@@ -116,6 +117,7 @@ Input actions expected (Send Messages):
 - Jump animation: Animator params were synced in `player.FixedUpdate()`:
   - `isGrounded`, `isJumping = !isGrounded`, `yVelocity`.
 - “Left mouse click stops control”: `PlayerAttackState.Update()` was given a fallback that exits the attack state when `Combat.CanAttack` becomes true (covers cases where animation events weren’t wired).
+- Life drain animation: Animator controller uses `isLifeDraining` bool transitions (param name must match `lifeDrainBoolParam`).
 
 ## Known current issue(s) to investigate when GOAP “doesn’t chase”
 Symptoms reported:
@@ -140,4 +142,3 @@ Most likely friction points:
   - `Assets/Scripts/Enemy/EnemyController.cs`
 - Unity Editor log:
   - `%LOCALAPPDATA%\Unity\Editor\Editor.log`
-

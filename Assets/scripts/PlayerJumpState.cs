@@ -10,9 +10,18 @@ public class PlayerJumpState : PlayerState
         // JumpState can also be used as the generic airborne state (e.g., after dash).
         if (JumpBufferTimer > 0f && CoyoteTimer > 0f)
         {
+            if (player.stamina != null && !player.stamina.TrySpend(player.JumpCost))
+            {
+                // Not enough stamina to jump; consume the buffer so it won't trigger later unexpectedly.
+                JumpBufferTimer = 0f;
+                CoyoteTimer = 0f;
+            }
+            else
+            {
             RB.linearVelocity = new Vector2(RB.linearVelocity.x, player.jumpForce);
             JumpBufferTimer = 0f;
             CoyoteTimer = 0f;
+            }
         }
         JumpReleased = false;
 
