@@ -278,6 +278,34 @@ public class player : MonoBehaviour
         lifeDrainPressed = false;
     }
 
+    public void ResetForRespawn(Vector3 worldPosition)
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.position = (Vector2)worldPosition;
+        }
+        else
+        {
+            transform.position = worldPosition;
+        }
+
+        isInvincible = false;
+        invincibilityTimer = 0f;
+        knockbackLockTimer = 0f;
+
+        coyoteTimer = 0f;
+        jumpBufferTimer = 0f;
+        jumpHeld = false;
+        jumpCutQueued = false;
+        attackPressed = false;
+        dashPressed = false;
+        lifeDrainPressed = false;
+
+        ChangeState(idleState);
+    }
+
     public bool IsGrounded => isGrounded;
 
     public void CheckGrounded()

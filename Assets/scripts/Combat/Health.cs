@@ -73,5 +73,18 @@ public class Health : MonoBehaviour
         currentHealth = 0;
         OnDeath?.Invoke();
     }
-}
 
+    public void ReviveFull()
+    {
+        int previousHealth = currentHealth;
+
+        isDead = false;
+        currentHealth = maxHealth;
+
+        int appliedHeal = currentHealth - previousHealth;
+        if (appliedHeal > 0)
+        {
+            OnHealed?.Invoke(appliedHeal);
+        }
+    }
+}
