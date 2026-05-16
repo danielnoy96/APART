@@ -47,7 +47,13 @@ public class PlayerRespawnController : MonoBehaviour
             return;
         }
 
+        // If we just respawned (e.g., from an instant-kill hazard), ignore the OnDeath event
+        // that might have been raised by damage during that same moment.
+        if (CheckpointManager.Instance.IsRespawnGraceActive)
+        {
+            return;
+        }
+
         CheckpointManager.Instance.RespawnToPermanent(player);
     }
 }
-

@@ -6,6 +6,7 @@ public class CheckpointManager : MonoBehaviour
 
     [Header("Respawn")]
     [SerializeField] private float respawnGraceSeconds = 0.25f;
+    [SerializeField] private bool logEvents = false;
 
     private Transform permanentCheckpoint;
     private Transform miniCheckpoint;
@@ -62,6 +63,10 @@ public class CheckpointManager : MonoBehaviour
         }
 
         permanentCheckpoint = point;
+        if (logEvents)
+        {
+            Debug.Log($"[Checkpoint] Permanent set -> {point.name} ({point.position})", this);
+        }
     }
 
     public void SetMini(Transform point)
@@ -72,6 +77,10 @@ public class CheckpointManager : MonoBehaviour
         }
 
         miniCheckpoint = point;
+        if (logEvents)
+        {
+            Debug.Log($"[Checkpoint] Mini set -> {point.name} ({point.position})", this);
+        }
     }
 
     public void RespawnToPermanent(player p)
@@ -82,6 +91,11 @@ public class CheckpointManager : MonoBehaviour
         }
 
         Vector3 pos = permanentCheckpoint != null ? permanentCheckpoint.position : GetFallbackSpawn(p);
+        if (logEvents)
+        {
+            string src = permanentCheckpoint != null ? $"permanent ({permanentCheckpoint.name})" : "fallback (default spawn / current pos)";
+            Debug.Log($"[Checkpoint] RespawnToPermanent -> {src} ({pos})", this);
+        }
         DoRespawn(p, pos, restoreHealthFull: true, restoreStaminaFull: true);
     }
 
@@ -93,6 +107,11 @@ public class CheckpointManager : MonoBehaviour
         }
 
         Vector3 pos = miniCheckpoint != null ? miniCheckpoint.position : GetFallbackSpawn(p);
+        if (logEvents)
+        {
+            string src = miniCheckpoint != null ? $"mini ({miniCheckpoint.name})" : "fallback (default spawn / current pos)";
+            Debug.Log($"[Checkpoint] RespawnToMini -> {src} ({pos})", this);
+        }
         DoRespawn(p, pos, restoreHealthFull: false, restoreStaminaFull: false);
     }
 
@@ -123,4 +142,3 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 }
-
