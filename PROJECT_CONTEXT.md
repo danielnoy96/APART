@@ -129,6 +129,11 @@ Most likely friction points:
 3. Sensors/targets aren’t producing valid world state (e.g., no `player` found, resolver not returning target, distance sensor not marking in-range).
 4. Decision module threshold too small for scene scale.
 
+## Breakable timed platform (new)
+- Script: `Assets/scripts/BreakableTimedPlatform.cs`
+- Behavior: when something in `triggerLayer` touches it, waits `0.9s`, disables all child `Collider2D` + `Renderer`, waits `0.9s`, then enables them again.
+- Defaults: `triggerLayer` auto-fills with the `Player` layer (if it exists).
+
 ## Where to look (files / assets / scene)
 - Scene: `Assets/Scenes/SampleScene.unity`
 - GOAP assets:

@@ -58,7 +58,7 @@ public class player : MonoBehaviour
     [Header("Dash Settings")]
     public float dashSpeed = 14f;
     public float dashDuration = 0.15f;
-    public float dashCost = 20f;
+    public float dashCost = 30f;
     public float dashCooldown = 0.5f;
     [Tooltip("Seconds to smoothly reduce horizontal velocity after the dash ends. Set to 0 for instant stop.")]
     public float dashEndEaseOutDuration = 0.06f;
@@ -89,7 +89,7 @@ public class player : MonoBehaviour
     [Tooltip("Stamina spent instantly when starting an attack.")]
     public float attackCost = 10f;
     [Tooltip("Stamina spent instantly when performing a jump (only when the jump impulse is applied).")]
-    public float jumpCost = 10f;
+    public float jumpCost = 30f;
     [Tooltip("Stamina spent repeatedly while Life Drain is active.")]
     public float lifeDrainStaminaCostPerTick = 2f;
     [Tooltip("Seconds between stamina ticks while Life Drain is active.")]
