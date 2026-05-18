@@ -199,7 +199,9 @@ namespace Game.GOAP
                 return;
             }
 
-            if (lastRequestedGoal == typeof(PatrolGoal))
+            // Don't permanently suppress requests: the resolver may initially fail due to missing
+            // sensors/targets during scene startup. Allow re-requesting if there is no plan yet.
+            if (lastRequestedGoal == typeof(PatrolGoal) && actionProvider.CurrentPlan != null)
                 return;
 
             lastRequestedGoal = typeof(PatrolGoal);
@@ -220,7 +222,9 @@ namespace Game.GOAP
                 return;
             }
 
-            if (lastRequestedGoal == typeof(ChasePlayerGoal))
+            // Don't permanently suppress requests: the resolver may initially fail due to missing
+            // sensors/targets during scene startup. Allow re-requesting if there is no plan yet.
+            if (lastRequestedGoal == typeof(ChasePlayerGoal) && actionProvider.CurrentPlan != null)
                 return;
 
             lastRequestedGoal = typeof(ChasePlayerGoal);
@@ -260,6 +264,10 @@ namespace Game.GOAP
                 : "NULL";
 
             Debug.LogWarning($"[GOAP] Events.NoActionFound (goals={goalCount}: {goals})", this);
+
+            // Allow the decision module to re-request goals next frame (common during startup when
+            // targets/sensors aren't ready on the first resolve).
+            lastRequestedGoal = null;
 
             // Practical fallback: if the resolver can't find an action, keep gameplay responsive by
             // driving the controller directly based on the requested goal. This is not a new system;

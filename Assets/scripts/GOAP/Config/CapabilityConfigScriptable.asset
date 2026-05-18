@@ -19,9 +19,9 @@ MonoBehaviour:
     baseCost: 1
     conditions:
     - worldKey:
-        <Name>k__BackingField: IsPlayerInRange
-        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
-      comparison: 0
+        <Name>k__BackingField: IsPatrolling
+        <Id>k__BackingField: game.goap.worldkey.is_patrolling
+      comparison: 3
       amount: 1
   - goal:
       <Name>k__BackingField: ChasePlayerGoal
@@ -29,8 +29,8 @@ MonoBehaviour:
     baseCost: 1
     conditions:
     - worldKey:
-        <Name>k__BackingField: IsPlayerInRange
-        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+        <Name>k__BackingField: IsChasing
+        <Id>k__BackingField: game.goap.worldkey.is_chasing
       comparison: 3
       amount: 1
   actions:
@@ -47,13 +47,13 @@ MonoBehaviour:
     validateTarget: 1
     requiresTarget: 0
     validateConditions: 1
-    moveMode: 0
+    moveMode: 1
     conditions: []
     effects:
     - worldKey:
-        <Name>k__BackingField: IsPlayerInRange
-        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
-      effect: 0
+        <Name>k__BackingField: IsPatrolling
+        <Id>k__BackingField: game.goap.worldkey.is_patrolling
+      effect: 1
   - action:
       <Name>k__BackingField: ChasePlayerAction
       <Id>k__BackingField: game.goap.action.chase_player
@@ -67,7 +67,7 @@ MonoBehaviour:
     validateTarget: 1
     requiresTarget: 1
     validateConditions: 1
-    moveMode: 0
+    moveMode: 1
     conditions:
     - worldKey:
         <Name>k__BackingField: IsObstacleAhead
@@ -81,8 +81,8 @@ MonoBehaviour:
       amount: 1
     effects:
     - worldKey:
-        <Name>k__BackingField: IsPlayerInRange
-        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+        <Name>k__BackingField: IsChasing
+        <Id>k__BackingField: game.goap.worldkey.is_chasing
       effect: 1
   - action:
       <Name>k__BackingField: JumpObstacleAction
@@ -97,7 +97,7 @@ MonoBehaviour:
     validateTarget: 1
     requiresTarget: 0
     validateConditions: 1
-    moveMode: 0
+    moveMode: 1
     conditions:
     - worldKey:
         <Name>k__BackingField: IsObstacleAhead
@@ -122,7 +122,7 @@ MonoBehaviour:
     validateTarget: 1
     requiresTarget: 1
     validateConditions: 1
-    moveMode: 0
+    moveMode: 1
     conditions:
     - worldKey:
         <Name>k__BackingField: IsPlayerAbove
@@ -131,8 +131,8 @@ MonoBehaviour:
       amount: 1
     effects:
     - worldKey:
-        <Name>k__BackingField: IsPlayerInRange
-        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+        <Name>k__BackingField: IsChasing
+        <Id>k__BackingField: game.goap.worldkey.is_chasing
       effect: 1
   worldSensors:
   - sensor:
