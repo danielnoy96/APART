@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ public class Combat : MonoBehaviour
     private Coroutine debugAttackRoutine;
 
     public bool CanAttack => Time.time >= nextAttackTime;
+
+    public event Action<bool> OnHitCheckCompleted;
+    public event Action<int> OnSuccessfulHit;
 
     [Header("Debug (No Animation)")]
     [Tooltip("If enabled, BeginAttack will perform the hit check and finish the attack automatically (useful before you have attack animations/events).")]
@@ -68,6 +72,7 @@ public class Combat : MonoBehaviour
             {
                 Debug.Log("Combat.PerformHitCheck: no colliders hit.", this);
             }
+            OnHitCheckCompleted?.Invoke(false);
             return;
         }
 
@@ -128,6 +133,13 @@ public class Combat : MonoBehaviour
         if (logHits && damaged.Count == 0)
         {
             Debug.Log($"Combat.PerformHitCheck: {hits.Length} collider(s) overlapped, but none had a Health component (noHealth={collidersWithNoHealth}).", this);
+        }
+
+        bool anyDamaged = damaged.Count > 0;
+        OnHitCheckCompleted?.Invoke(anyDamaged);
+        if (anyDamaged)
+        {
+            OnSuccessfulHit?.Invoke(damaged.Count);
         }
     }
 

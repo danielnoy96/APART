@@ -303,6 +303,9 @@ public class player : MonoBehaviour
         dashPressed = false;
         lifeDrainPressed = false;
 
+        PlayerCombo combo = GetComponent<PlayerCombo>();
+        combo?.ResetCombo();
+
         ChangeState(idleState);
     }
 
