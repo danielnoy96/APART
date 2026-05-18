@@ -31,6 +31,16 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       <Path>k__BackingField: Assets/scripts/GOAP/Actions/ChasePlayerAction.cs
       <Id>k__BackingField: game.goap.action.chase_player
+    - <Name>k__BackingField: JumpObstacleAction
+      fullName: Game.GOAP.Actions.JumpObstacleAction, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Actions/JumpObstacleAction.cs
+      <Id>k__BackingField: game.goap.action.jump_obstacle
+    - <Name>k__BackingField: JumpToPlayerAction
+      fullName: Game.GOAP.Actions.JumpToPlayerAction, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Actions/JumpToPlayerAction.cs
+      <Id>k__BackingField: game.goap.action.jump_to_player
     - <Name>k__BackingField: PatrolAction
       fullName: Game.GOAP.Actions.PatrolAction, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
@@ -42,6 +52,16 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       <Path>k__BackingField: Assets/scripts/GOAP/Sensors/HasPlayerTargetSensor.cs
       <Id>k__BackingField: game.goap.worldsensor.has_player_target
+    - <Name>k__BackingField: ObstacleAheadSensor
+      fullName: Game.GOAP.Sensors.ObstacleAheadSensor, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Sensors/ObstacleAheadSensor.cs
+      <Id>k__BackingField: game.goap.worldsensor.obstacle_ahead
+    - <Name>k__BackingField: PlayerAboveSensor
+      fullName: Game.GOAP.Sensors.PlayerAboveSensor, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Sensors/PlayerAboveSensor.cs
+      <Id>k__BackingField: game.goap.worldsensor.player_above
     - <Name>k__BackingField: PlayerDistanceSensor
       fullName: Game.GOAP.Sensors.PlayerDistanceSensor, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
@@ -58,11 +78,21 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsChasing.cs
       <Id>k__BackingField: game.goap.worldkey.is_chasing
+    - <Name>k__BackingField: IsObstacleAhead
+      fullName: Game.GOAP.WorldKeys.IsObstacleAhead, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsObstacleAhead.cs
+      <Id>k__BackingField: game.goap.worldkey.is_obstacle_ahead
     - <Name>k__BackingField: IsPatrolling
       fullName: Game.GOAP.WorldKeys.IsPatrolling, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsPatrolling.cs
       <Id>k__BackingField: game.goap.worldkey.is_patrolling
+    - <Name>k__BackingField: IsPlayerAbove
+      fullName: Game.GOAP.WorldKeys.IsPlayerAbove, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsPlayerAbove.cs
+      <Id>k__BackingField: game.goap.worldkey.is_player_above
     - <Name>k__BackingField: IsPlayerInRange
       fullName: Game.GOAP.WorldKeys.IsPlayerInRange, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null

@@ -20,6 +20,7 @@ namespace Game.GOAP
         public Transform Player => player;
         public float DetectionRange => detectionRange;
         public bool DebugLog => debugLog;
+        public EnemyController Controller => controller;
 
         private Type lastRequestedGoal;
         private Type lastPlannedAction;

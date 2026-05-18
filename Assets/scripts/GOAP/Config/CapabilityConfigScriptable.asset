@@ -68,7 +68,67 @@ MonoBehaviour:
     requiresTarget: 1
     validateConditions: 1
     moveMode: 0
-    conditions: []
+    conditions:
+    - worldKey:
+        <Name>k__BackingField: IsObstacleAhead
+        <Id>k__BackingField: game.goap.worldkey.is_obstacle_ahead
+      comparison: 0
+      amount: 1
+    - worldKey:
+        <Name>k__BackingField: IsPlayerAbove
+        <Id>k__BackingField: game.goap.worldkey.is_player_above
+      comparison: 0
+      amount: 1
+    effects:
+    - worldKey:
+        <Name>k__BackingField: IsPlayerInRange
+        <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+      effect: 1
+  - action:
+      <Name>k__BackingField: JumpObstacleAction
+      <Id>k__BackingField: game.goap.action.jump_obstacle
+    target:
+      <Name>k__BackingField: PlayerTarget
+      <Id>k__BackingField: game.goap.targetkey.player
+    properties:
+      rid: 4994295344011935962
+    baseCost: 1
+    stoppingDistance: 0.1
+    validateTarget: 1
+    requiresTarget: 0
+    validateConditions: 1
+    moveMode: 0
+    conditions:
+    - worldKey:
+        <Name>k__BackingField: IsObstacleAhead
+        <Id>k__BackingField: game.goap.worldkey.is_obstacle_ahead
+      comparison: 3
+      amount: 1
+    effects:
+    - worldKey:
+        <Name>k__BackingField: IsObstacleAhead
+        <Id>k__BackingField: game.goap.worldkey.is_obstacle_ahead
+      effect: 0
+  - action:
+      <Name>k__BackingField: JumpToPlayerAction
+      <Id>k__BackingField: game.goap.action.jump_to_player
+    target:
+      <Name>k__BackingField: PlayerTarget
+      <Id>k__BackingField: game.goap.targetkey.player
+    properties:
+      rid: 4994295344011935963
+    baseCost: 1
+    stoppingDistance: 0.1
+    validateTarget: 1
+    requiresTarget: 1
+    validateConditions: 1
+    moveMode: 0
+    conditions:
+    - worldKey:
+        <Name>k__BackingField: IsPlayerAbove
+        <Id>k__BackingField: game.goap.worldkey.is_player_above
+      comparison: 3
+      amount: 1
     effects:
     - worldKey:
         <Name>k__BackingField: IsPlayerInRange
@@ -87,6 +147,18 @@ MonoBehaviour:
     worldKey:
       <Name>k__BackingField: IsPlayerInRange
       <Id>k__BackingField: game.goap.worldkey.is_player_in_range
+  - sensor:
+      <Name>k__BackingField: ObstacleAheadSensor
+      <Id>k__BackingField: game.goap.worldsensor.obstacle_ahead
+    worldKey:
+      <Name>k__BackingField: IsObstacleAhead
+      <Id>k__BackingField: game.goap.worldkey.is_obstacle_ahead
+  - sensor:
+      <Name>k__BackingField: PlayerAboveSensor
+      <Id>k__BackingField: game.goap.worldsensor.player_above
+    worldKey:
+      <Name>k__BackingField: IsPlayerAbove
+      <Id>k__BackingField: game.goap.worldkey.is_player_above
   targetSensors:
   - sensor:
       <Name>k__BackingField: PlayerTargetResolver
@@ -103,5 +175,11 @@ MonoBehaviour:
       type: {class: EmptyActionProperties, ns: CrashKonijn.Agent.Runtime, asm: CrashKonijn.Agent.Runtime}
       data: 
     - rid: 4994295344011935961
+      type: {class: EmptyActionProperties, ns: CrashKonijn.Agent.Runtime, asm: CrashKonijn.Agent.Runtime}
+      data: 
+    - rid: 4994295344011935962
+      type: {class: EmptyActionProperties, ns: CrashKonijn.Agent.Runtime, asm: CrashKonijn.Agent.Runtime}
+      data: 
+    - rid: 4994295344011935963
       type: {class: EmptyActionProperties, ns: CrashKonijn.Agent.Runtime, asm: CrashKonijn.Agent.Runtime}
       data: 

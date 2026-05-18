@@ -25,6 +25,26 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private bool stopAtDistance = true;
     [SerializeField] private float stopDistance = 1.2f;
 
+    [Header("Jump")]
+    [Tooltip("Upward velocity applied when the enemy jumps.")]
+    [SerializeField] private float jumpVelocity = 6f;
+    [Tooltip("Seconds between jumps to prevent spamming into walls.")]
+    [SerializeField] private float jumpCooldownSeconds = 0.8f;
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.15f;
+    [SerializeField] private LayerMask groundLayer;
+    [Header("Obstacle Check")]
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private float wallCheckDistance = 0.5f;
+    [SerializeField] private LayerMask obstacleLayer;
+
+    [Header("Jump To Player")]
+    [Tooltip("If the player is above the enemy by at least this many units, GOAP can choose to jump to reach them.")]
+    [SerializeField] private float playerAboveMinDeltaY = 1.25f;
+    [Tooltip("Only consider jumping to the player if horizontal distance is within this range (prevents random jumps).")]
+    [SerializeField] private float playerAboveMaxDeltaX = 2.5f;
+
     [Header("Patrol")]
     [Tooltip("If patrolPoints is assigned (size >= 2), enemy patrols between points. Otherwise it patrols back/forth by patrolDistance.")]
     [SerializeField] private Transform[] patrolPoints;
@@ -40,6 +60,8 @@ public class EnemyController : MonoBehaviour
     [Header("Debug")]
     [Tooltip("Logs when EnemyController is overriding velocity (useful to debug knockback being canceled).")]
     [SerializeField] private bool logVelocityOverrides = false;
+    [Tooltip("Logs jump gating (grounded/cooldown/etc). Enable temporarily for diagnosing why the enemy won't jump.")]
+    [SerializeField] private bool debugJump = false;
 
     private State state;
     private Vector2 spawnPosition;
@@ -48,11 +70,14 @@ public class EnemyController : MonoBehaviour
     private float idleUntilTime;
     private Collider2D contactDamageSensor;
     private Collider2D playerCollider;
+    private Collider2D selfCollider;
     private Transform contactDamageSensorTransform;
     private Vector3 contactSensorInitialLocalPos;
     private bool contactSensorHasInitial;
     private CrashKonijn.Goap.Runtime.GoapActionProvider goapActionProvider;
     private CrashKonijn.Agent.Runtime.AgentBehaviour goapAgentBehaviour;
+    private float nextJumpTime;
+    private float lastMoveDir = 1f;
 
     public KnockbackReceiver KnockbackReceiver => knockbackReceiver;
 
@@ -103,11 +128,19 @@ public class EnemyController : MonoBehaviour
             }
         }
 
+        selfCollider = GetComponent<Collider2D>();
+
         spawnPosition = transform.position;
         state = State.Patrol;
 
         goapActionProvider = GetComponent<CrashKonijn.Goap.Runtime.GoapActionProvider>();
         goapAgentBehaviour = GetComponent<CrashKonijn.Agent.Runtime.AgentBehaviour>();
+
+        // Sensible default: if obstacle layer is unset, treat it like ground.
+        if (obstacleLayer.value == 0)
+        {
+            obstacleLayer = groundLayer;
+        }
     }
 
     private void OnEnable()
@@ -199,6 +232,7 @@ public class EnemyController : MonoBehaviour
 
             float dir = Mathf.Sign(dx);
             SetHorizontalVelocity(dir * moveSpeed);
+            lastMoveDir = dir;
             FlipByVelocity(dir);
             return;
         }
@@ -217,7 +251,8 @@ public class EnemyController : MonoBehaviour
         }
 
         SetHorizontalVelocity(Mathf.Sign(delta) * moveSpeed);
-        FlipByVelocity(Mathf.Sign(delta));
+        lastMoveDir = Mathf.Sign(delta);
+        FlipByVelocity(lastMoveDir);
     }
 
     // GOAP action will call ChasePlayer() later.
@@ -240,8 +275,16 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        // If the player is on a higher platform, attempt a jump while chasing.
+        // This is also used as a safety net when GOAP planning is still being iterated.
+        if (IsPlayerAbove())
+        {
+            TryJump();
+        }
+
         float dir = Mathf.Sign(distanceX);
         SetHorizontalVelocity(dir * moveSpeed);
+        lastMoveDir = dir;
         FlipByVelocity(dir);
     }
 
@@ -249,6 +292,100 @@ public class EnemyController : MonoBehaviour
     public void StopMoving()
     {
         SetHorizontalVelocity(0f);
+    }
+
+    public bool IsGrounded()
+    {
+        if (groundCheck == null)
+        {
+            // If not configured, treat as grounded to avoid breaking gameplay; jump will still be gated by cooldown.
+            return true;
+        }
+
+        return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer) != null;
+    }
+
+    public bool IsObstacleAhead()
+    {
+        if (wallCheck == null)
+        {
+            return false;
+        }
+
+        float dir = GetFacingDirection();
+        RaycastHit2D hit = Physics2D.Raycast(wallCheck.position, new Vector2(dir, 0f), wallCheckDistance, obstacleLayer);
+        return hit.collider != null;
+    }
+
+    public bool IsPlayerAbove()
+    {
+        if (player == null)
+        {
+            return false;
+        }
+
+        // Use collider feet positions when available; transform pivots can differ between prefabs
+        // and make "above" trigger even when both are on the same platform.
+        float enemyFeetY = selfCollider != null ? selfCollider.bounds.min.y : transform.position.y;
+        float playerFeetY = playerCollider != null ? playerCollider.bounds.min.y : player.position.y;
+        float deltaY = playerFeetY - enemyFeetY;
+        if (deltaY < playerAboveMinDeltaY)
+        {
+            return false;
+        }
+
+        float deltaX = Mathf.Abs(player.position.x - transform.position.x);
+        return deltaX <= playerAboveMaxDeltaX;
+    }
+
+    public bool TryJump()
+    {
+        if (rb == null || IsDead)
+        {
+            if (debugJump)
+                Debug.Log($"EnemyController({name}) TryJump blocked: rb={(rb != null ? "OK" : "NULL")} dead={IsDead}", this);
+            return false;
+        }
+
+        if (knockbackReceiver != null && knockbackReceiver.IsKnockbackActive)
+        {
+            if (debugJump)
+                Debug.Log($"EnemyController({name}) TryJump blocked: knockback active", this);
+            return false;
+        }
+
+        if (Time.time < nextJumpTime)
+        {
+            if (debugJump)
+                Debug.Log($"EnemyController({name}) TryJump blocked: cooldown ({nextJumpTime - Time.time:0.00}s)", this);
+            return false;
+        }
+
+        if (!IsGrounded())
+        {
+            if (debugJump)
+                Debug.Log($"EnemyController({name}) TryJump blocked: not grounded (groundCheck={(groundCheck != null ? groundCheck.name : "NULL")} r={groundCheckRadius:0.00} layerMask={groundLayer.value})", this);
+            return false;
+        }
+
+        nextJumpTime = Time.time + jumpCooldownSeconds;
+
+        // Apply an impulse-like jump by setting Y velocity.
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpVelocity);
+        if (debugJump)
+            Debug.Log($"EnemyController({name}) TryJump SUCCESS: vy={jumpVelocity:0.00}", this);
+        return true;
+    }
+
+    private float GetFacingDirection()
+    {
+        // Prefer sprite flip if present; otherwise use last movement direction.
+        if (spriteRenderer != null)
+        {
+            return spriteRenderer.flipX ? -1f : 1f;
+        }
+
+        return Mathf.Abs(lastMoveDir) < 0.001f ? 1f : Mathf.Sign(lastMoveDir);
     }
 
     // GOAP action will call FaceTarget(target) later.
