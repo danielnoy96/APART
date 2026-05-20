@@ -70,7 +70,7 @@ public sealed class InGameResetButton : MonoBehaviour
         textRect.offsetMax = Vector2.zero;
 
         Text text = textGo.GetComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.alignment = TextAnchor.MiddleCenter;
         text.raycastTarget = false;
         text.resizeTextForBestFit = false;

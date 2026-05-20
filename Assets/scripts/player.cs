@@ -121,6 +121,7 @@ public class player : MonoBehaviour
     public float attackAnimHoldSeconds = 0.5f;
 
     private Coroutine animatorBoolHoldRoutine;
+    private Vector3 startingScale;
 
     [Header("Life Drain")]
     public Transform drainCheckPoint;
@@ -145,6 +146,8 @@ public class player : MonoBehaviour
 
     private void Awake()
     {
+        startingScale = transform.localScale;
+
         if (rb == null)
         {
             rb = GetComponent<Rigidbody2D>();
@@ -339,7 +342,7 @@ public class player : MonoBehaviour
             facingDirection = -1;
         }
 
-        transform.localScale = new Vector3(facingDirection, 1, 1);
+        transform.localScale = new Vector3(Mathf.Abs(startingScale.x) * facingDirection, startingScale.y, startingScale.z);
     }
 
 
