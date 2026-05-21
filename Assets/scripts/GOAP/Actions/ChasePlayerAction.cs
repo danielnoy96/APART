@@ -1,6 +1,7 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
+using Game.GOAP.Goals;
 using UnityEngine;
 
 namespace Game.GOAP.Actions
@@ -17,6 +18,11 @@ namespace Game.GOAP.Actions
             }
 
             var bridge = data.Controller.GetComponent<Game.GOAP.EnemyGoapAgentBridge>();
+            if (bridge != null && !bridge.IsRequestedGoal(typeof(ChasePlayerGoal)))
+            {
+                return ActionRunState.Stop;
+            }
+
             if (bridge != null && bridge.DebugLog && (Time.frameCount % 30 == 0))
                 Debug.Log("[GOAP] ChasePlayerAction.Perform", data.Controller);
 

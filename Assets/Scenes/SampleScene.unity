@@ -50046,7 +50046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2bd5bf1cfedd74d9d337e8e6582272, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.GOAP.DistanceGoalSelector
-  useHysteresis: 0
+  useHysteresis: 1
   useHorizontalDistanceOnly: 1
   enterChaseRange: 6
   exitChaseRange: 7

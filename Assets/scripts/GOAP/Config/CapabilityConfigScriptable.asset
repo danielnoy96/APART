@@ -70,11 +70,6 @@ MonoBehaviour:
     moveMode: 1
     conditions:
     - worldKey:
-        <Name>k__BackingField: IsObstacleAhead
-        <Id>k__BackingField: game.goap.worldkey.is_obstacle_ahead
-      comparison: 0
-      amount: 1
-    - worldKey:
         <Name>k__BackingField: IsPlayerAbove
         <Id>k__BackingField: game.goap.worldkey.is_player_above
       comparison: 0

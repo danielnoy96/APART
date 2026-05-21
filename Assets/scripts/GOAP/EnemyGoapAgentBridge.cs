@@ -21,6 +21,7 @@ namespace Game.GOAP
         public float DetectionRange => detectionRange;
         public bool DebugLog => debugLog;
         public EnemyController Controller => controller;
+        public bool IsRequestedGoal(Type goalType) => lastRequestedGoal == null || lastRequestedGoal == goalType;
 
         private Type lastRequestedGoal;
         private Type lastPlannedAction;
@@ -204,10 +205,12 @@ namespace Game.GOAP
             if (lastRequestedGoal == typeof(PatrolGoal) && actionProvider.CurrentPlan != null)
                 return;
 
+            bool isGoalChange = lastRequestedGoal != typeof(PatrolGoal);
             lastRequestedGoal = typeof(PatrolGoal);
             if (debugLog)
                 Debug.Log("[GOAP] RequestGoal: PatrolGoal", this);
             actionProvider.RequestGoal(new[] { typeof(PatrolGoal) });
+            StopRunningActionOnGoalChange(isGoalChange);
         }
 
         public void RequestChase()
@@ -227,17 +230,28 @@ namespace Game.GOAP
             if (lastRequestedGoal == typeof(ChasePlayerGoal) && actionProvider.CurrentPlan != null)
                 return;
 
+            bool isGoalChange = lastRequestedGoal != typeof(ChasePlayerGoal);
             lastRequestedGoal = typeof(ChasePlayerGoal);
             if (debugLog)
                 Debug.Log("[GOAP] RequestGoal: ChasePlayerGoal", this);
             actionProvider.RequestGoal(new[] { typeof(ChasePlayerGoal) });
+            StopRunningActionOnGoalChange(isGoalChange);
+        }
+
+        private void StopRunningActionOnGoalChange(bool isGoalChange)
+        {
+            if (!isGoalChange)
+                return;
+
+            var receiver = actionProvider != null ? actionProvider.Receiver as CrashKonijn.Agent.Runtime.AgentBehaviour : null;
+            if (receiver == null || receiver.ActionState.Action == null)
+                return;
+
+            receiver.StopAction();
         }
 
         private void HookEventsIfNeeded()
         {
-            if (!debugLog)
-                return;
-
             if (eventsHooked)
                 return;
 
@@ -253,11 +267,18 @@ namespace Game.GOAP
 
         private void OnGoapResolveRequested()
         {
+            if (!debugLog)
+                return;
+
             Debug.Log("[GOAP] Events.Resolve()", this);
         }
 
         private void OnNoActionFound(CrashKonijn.Goap.Core.IGoalRequest request)
         {
+            Type failedGoal = lastRequestedGoal;
+            if (failedGoal == null && request != null && request.Goals != null && request.Goals.Count > 0 && request.Goals[0] != null)
+                failedGoal = request.Goals[0].GetType();
+
             int goalCount = request != null && request.Goals != null ? request.Goals.Count : 0;
             string goals = request != null && request.Goals != null
                 ? string.Join(", ", request.Goals.ConvertAll(g => g != null ? g.GetType().Name : "NULL"))
@@ -275,19 +296,33 @@ namespace Game.GOAP
             if (controller == null)
                 return;
 
-            if (lastRequestedGoal == typeof(ChasePlayerGoal))
+            if (failedGoal == typeof(ChasePlayerGoal))
+            {
+                if (debugLog)
+                    Debug.Log("[GOAP] NoActionFound fallback: ChasePlayer", this);
                 controller.ChasePlayer();
-            else if (lastRequestedGoal == typeof(PatrolGoal))
+            }
+            else if (failedGoal == typeof(PatrolGoal))
+            {
+                if (debugLog)
+                    Debug.Log("[GOAP] NoActionFound fallback: Patrol", this);
                 controller.Patrol();
+            }
         }
 
         private void OnGoalStart(CrashKonijn.Goap.Core.IGoal goal)
         {
+            if (!debugLog)
+                return;
+
             Debug.Log($"[GOAP] Events.GoalStart: {(goal != null ? goal.GetType().Name : "NULL")}", this);
         }
 
         private void OnGoalCompleted(CrashKonijn.Goap.Core.IGoal goal)
         {
+            if (!debugLog)
+                return;
+
             Debug.Log($"[GOAP] Events.GoalCompleted: {(goal != null ? goal.GetType().Name : "NULL")}", this);
         }
     }

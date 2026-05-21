@@ -1,6 +1,7 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
+using Game.GOAP.Goals;
 using UnityEngine;
 
 namespace Game.GOAP.Actions
@@ -10,6 +11,7 @@ namespace Game.GOAP.Actions
     {
         // Safety stop so a misconfigured ground check can't get the action stuck forever.
         private const float MaxAirSeconds = 2.0f;
+        private const float MinJumpCommitSeconds = 0.12f;
 
         public override void Start(IMonoAgent agent, Data data)
         {
@@ -24,11 +26,33 @@ namespace Game.GOAP.Actions
                 return ActionRunState.Stop;
             }
 
+            var bridge = data.Controller.GetComponent<Game.GOAP.EnemyGoapAgentBridge>();
+            if (bridge != null && !bridge.IsRequestedGoal(typeof(ChasePlayerGoal)))
+            {
+                return ActionRunState.Stop;
+            }
+
+            if (!data.Controller.IsPlayerAbove())
+            {
+                data.Controller.ChasePlayer();
+                return ActionRunState.Stop;
+            }
+
             if (!data.HasJumped)
             {
-                data.Controller.TryJump();
+                if (!data.Controller.TryJump())
+                {
+                    data.Controller.ChasePlayer();
+                    return Time.time - data.StartTime > MaxAirSeconds
+                        ? ActionRunState.Stop
+                        : ActionRunState.Continue;
+                }
+
                 data.HasJumped = true;
+                data.JumpTime = Time.time;
             }
+
+            data.Controller.ChasePlayer();
 
             if (Time.time - data.StartTime > MaxAirSeconds)
             {
@@ -36,7 +60,7 @@ namespace Game.GOAP.Actions
             }
 
             // Keep running until we land again, then allow GOAP to replan back into chase.
-            if (data.Controller.IsGrounded())
+            if (Time.time - data.JumpTime >= MinJumpCommitSeconds && data.Controller.IsGrounded())
             {
                 return ActionRunState.Stop;
             }
@@ -54,8 +78,8 @@ namespace Game.GOAP.Actions
             public EnemyController Controller { get; set; }
 
             public float StartTime { get; set; }
+            public float JumpTime { get; set; }
             public bool HasJumped { get; set; }
         }
     }
 }
-
