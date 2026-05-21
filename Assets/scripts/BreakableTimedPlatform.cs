@@ -62,6 +62,7 @@ public class BreakableTimedPlatform : MonoBehaviour
 
     [Header("Crumble Animation")]
     [SerializeField, Min(0f)] private float releaseDelayJitter = 0.06f;
+    [SerializeField, Range(1f, 5f)] private float crumbleAcceleration = 2.25f;
 
     [Header("Performance")]
     [SerializeField] private bool prewarmShardsOnStart = true;
@@ -981,10 +982,11 @@ public class BreakableTimedPlatform : MonoBehaviour
         }
 
         float normalizedHeight = Mathf.InverseLerp(localBounds.yMin, localBounds.yMax, localCentroid.y);
+        float easedHeight = 1f - Mathf.Pow(1f - normalizedHeight, crumbleAcceleration);
         float jitterMax = Mathf.Min(releaseDelayJitter, crumbleDuration);
         float releaseWindow = Mathf.Max(0f, crumbleDuration - jitterMax);
         float jitter = RandomRange(random, 0f, jitterMax);
-        return normalizedHeight * releaseWindow + jitter;
+        return easedHeight * releaseWindow + jitter;
     }
 
     private void WarnMissingVisual()
