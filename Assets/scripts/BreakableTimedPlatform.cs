@@ -22,6 +22,14 @@ public class BreakableTimedPlatform : MonoBehaviour
         }
     }
 
+    private sealed class ShardInstance
+    {
+        public GameObject gameObject;
+        public Rigidbody2D body;
+        public Mesh mesh;
+        public Vector2 localCentroid;
+    }
+
     [SerializeField] private float breakDelay = 0.9f;
     [SerializeField] private float respawnDelay = 0.9f;
     [SerializeField] private LayerMask triggerLayer;
@@ -55,15 +63,37 @@ public class BreakableTimedPlatform : MonoBehaviour
     [Header("Crumble Animation")]
     [SerializeField, Min(0f)] private float releaseDelayJitter = 0.06f;
 
+    [Header("Performance")]
+    [SerializeField] private bool prewarmShardsOnStart = true;
+    [SerializeField] private bool regenerateShardsEveryBreak;
+
     private Collider2D[] colliders;
     private Renderer[] renderers;
+    private readonly List<ShardInstance> shardCache = new List<ShardInstance>();
+    private GameObject shardContainer;
+    private Material cachedShardMaterial;
+    private Sprite cachedSprite;
     private bool busy;
     private bool warnedMissingVisual;
+    private int shardActivationVersion;
 
     private void Awake()
     {
         colliders = GetComponentsInChildren<Collider2D>();
         renderers = GetComponentsInChildren<Renderer>();
+    }
+
+    private void Start()
+    {
+        if (prewarmShardsOnStart)
+        {
+            BuildShardCache(CreateRandom());
+        }
+    }
+
+    private void OnDestroy()
+    {
+        ClearShardCache();
     }
 
     private void Reset()
@@ -181,10 +211,62 @@ public class BreakableTimedPlatform : MonoBehaviour
             return false;
         }
 
+        System.Random random = CreateRandom();
+
+        if (regenerateShardsEveryBreak || cachedSprite != visualTarget.sprite || shardCache.Count == 0)
+        {
+            if (!BuildShardCache(random))
+            {
+                return false;
+            }
+        }
+
+        if (shardContainer != null)
+        {
+            shardContainer.SetActive(true);
+        }
+
+        Bounds bounds = visualTarget.sprite.bounds;
+        Rect localBounds = new Rect(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
+        shardActivationVersion++;
+
+        foreach (ShardInstance shard in shardCache)
+        {
+            Vector2 displayCentroid = ApplySpriteFlip(shard.localCentroid);
+            Vector3 worldPosition = visualTarget.transform.TransformPoint(displayCentroid);
+            shard.gameObject.transform.position = worldPosition;
+            shard.gameObject.transform.rotation = visualTarget.transform.rotation;
+            shard.gameObject.transform.localScale = visualTarget.transform.lossyScale;
+            shard.gameObject.layer = visualTarget.gameObject.layer;
+            shard.gameObject.SetActive(true);
+
+            if (shard.body != null)
+            {
+                shard.body.simulated = false;
+                shard.body.linearVelocity = Vector2.zero;
+                shard.body.angularVelocity = 0f;
+            }
+
+            float releaseDelay = GetBottomToTopReleaseDelay(shard.localCentroid, localBounds, crumbleDuration, random);
+            StartCoroutine(ReleaseShard(shard.body, worldPosition, releaseDelay, random));
+        }
+
+        StartCoroutine(DeactivateShardGroup(pieceLifetime + crumbleDuration, shardActivationVersion));
+        return true;
+    }
+
+    private bool BuildShardCache(System.Random random)
+    {
+        ClearShardCache();
+
+        if (visualTarget == null || visualTarget.sprite == null)
+        {
+            return false;
+        }
+
         Sprite sprite = visualTarget.sprite;
         Bounds bounds = sprite.bounds;
         Rect localBounds = new Rect(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
-        System.Random random = CreateRandom();
         List<List<int>> regions = GenerateContrastMaskRegions(random, out int maskWidth, out int maskHeight);
 
         if (regions.Count == 0)
@@ -192,9 +274,10 @@ public class BreakableTimedPlatform : MonoBehaviour
             return false;
         }
 
-        GameObject container = new GameObject($"{visualTarget.name}_CrumbleShards");
-        Material runtimeMaterial = CreateShardMaterial(sprite);
-        var meshes = new List<Mesh>(regions.Count);
+        shardContainer = new GameObject($"{visualTarget.name}_CrumbleShards");
+        shardContainer.SetActive(false);
+        cachedShardMaterial = CreateShardMaterial(sprite);
+        cachedSprite = sprite;
 
         foreach (List<int> region in regions)
         {
@@ -204,46 +287,66 @@ public class BreakableTimedPlatform : MonoBehaviour
                 continue;
             }
 
-            Vector2 displayCentroid = ApplySpriteFlip(localCentroid);
-            Vector3 worldPosition = visualTarget.transform.TransformPoint(displayCentroid);
-            GameObject shard = new GameObject($"{visualTarget.name}_Chip");
-            shard.transform.SetParent(container.transform, true);
-            shard.transform.position = worldPosition;
-            shard.transform.rotation = visualTarget.transform.rotation;
-            shard.transform.localScale = visualTarget.transform.lossyScale;
-            shard.layer = visualTarget.gameObject.layer;
+            GameObject shardObject = new GameObject($"{visualTarget.name}_Chip");
+            shardObject.transform.SetParent(shardContainer.transform, true);
+            shardObject.SetActive(false);
 
-            MeshFilter meshFilter = shard.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = shardObject.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = mesh;
-            meshes.Add(mesh);
 
-            MeshRenderer meshRenderer = shard.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = runtimeMaterial;
+            MeshRenderer meshRenderer = shardObject.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = cachedShardMaterial;
             meshRenderer.sortingLayerID = visualTarget.sortingLayerID;
             meshRenderer.sortingOrder = visualTarget.sortingOrder;
 
-            Rigidbody2D body = shard.AddComponent<Rigidbody2D>();
+            Rigidbody2D body = shardObject.AddComponent<Rigidbody2D>();
             body.simulated = false;
             body.gravityScale = 1f;
             body.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-            float releaseDelay = GetBottomToTopReleaseDelay(localCentroid, localBounds, crumbleDuration, random);
-            StartCoroutine(ReleaseShard(body, worldPosition, releaseDelay, random));
-        }
-
-        if (meshes.Count == 0)
-        {
-            if (runtimeMaterial != null)
+            shardCache.Add(new ShardInstance
             {
-                Destroy(runtimeMaterial);
-            }
-
-            Destroy(container);
-            return false;
+                gameObject = shardObject,
+                body = body,
+                mesh = mesh,
+                localCentroid = localCentroid
+            });
         }
 
-        StartCoroutine(DestroyShardGroup(container, meshes, runtimeMaterial, pieceLifetime, crumbleDuration));
-        return true;
+        if (shardCache.Count > 0)
+        {
+            return true;
+        }
+
+        ClearShardCache();
+        return false;
+    }
+
+    private void ClearShardCache()
+    {
+        foreach (ShardInstance shard in shardCache)
+        {
+            if (shard.mesh != null)
+            {
+                Destroy(shard.mesh);
+            }
+        }
+
+        shardCache.Clear();
+
+        if (cachedShardMaterial != null)
+        {
+            Destroy(cachedShardMaterial);
+            cachedShardMaterial = null;
+        }
+
+        if (shardContainer != null)
+        {
+            Destroy(shardContainer);
+            shardContainer = null;
+        }
+
+        cachedSprite = null;
     }
 
     private System.Random CreateRandom()
@@ -829,26 +932,31 @@ public class BreakableTimedPlatform : MonoBehaviour
         body.AddTorque(RandomRange(random, -torqueForce, torqueForce), ForceMode2D.Impulse);
     }
 
-    private IEnumerator DestroyShardGroup(GameObject container, List<Mesh> meshes, Material material, float lifetime, float crumbleDuration)
+    private IEnumerator DeactivateShardGroup(float delay, int activationVersion)
     {
-        yield return new WaitForSeconds(lifetime + crumbleDuration);
+        yield return new WaitForSeconds(delay);
 
-        foreach (Mesh mesh in meshes)
+        if (activationVersion != shardActivationVersion)
         {
-            if (mesh != null)
+            yield break;
+        }
+
+        foreach (ShardInstance shard in shardCache)
+        {
+            if (shard.body != null)
             {
-                Destroy(mesh);
+                shard.body.simulated = false;
+            }
+
+            if (shard.gameObject != null)
+            {
+                shard.gameObject.SetActive(false);
             }
         }
 
-        if (material != null)
+        if (shardContainer != null)
         {
-            Destroy(material);
-        }
-
-        if (container != null)
-        {
-            Destroy(container);
+            shardContainer.SetActive(false);
         }
     }
 
