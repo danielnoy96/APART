@@ -4,10 +4,22 @@ using UnityEngine;
 
 public class BreakableTimedPlatform : MonoBehaviour
 {
-    [System.Serializable]
-    public class WoodCutLine
+    private sealed class MaskRegion
     {
-        public List<Vector2> points = new List<Vector2>();
+        public readonly List<int> cells = new List<int>();
+        public float centerX;
+        public float centerY;
+
+        public void FinalizeCenter()
+        {
+            if (cells.Count == 0)
+            {
+                return;
+            }
+
+            centerX /= cells.Count;
+            centerY /= cells.Count;
+        }
     }
 
     [SerializeField] private float breakDelay = 0.9f;
@@ -17,8 +29,6 @@ public class BreakableTimedPlatform : MonoBehaviour
     [Header("Crumble Visual")]
     [SerializeField] private SpriteRenderer visualTarget;
     [SerializeField] private Material shardMaterial;
-    [SerializeField, Min(1)] private int minPieces = 24;
-    [SerializeField, Min(1)] private int maxPieces = 36;
     [SerializeField] private float explosionForce = 2.5f;
     [SerializeField] private float upwardForce = 1.5f;
     [SerializeField] private float torqueForce = 180f;
@@ -26,25 +36,29 @@ public class BreakableTimedPlatform : MonoBehaviour
     [SerializeField] private bool useDeterministicSeed;
     [SerializeField] private int seed;
 
-    [Header("Wood Chips")]
-    [SerializeField] private Vector2 chipWidthRange = new Vector2(0.18f, 0.62f);
-    [SerializeField] private Vector2 chipHeightRange = new Vector2(0.045f, 0.14f);
-    [SerializeField, Range(6, 18)] private int chipEdgePoints = 12;
-    [SerializeField, Range(0f, 0.35f)] private float chipEdgeJitter = 0.16f;
-    [SerializeField, Range(0f, 0.6f)] private float chipPointiness = 0.28f;
-    [SerializeField] private List<WoodCutLine> guidedCutLines = new List<WoodCutLine>();
+    [Header("Wood Texture Mask")]
+    [SerializeField] private Vector2Int maskResolution = new Vector2Int(128, 72);
+    [SerializeField, Range(1f, 50f)] private float scaleX = 15f;
+    [SerializeField, Range(10f, 200f)] private float scaleY = 85f;
+    [SerializeField, Range(0.3f, 0.7f)] private float threshold = 0.52f;
+    [SerializeField, Range(0f, 50f)] private float warp = 15f;
+    [SerializeField, Range(1, 8)] private int noiseOctaves = 4;
+    [SerializeField, Range(0f, 1f)] private float noiseFalloff = 0.5f;
+    [SerializeField, Range(0.001f, 0.12f)] private float edgeSmoothness = 0.03f;
+    [SerializeField, Range(0f, 0.5f)] private float edgeDetailStrength = 0.12f;
+    [SerializeField, Min(1)] private int minIslandArea = 8;
+    [SerializeField, Min(1)] private int maxPieces = 48;
+    [SerializeField] private bool invertMask;
+    [SerializeField] private bool showMaskPreview;
+    [SerializeField, Range(0.05f, 0.9f)] private float maskPreviewAlpha = 0.45f;
 
     [Header("Crumble Animation")]
-    [SerializeField, Min(0f)] private float bottomToTopWaveDuration = 0.45f;
     [SerializeField, Min(0f)] private float releaseDelayJitter = 0.06f;
 
     private Collider2D[] colliders;
     private Renderer[] renderers;
     private bool busy;
     private bool warnedMissingVisual;
-
-    public SpriteRenderer VisualTarget => visualTarget;
-    public int GuidedCutLineCount => guidedCutLines != null ? guidedCutLines.Count : 0;
 
     private void Awake()
     {
@@ -59,6 +73,16 @@ public class BreakableTimedPlatform : MonoBehaviour
         {
             triggerLayer = 1 << playerLayer;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!showMaskPreview || visualTarget == null || visualTarget.sprite == null)
+        {
+            return;
+        }
+
+        DrawMaskPreview();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -89,24 +113,28 @@ public class BreakableTimedPlatform : MonoBehaviour
     private IEnumerator BreakRoutine()
     {
         busy = true;
+        float crumbleDuration = Mathf.Max(0f, breakDelay);
+        bool spawnedShards = TrySpawnShards(crumbleDuration);
 
-        yield return new WaitForSeconds(breakDelay);
-
-        bool spawnedShards = TrySpawnShards();
-        SetEnabled(false);
-
-        if (!spawnedShards)
+        if (spawnedShards)
         {
             SetVisualTargetEnabled(false);
-            WarnMissingVisual();
         }
         else
         {
-            yield return new WaitForSeconds(bottomToTopWaveDuration + releaseDelayJitter);
-            SetVisualTargetEnabled(false);
+            WarnMissingVisual();
         }
 
+        if (crumbleDuration > 0f)
+        {
+            yield return new WaitForSeconds(crumbleDuration);
+        }
+
+        SetEnabled(false);
+        SetVisualTargetEnabled(false);
+
         yield return new WaitForSeconds(respawnDelay);
+
         SetEnabled(true);
         SetVisualTargetEnabled(true);
 
@@ -146,7 +174,7 @@ public class BreakableTimedPlatform : MonoBehaviour
         }
     }
 
-    private bool TrySpawnShards()
+    private bool TrySpawnShards(float crumbleDuration)
     {
         if (visualTarget == null || visualTarget.sprite == null)
         {
@@ -156,24 +184,21 @@ public class BreakableTimedPlatform : MonoBehaviour
         Sprite sprite = visualTarget.sprite;
         Bounds bounds = sprite.bounds;
         Rect localBounds = new Rect(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
-        int pieceCount = Mathf.Max(1, GetPieceCount());
         System.Random random = CreateRandom();
-        List<List<Vector2>> chips = GuidedCutLineCount > 0
-            ? GenerateGuidedCutLineCells(localBounds, random)
-            : GenerateWoodChipCells(localBounds, pieceCount, random);
+        List<List<int>> regions = GenerateContrastMaskRegions(random, out int maskWidth, out int maskHeight);
 
-        if (chips.Count == 0)
+        if (regions.Count == 0)
         {
             return false;
         }
 
         GameObject container = new GameObject($"{visualTarget.name}_CrumbleShards");
         Material runtimeMaterial = CreateShardMaterial(sprite);
-        var meshes = new List<Mesh>(chips.Count);
+        var meshes = new List<Mesh>(regions.Count);
 
-        foreach (List<Vector2> chip in chips)
+        foreach (List<int> region in regions)
         {
-            Mesh mesh = CreateShardMesh(sprite, chip, out Vector2 localCentroid);
+            Mesh mesh = CreateShardMesh(sprite, localBounds, region, maskWidth, maskHeight, out Vector2 localCentroid);
             if (mesh == null)
             {
                 continue;
@@ -202,7 +227,7 @@ public class BreakableTimedPlatform : MonoBehaviour
             body.gravityScale = 1f;
             body.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-            float releaseDelay = GetBottomToTopReleaseDelay(localCentroid, localBounds, random);
+            float releaseDelay = GetBottomToTopReleaseDelay(localCentroid, localBounds, crumbleDuration, random);
             StartCoroutine(ReleaseShard(body, worldPosition, releaseDelay, random));
         }
 
@@ -217,15 +242,8 @@ public class BreakableTimedPlatform : MonoBehaviour
             return false;
         }
 
-        StartCoroutine(DestroyShardGroup(container, meshes, runtimeMaterial, pieceLifetime));
+        StartCoroutine(DestroyShardGroup(container, meshes, runtimeMaterial, pieceLifetime, crumbleDuration));
         return true;
-    }
-
-    private int GetPieceCount()
-    {
-        int lower = Mathf.Min(minPieces, maxPieces);
-        int upper = Mathf.Max(minPieces, maxPieces);
-        return useDeterministicSeed ? lower + Mathf.Abs(seed % (upper - lower + 1)) : UnityEngine.Random.Range(lower, upper + 1);
     }
 
     private System.Random CreateRandom()
@@ -244,318 +262,337 @@ public class BreakableTimedPlatform : MonoBehaviour
         }
     }
 
-    private List<List<Vector2>> GenerateWoodChipCells(Rect bounds, int count, System.Random random)
+    private List<List<int>> GenerateContrastMaskRegions(System.Random random, out int width, out int height)
     {
-        Vector2 widthRange = SortRange(chipWidthRange);
-        Vector2 heightRange = SortRange(chipHeightRange);
-        int edgePoints = Mathf.Max(6, chipEdgePoints);
-        var chips = new List<List<Vector2>>(count);
+        bool[] mask = GenerateContrastMask(random, out width, out height);
+        int totalCells = mask.Length;
 
-        for (int i = 0; i < count; i++)
+        List<MaskRegion> regions = FloodFillRegions(mask, width, height);
+        if (regions.Count == 0)
         {
-            float width = bounds.width * RandomRange(random, widthRange.x, widthRange.y);
-            float height = bounds.height * RandomRange(random, heightRange.x, heightRange.y);
-            width = Mathf.Clamp(width, bounds.width * 0.04f, bounds.width);
-            height = Mathf.Clamp(height, bounds.height * 0.02f, bounds.height);
-
-            float centerX = RandomRange(random, bounds.xMin, bounds.xMax);
-            float centerY = RandomRange(random, bounds.yMin, bounds.yMax);
-            List<Vector2> chip = CreateWoodChipPolygon(bounds, centerX, centerY, width, height, edgePoints, random);
-
-            chip = CleanPolygon(chip);
-            if (chip.Count >= 3 && Mathf.Abs(GetSignedArea(chip)) > 0.0001f)
-            {
-                chips.Add(chip);
-            }
+            return new List<List<int>>();
         }
 
-        return chips;
+        regions.Sort((left, right) => right.cells.Count.CompareTo(left.cells.Count));
+        return MergeAndBuildShardCells(regions, width, height, totalCells);
     }
 
-    private List<List<Vector2>> GenerateGuidedCutLineCells(Rect bounds, System.Random random)
+    private bool[] GenerateContrastMask(System.Random random, out int width, out int height)
     {
-        Vector2 widthRange = SortRange(chipWidthRange);
-        var cutLines = new List<List<Vector2>>(GuidedCutLineCount + 2);
-        cutLines.Add(new List<Vector2>
-        {
-            new Vector2(bounds.xMin, bounds.yMin),
-            new Vector2(bounds.xMax, bounds.yMin)
-        });
+        width = Mathf.Clamp(maskResolution.x, 16, 256);
+        height = Mathf.Clamp(maskResolution.y, 8, 256);
+        bool[] mask = new bool[width * height];
+        Vector2 noiseOffset = new Vector2(RandomRange(random, -10000f, 10000f), RandomRange(random, -10000f, 10000f));
 
-        foreach (WoodCutLine cutLine in guidedCutLines)
+        for (int y = 0; y < height; y++)
         {
-            List<Vector2> localLine = ConvertCutLineToLocal(bounds, cutLine);
-            if (localLine.Count >= 2)
+            for (int x = 0; x < width; x++)
             {
-                cutLines.Add(localLine);
-            }
-        }
+                float normalizedX = x / (float)width;
+                float normalizedY = y / (float)height;
+                float warpNoise = SampleFractalNoise(
+                    normalizedX * 5f,
+                    normalizedY * 5f,
+                    noiseOffset,
+                    Mathf.Max(1, noiseOctaves - 1),
+                    noiseFalloff) * (warp / 100f);
+                float noiseValue = SampleFractalNoise(
+                    normalizedX * scaleX,
+                    (normalizedY + warpNoise) * scaleY,
+                    noiseOffset * 0.37f,
+                    noiseOctaves,
+                    noiseFalloff);
+                float edgeBand = Mathf.Max(0.0001f, edgeSmoothness);
+                float thresholdValue = threshold;
 
-        cutLines.Add(new List<Vector2>
-        {
-            new Vector2(bounds.xMin, bounds.yMax),
-            new Vector2(bounds.xMax, bounds.yMax)
-        });
-
-        cutLines.Sort((a, b) => GetAverageY(a).CompareTo(GetAverageY(b)));
-
-        var chips = new List<List<Vector2>>();
-        for (int lineIndex = 0; lineIndex < cutLines.Count - 1; lineIndex++)
-        {
-            List<float> rowCuts = CreateRowCuts(bounds, widthRange, random);
-            List<Vector2> lowerLine = cutLines[lineIndex];
-            List<Vector2> upperLine = cutLines[lineIndex + 1];
-
-            for (int cutIndex = 0; cutIndex < rowCuts.Count - 1; cutIndex++)
-            {
-                List<Vector2> chip = CreateCutLineChip(lowerLine, upperLine, rowCuts[cutIndex], rowCuts[cutIndex + 1]);
-                chip = CleanPolygon(chip);
-                if (chip.Count >= 3 && Mathf.Abs(GetSignedArea(chip)) > 0.0001f)
+                if (noiseValue > threshold - edgeBand && noiseValue < threshold + edgeBand)
                 {
-                    chips.Add(chip);
+                    float edgeNoise = SampleFractalNoise(
+                        normalizedX * scaleX * 3.25f,
+                        (normalizedY + warpNoise) * scaleY * 1.65f,
+                        noiseOffset * 1.91f,
+                        Mathf.Max(1, noiseOctaves - 1),
+                        noiseFalloff);
+                    thresholdValue += (edgeNoise - 0.5f) * edgeDetailStrength;
                 }
-            }
-        }
 
-        return chips;
-    }
+                bool isBlack = noiseValue > thresholdValue;
 
-    private List<Vector2> ConvertCutLineToLocal(Rect bounds, WoodCutLine cutLine)
-    {
-        var localPoints = new List<Vector2>();
-        if (cutLine == null || cutLine.points == null)
-        {
-            return localPoints;
-        }
-
-        foreach (Vector2 point in cutLine.points)
-        {
-            localPoints.Add(new Vector2(
-                Mathf.Lerp(bounds.xMin, bounds.xMax, Mathf.Clamp01(point.x)),
-                Mathf.Lerp(bounds.yMin, bounds.yMax, Mathf.Clamp01(point.y))));
-        }
-
-        localPoints.Sort((a, b) => a.x.CompareTo(b.x));
-        if (localPoints.Count >= 2)
-        {
-            float leftY = EvaluateCutLineY(localPoints, bounds.xMin);
-            float rightY = EvaluateCutLineY(localPoints, bounds.xMax);
-
-            if (localPoints[0].x > bounds.xMin)
-            {
-                localPoints.Insert(0, new Vector2(bounds.xMin, leftY));
-            }
-            else
-            {
-                localPoints[0] = new Vector2(bounds.xMin, localPoints[0].y);
-            }
-
-            int lastIndex = localPoints.Count - 1;
-            if (localPoints[lastIndex].x < bounds.xMax)
-            {
-                localPoints.Add(new Vector2(bounds.xMax, rightY));
-            }
-            else
-            {
-                localPoints[lastIndex] = new Vector2(bounds.xMax, localPoints[lastIndex].y);
-            }
-        }
-
-        return localPoints;
-    }
-
-    private List<float> CreateRowCuts(Rect bounds, Vector2 widthRange, System.Random random)
-    {
-        var cuts = new List<float> { bounds.xMin };
-        float currentX = bounds.xMin;
-        float minimumWidth = Mathf.Max(bounds.width * Mathf.Clamp01(widthRange.x), bounds.width * 0.04f);
-        float maximumWidth = Mathf.Max(minimumWidth, bounds.width * Mathf.Clamp01(widthRange.y));
-
-        while (currentX < bounds.xMax - minimumWidth)
-        {
-            currentX += RandomRange(random, minimumWidth, maximumWidth);
-            if (currentX < bounds.xMax - minimumWidth)
-            {
-                cuts.Add(currentX);
-            }
-        }
-
-        cuts.Add(bounds.xMax);
-        return cuts;
-    }
-
-    private static List<Vector2> CreateCutLineChip(List<Vector2> lowerLine, List<Vector2> upperLine, float leftX, float rightX)
-    {
-        var chip = new List<Vector2>();
-        AddCutLineSegment(chip, lowerLine, leftX, rightX, false);
-        AddCutLineSegment(chip, upperLine, rightX, leftX, true);
-        return chip;
-    }
-
-    private static void AddCutLineSegment(List<Vector2> polygon, List<Vector2> cutLine, float startX, float endX, bool reverse)
-    {
-        polygon.Add(new Vector2(startX, EvaluateCutLineY(cutLine, startX)));
-
-        if (!reverse)
-        {
-            foreach (Vector2 point in cutLine)
-            {
-                if (point.x > startX && point.x < endX)
+                if (invertMask)
                 {
-                    polygon.Add(point);
+                    isBlack = !isBlack;
                 }
+
+                mask[ToCellIndex(x, y, width)] = isBlack;
             }
         }
-        else
+
+        return mask;
+    }
+
+    private static float SampleFractalNoise(float x, float y, Vector2 offset, int octaves, float falloff)
+    {
+        float amplitude = 1f;
+        float frequency = 1f;
+        float value = 0f;
+        float amplitudeTotal = 0f;
+        int octaveCount = Mathf.Max(1, octaves);
+        float persistence = Mathf.Clamp01(falloff);
+
+        for (int octave = 0; octave < octaveCount; octave++)
         {
-            for (int i = cutLine.Count - 1; i >= 0; i--)
+            value += Mathf.PerlinNoise(
+                x * frequency + offset.x,
+                y * frequency + offset.y) * amplitude;
+            amplitudeTotal += amplitude;
+            amplitude *= persistence;
+            frequency *= 2f;
+        }
+
+        if (amplitudeTotal <= 0f)
+        {
+            return 0f;
+        }
+
+        return value / amplitudeTotal;
+    }
+
+    private List<MaskRegion> FloodFillRegions(bool[] mask, int width, int height)
+    {
+        bool[] visited = new bool[mask.Length];
+        var regions = new List<MaskRegion>();
+        var pending = new Queue<int>();
+
+        for (int startIndex = 0; startIndex < mask.Length; startIndex++)
+        {
+            if (visited[startIndex])
             {
-                Vector2 point = cutLine[i];
-                if (point.x < startX && point.x > endX)
+                continue;
+            }
+
+            bool regionValue = mask[startIndex];
+            var region = new MaskRegion();
+            visited[startIndex] = true;
+            pending.Enqueue(startIndex);
+
+            while (pending.Count > 0)
+            {
+                int cell = pending.Dequeue();
+                int x = cell % width;
+                int y = cell / width;
+                region.cells.Add(cell);
+                region.centerX += x + 0.5f;
+                region.centerY += y + 0.5f;
+
+                TryQueueNeighbor(x - 1, y, width, height, regionValue, mask, visited, pending);
+                TryQueueNeighbor(x + 1, y, width, height, regionValue, mask, visited, pending);
+                TryQueueNeighbor(x, y - 1, width, height, regionValue, mask, visited, pending);
+                TryQueueNeighbor(x, y + 1, width, height, regionValue, mask, visited, pending);
+            }
+
+            region.FinalizeCenter();
+            regions.Add(region);
+        }
+
+        return regions;
+    }
+
+    private static void TryQueueNeighbor(
+        int x,
+        int y,
+        int width,
+        int height,
+        bool regionValue,
+        bool[] mask,
+        bool[] visited,
+        Queue<int> pending)
+    {
+        if (x < 0 || x >= width || y < 0 || y >= height)
+        {
+            return;
+        }
+
+        int index = ToCellIndex(x, y, width);
+        if (visited[index] || mask[index] != regionValue)
+        {
+            return;
+        }
+
+        visited[index] = true;
+        pending.Enqueue(index);
+    }
+
+    private List<List<int>> MergeAndBuildShardCells(List<MaskRegion> regions, int width, int height, int totalCells)
+    {
+        int pieceLimit = Mathf.Clamp(maxPieces, 1, regions.Count);
+        int minimumArea = Mathf.Max(1, minIslandArea);
+        var keptRegions = new List<MaskRegion>(pieceLimit);
+
+        foreach (MaskRegion region in regions)
+        {
+            if (keptRegions.Count >= pieceLimit)
+            {
+                break;
+            }
+
+            if (region.cells.Count >= minimumArea)
+            {
+                keptRegions.Add(region);
+            }
+        }
+
+        if (keptRegions.Count == 0)
+        {
+            keptRegions.Add(regions[0]);
+        }
+
+        int[] assignedRegionByCell = new int[totalCells];
+        for (int i = 0; i < assignedRegionByCell.Length; i++)
+        {
+            assignedRegionByCell[i] = -1;
+        }
+
+        for (int keptIndex = 0; keptIndex < keptRegions.Count; keptIndex++)
+        {
+            foreach (int cell in keptRegions[keptIndex].cells)
+            {
+                assignedRegionByCell[cell] = keptIndex;
+            }
+        }
+
+        FillUnassignedCells(assignedRegionByCell, width, height, keptRegions);
+
+        var shardCells = new List<List<int>>(keptRegions.Count);
+        for (int i = 0; i < keptRegions.Count; i++)
+        {
+            shardCells.Add(new List<int>());
+        }
+
+        for (int cell = 0; cell < assignedRegionByCell.Length; cell++)
+        {
+            int keptIndex = assignedRegionByCell[cell];
+            if (keptIndex >= 0)
+            {
+                shardCells[keptIndex].Add(cell);
+            }
+        }
+
+        return shardCells;
+    }
+
+    private static void FillUnassignedCells(int[] assignedRegionByCell, int width, int height, List<MaskRegion> keptRegions)
+    {
+        int remaining = 0;
+        for (int i = 0; i < assignedRegionByCell.Length; i++)
+        {
+            if (assignedRegionByCell[i] < 0)
+            {
+                remaining++;
+            }
+        }
+
+        int safety = assignedRegionByCell.Length;
+        while (remaining > 0 && safety > 0)
+        {
+            bool madeProgress = false;
+
+            for (int cell = 0; cell < assignedRegionByCell.Length; cell++)
+            {
+                if (assignedRegionByCell[cell] >= 0)
                 {
-                    polygon.Add(point);
+                    continue;
                 }
+
+                int x = cell % width;
+                int y = cell / width;
+                int neighborRegion = GetAssignedNeighbor(assignedRegionByCell, x, y, width, height);
+                if (neighborRegion < 0)
+                {
+                    continue;
+                }
+
+                assignedRegionByCell[cell] = neighborRegion;
+                remaining--;
+                madeProgress = true;
             }
-        }
 
-        polygon.Add(new Vector2(endX, EvaluateCutLineY(cutLine, endX)));
-    }
-
-    private static float EvaluateCutLineY(List<Vector2> cutLine, float pointX)
-    {
-        if (pointX <= cutLine[0].x)
-        {
-            return cutLine[0].y;
-        }
-
-        for (int i = 0; i < cutLine.Count - 1; i++)
-        {
-            Vector2 left = cutLine[i];
-            Vector2 right = cutLine[i + 1];
-            if (pointX <= right.x)
+            if (!madeProgress)
             {
-                float segmentPercent = Mathf.InverseLerp(left.x, right.x, pointX);
-                return Mathf.Lerp(left.y, right.y, segmentPercent);
+                break;
             }
+
+            safety--;
         }
 
-        return cutLine[cutLine.Count - 1].y;
-    }
-
-    private static float GetAverageY(List<Vector2> points)
-    {
-        float total = 0f;
-        foreach (Vector2 point in points)
+        if (remaining <= 0)
         {
-            total += point.y;
+            return;
         }
 
-        return total / points.Count;
-    }
-
-    private List<Vector2> CreateWoodChipPolygon(Rect bounds, float centerX, float centerY, float width, float height, int edgePoints, System.Random random)
-    {
-        return CreateWoodChipPolygon(bounds, centerX, centerY, width, height, edgePoints, 0f, random);
-    }
-
-    private List<Vector2> CreateWoodChipPolygon(Rect bounds, float centerX, float centerY, float width, float height, int edgePoints, float rotationDegrees, System.Random random)
-    {
-        float halfWidth = width * 0.5f;
-        float halfHeight = height * 0.5f;
-        float rotation = rotationDegrees * Mathf.Deg2Rad;
-        float sin = Mathf.Sin(rotation);
-        float cos = Mathf.Cos(rotation);
-        var chip = new List<Vector2>(edgePoints);
-
-        for (int pointIndex = 0; pointIndex < edgePoints; pointIndex++)
+        for (int cell = 0; cell < assignedRegionByCell.Length; cell++)
         {
-            float angle = pointIndex / (float)edgePoints * Mathf.PI * 2f;
-            float alternatingPoint = pointIndex % 2 == 0 ? chipPointiness : -chipPointiness * 0.45f;
-            float radiusJitter = RandomRange(random, 1f - chipEdgeJitter, 1f + chipEdgeJitter);
-            float pointScale = Mathf.Max(0.25f, 1f + alternatingPoint);
-            float localX = Mathf.Cos(angle) * halfWidth * radiusJitter * pointScale;
-            float localY = Mathf.Sin(angle) * halfHeight * radiusJitter * pointScale;
-            float x = centerX + localX * cos - localY * sin;
-            float y = centerY + localX * sin + localY * cos;
-            chip.Add(new Vector2(
-                Mathf.Clamp(x, bounds.xMin, bounds.xMax),
-                Mathf.Clamp(y, bounds.yMin, bounds.yMax)));
-        }
-
-        return chip;
-    }
-
-    public WoodCutLine GetGuidedCutLine(int index)
-    {
-        return guidedCutLines[index];
-    }
-
-    public void AddGuidedCutLine(List<Vector2> normalizedPoints)
-    {
-        if (guidedCutLines == null)
-        {
-            guidedCutLines = new List<WoodCutLine>();
-        }
-
-        var line = new WoodCutLine();
-        foreach (Vector2 point in normalizedPoints)
-        {
-            line.points.Add(new Vector2(Mathf.Clamp01(point.x), Mathf.Clamp01(point.y)));
-        }
-
-        if (line.points.Count >= 2)
-        {
-            guidedCutLines.Add(line);
-        }
-    }
-
-    public bool RemoveGuidedCutLine(Vector2 normalizedPoint, float normalizedRadius)
-    {
-        if (guidedCutLines == null || guidedCutLines.Count == 0)
-        {
-            return false;
-        }
-
-        float bestDistance = normalizedRadius * normalizedRadius;
-        int bestIndex = -1;
-
-        for (int i = 0; i < guidedCutLines.Count; i++)
-        {
-            float distance = GetCutLineDistanceSqr(guidedCutLines[i], normalizedPoint);
-            if (distance <= bestDistance)
+            if (assignedRegionByCell[cell] >= 0)
             {
-                bestDistance = distance;
-                bestIndex = i;
+                continue;
+            }
+
+            assignedRegionByCell[cell] = GetNearestKeptRegion(cell, width, keptRegions);
+        }
+    }
+
+    private static int GetAssignedNeighbor(int[] assignedRegionByCell, int x, int y, int width, int height)
+    {
+        int left = GetAssignedCell(assignedRegionByCell, x - 1, y, width, height);
+        if (left >= 0)
+        {
+            return left;
+        }
+
+        int right = GetAssignedCell(assignedRegionByCell, x + 1, y, width, height);
+        if (right >= 0)
+        {
+            return right;
+        }
+
+        int down = GetAssignedCell(assignedRegionByCell, x, y - 1, width, height);
+        if (down >= 0)
+        {
+            return down;
+        }
+
+        return GetAssignedCell(assignedRegionByCell, x, y + 1, width, height);
+    }
+
+    private static int GetAssignedCell(int[] assignedRegionByCell, int x, int y, int width, int height)
+    {
+        if (x < 0 || x >= width || y < 0 || y >= height)
+        {
+            return -1;
+        }
+
+        return assignedRegionByCell[ToCellIndex(x, y, width)];
+    }
+
+    private static int GetNearestKeptRegion(int cell, int width, List<MaskRegion> keptRegions)
+    {
+        int x = cell % width;
+        int y = cell / width;
+        int nearestIndex = 0;
+        float nearestDistance = float.PositiveInfinity;
+
+        for (int i = 0; i < keptRegions.Count; i++)
+        {
+            float dx = keptRegions[i].centerX - x;
+            float dy = keptRegions[i].centerY - y;
+            float distance = dx * dx + dy * dy;
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestIndex = i;
             }
         }
 
-        if (bestIndex < 0)
-        {
-            return false;
-        }
-
-        guidedCutLines.RemoveAt(bestIndex);
-        return true;
-    }
-
-    public void ClearGuidedCutLines()
-    {
-        if (guidedCutLines != null)
-        {
-            guidedCutLines.Clear();
-        }
-    }
-
-    private static float GetCutLineDistanceSqr(WoodCutLine line, Vector2 point)
-    {
-        float bestDistance = float.PositiveInfinity;
-
-        foreach (Vector2 linePoint in line.points)
-        {
-            bestDistance = Mathf.Min(bestDistance, (linePoint - point).sqrMagnitude);
-        }
-
-        return bestDistance;
+        return nearestIndex;
     }
 
     private Material CreateShardMaterial(Sprite sprite)
@@ -604,6 +641,11 @@ public class BreakableTimedPlatform : MonoBehaviour
             material.SetTexture("_BaseMap", sprite.texture);
         }
 
+        if (material.HasProperty("_Cull"))
+        {
+            material.SetFloat("_Cull", 0f);
+        }
+
         if (visualTarget != null)
         {
             if (material.HasProperty("_Color"))
@@ -620,54 +662,132 @@ public class BreakableTimedPlatform : MonoBehaviour
         return material;
     }
 
-    private Mesh CreateShardMesh(Sprite sprite, List<Vector2> chip, out Vector2 centroid)
+    private Mesh CreateShardMesh(
+        Sprite sprite,
+        Rect localBounds,
+        List<int> cells,
+        int maskWidth,
+        int maskHeight,
+        out Vector2 centroid)
     {
-        centroid = GetPolygonCentroid(chip);
-        if (chip.Count < 3 || Mathf.Abs(GetSignedArea(chip)) < 0.0001f)
+        centroid = GetCellCentroid(localBounds, cells, maskWidth, maskHeight);
+        if (cells.Count == 0)
         {
             return null;
         }
 
-        Vector3[] vertices = new Vector3[chip.Count + 1];
-        Vector2[] uvs = new Vector2[chip.Count + 1];
-        Color[] colors = new Color[chip.Count + 1];
-        int[] triangles = new int[chip.Count * 3];
+        int vertexCount = cells.Count * 4;
+        var vertices = new Vector3[vertexCount];
+        var uvs = new Vector2[vertexCount];
+        var colors = new Color[vertexCount];
+        var triangles = new int[cells.Count * 6];
         Color shardColor = visualTarget != null ? visualTarget.color : Color.white;
-
-        vertices[0] = Vector3.zero;
-        uvs[0] = GetSpriteUv(sprite, centroid);
-        colors[0] = shardColor;
-
-        for (int i = 0; i < chip.Count; i++)
-        {
-            Vector2 displayVertex = ApplySpriteFlip(chip[i]) - ApplySpriteFlip(centroid);
-            vertices[i + 1] = new Vector3(displayVertex.x, displayVertex.y, 0f);
-            uvs[i + 1] = GetSpriteUv(sprite, chip[i]);
-            colors[i + 1] = shardColor;
-        }
-
-        bool counterClockwise = GetSignedArea(chip) > 0f;
+        Vector2 displayCentroid = ApplySpriteFlip(centroid);
+        float cellWidth = localBounds.width / maskWidth;
+        float cellHeight = localBounds.height / maskHeight;
+        int vertexIndex = 0;
         int triangleIndex = 0;
-        for (int i = 0; i < chip.Count; i++)
-        {
-            int current = i + 1;
-            int next = (i + 1) % chip.Count + 1;
 
-            triangles[triangleIndex++] = 0;
-            triangles[triangleIndex++] = counterClockwise ? current : next;
-            triangles[triangleIndex++] = counterClockwise ? next : current;
+        foreach (int cell in cells)
+        {
+            int x = cell % maskWidth;
+            int y = cell / maskWidth;
+            float left = localBounds.xMin + x * cellWidth;
+            float right = left + cellWidth;
+            float bottom = localBounds.yMin + y * cellHeight;
+            float top = bottom + cellHeight;
+
+            Vector2 bottomLeft = new Vector2(left, bottom);
+            Vector2 bottomRight = new Vector2(right, bottom);
+            Vector2 topRight = new Vector2(right, top);
+            Vector2 topLeft = new Vector2(left, top);
+
+            vertices[vertexIndex] = ToShardVertex(bottomLeft, displayCentroid);
+            vertices[vertexIndex + 1] = ToShardVertex(bottomRight, displayCentroid);
+            vertices[vertexIndex + 2] = ToShardVertex(topRight, displayCentroid);
+            vertices[vertexIndex + 3] = ToShardVertex(topLeft, displayCentroid);
+
+            uvs[vertexIndex] = GetSpriteUv(sprite, bottomLeft);
+            uvs[vertexIndex + 1] = GetSpriteUv(sprite, bottomRight);
+            uvs[vertexIndex + 2] = GetSpriteUv(sprite, topRight);
+            uvs[vertexIndex + 3] = GetSpriteUv(sprite, topLeft);
+
+            colors[vertexIndex] = shardColor;
+            colors[vertexIndex + 1] = shardColor;
+            colors[vertexIndex + 2] = shardColor;
+            colors[vertexIndex + 3] = shardColor;
+
+            WriteQuadTriangles(vertices, vertexIndex, triangles, triangleIndex);
+            vertexIndex += 4;
+            triangleIndex += 6;
         }
 
         Mesh mesh = new Mesh
         {
-            name = $"{sprite.name}_WoodChipMesh",
-            vertices = vertices,
-            uv = uvs,
-            colors = colors,
-            triangles = triangles
+            name = $"{sprite.name}_WoodMaskShardMesh"
         };
+
+        if (vertexCount > 65000)
+        {
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        }
+
+        mesh.vertices = vertices;
+        mesh.uv = uvs;
+        mesh.colors = colors;
+        mesh.triangles = triangles;
         mesh.RecalculateBounds();
         return mesh;
+    }
+
+    private Vector3 ToShardVertex(Vector2 localPoint, Vector2 displayCentroid)
+    {
+        Vector2 displayPoint = ApplySpriteFlip(localPoint) - displayCentroid;
+        return new Vector3(displayPoint.x, displayPoint.y, 0f);
+    }
+
+    private static void WriteQuadTriangles(Vector3[] vertices, int vertexIndex, int[] triangles, int triangleIndex)
+    {
+        Vector3 first = vertices[vertexIndex];
+        Vector3 second = vertices[vertexIndex + 1];
+        Vector3 third = vertices[vertexIndex + 2];
+        float signedArea = (second.x - first.x) * (third.y - first.y) - (second.y - first.y) * (third.x - first.x);
+
+        if (signedArea >= 0f)
+        {
+            triangles[triangleIndex] = vertexIndex;
+            triangles[triangleIndex + 1] = vertexIndex + 1;
+            triangles[triangleIndex + 2] = vertexIndex + 2;
+            triangles[triangleIndex + 3] = vertexIndex;
+            triangles[triangleIndex + 4] = vertexIndex + 2;
+            triangles[triangleIndex + 5] = vertexIndex + 3;
+            return;
+        }
+
+        triangles[triangleIndex] = vertexIndex;
+        triangles[triangleIndex + 1] = vertexIndex + 2;
+        triangles[triangleIndex + 2] = vertexIndex + 1;
+        triangles[triangleIndex + 3] = vertexIndex;
+        triangles[triangleIndex + 4] = vertexIndex + 3;
+        triangles[triangleIndex + 5] = vertexIndex + 2;
+    }
+
+    private static Vector2 GetCellCentroid(Rect localBounds, List<int> cells, int maskWidth, int maskHeight)
+    {
+        float cellWidth = localBounds.width / maskWidth;
+        float cellHeight = localBounds.height / maskHeight;
+        Vector2 total = Vector2.zero;
+
+        foreach (int cell in cells)
+        {
+            int x = cell % maskWidth;
+            int y = cell / maskWidth;
+            total += new Vector2(
+                localBounds.xMin + (x + 0.5f) * cellWidth,
+                localBounds.yMin + (y + 0.5f) * cellHeight);
+        }
+
+        return total / cells.Count;
     }
 
     private Vector2 ApplySpriteFlip(Vector2 point)
@@ -709,9 +829,9 @@ public class BreakableTimedPlatform : MonoBehaviour
         body.AddTorque(RandomRange(random, -torqueForce, torqueForce), ForceMode2D.Impulse);
     }
 
-    private IEnumerator DestroyShardGroup(GameObject container, List<Mesh> meshes, Material material, float lifetime)
+    private IEnumerator DestroyShardGroup(GameObject container, List<Mesh> meshes, Material material, float lifetime, float crumbleDuration)
     {
-        yield return new WaitForSeconds(lifetime + bottomToTopWaveDuration + releaseDelayJitter);
+        yield return new WaitForSeconds(lifetime + crumbleDuration);
 
         foreach (Mesh mesh in meshes)
         {
@@ -745,16 +865,18 @@ public class BreakableTimedPlatform : MonoBehaviour
         ApplyShardImpulse(body, worldPosition, random);
     }
 
-    private float GetBottomToTopReleaseDelay(Vector2 localCentroid, Rect localBounds, System.Random random)
+    private float GetBottomToTopReleaseDelay(Vector2 localCentroid, Rect localBounds, float crumbleDuration, System.Random random)
     {
-        if (bottomToTopWaveDuration <= 0f)
+        if (crumbleDuration <= 0f)
         {
             return 0f;
         }
 
         float normalizedHeight = Mathf.InverseLerp(localBounds.yMin, localBounds.yMax, localCentroid.y);
-        float jitter = RandomRange(random, 0f, releaseDelayJitter);
-        return normalizedHeight * bottomToTopWaveDuration + jitter;
+        float jitterMax = Mathf.Min(releaseDelayJitter, crumbleDuration);
+        float releaseWindow = Mathf.Max(0f, crumbleDuration - jitterMax);
+        float jitter = RandomRange(random, 0f, jitterMax);
+        return normalizedHeight * releaseWindow + jitter;
     }
 
     private void WarnMissingVisual()
@@ -765,87 +887,53 @@ public class BreakableTimedPlatform : MonoBehaviour
         }
 
         warnedMissingVisual = true;
-        Debug.LogWarning($"{nameof(BreakableTimedPlatform)} on {name} has no visual target sprite assigned, so it used the old hide/respawn behavior.", this);
+        Debug.LogWarning($"{nameof(BreakableTimedPlatform)} on {name} could not create crumble shards, so it used the simple hide/respawn behavior. Assign a Visual Target sprite and check mask settings.", this);
     }
 
-    private static List<Vector2> CleanPolygon(List<Vector2> polygon)
+    private void DrawMaskPreview()
     {
-        if (polygon.Count < 3)
-        {
-            return polygon;
-        }
+        Sprite sprite = visualTarget.sprite;
+        Bounds bounds = sprite.bounds;
+        Rect localBounds = new Rect(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
+        bool[] mask = GenerateContrastMask(CreatePreviewRandom(), out int width, out int height);
+        float cellWidth = localBounds.width / width;
+        float cellHeight = localBounds.height / height;
+        Matrix4x4 previousMatrix = Gizmos.matrix;
+        Color previousColor = Gizmos.color;
 
-        var cleaned = new List<Vector2>(polygon.Count);
-        for (int i = 0; i < polygon.Count; i++)
-        {
-            Vector2 previous = polygon[(i + polygon.Count - 1) % polygon.Count];
-            Vector2 current = polygon[i];
-            Vector2 next = polygon[(i + 1) % polygon.Count];
+        Gizmos.matrix = visualTarget.transform.localToWorldMatrix;
 
-            if ((current - previous).sqrMagnitude < 0.000001f)
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
             {
-                continue;
-            }
+                bool isBlack = mask[ToCellIndex(x, y, width)];
+                Gizmos.color = isBlack
+                    ? new Color(0f, 0f, 0f, maskPreviewAlpha)
+                    : new Color(1f, 1f, 1f, maskPreviewAlpha);
 
-            Vector2 toCurrent = (current - previous).normalized;
-            Vector2 toNext = (next - current).normalized;
-            float cross = toCurrent.x * toNext.y - toCurrent.y * toNext.x;
-            if (Mathf.Abs(cross) < 0.0001f)
-            {
-                continue;
+                Vector2 localCenter = new Vector2(
+                    localBounds.xMin + (x + 0.5f) * cellWidth,
+                    localBounds.yMin + (y + 0.5f) * cellHeight);
+                Vector2 displayCenter = ApplySpriteFlip(localCenter);
+                Gizmos.DrawCube(
+                    new Vector3(displayCenter.x, displayCenter.y, -0.01f),
+                    new Vector3(cellWidth, cellHeight, 0.01f));
             }
-
-            cleaned.Add(current);
         }
 
-        return cleaned;
+        Gizmos.matrix = previousMatrix;
+        Gizmos.color = previousColor;
     }
 
-    private static Vector2 GetPolygonCentroid(List<Vector2> polygon)
+    private System.Random CreatePreviewRandom()
     {
-        float signedArea = GetSignedArea(polygon);
-        if (Mathf.Abs(signedArea) < 0.0001f)
-        {
-            Vector2 average = Vector2.zero;
-            foreach (Vector2 point in polygon)
-            {
-                average += point;
-            }
-
-            return average / polygon.Count;
-        }
-
-        float centroidX = 0f;
-        float centroidY = 0f;
-        for (int i = 0; i < polygon.Count; i++)
-        {
-            Vector2 current = polygon[i];
-            Vector2 next = polygon[(i + 1) % polygon.Count];
-            float cross = current.x * next.y - next.x * current.y;
-            centroidX += (current.x + next.x) * cross;
-            centroidY += (current.y + next.y) * cross;
-        }
-
-        float factor = 1f / (6f * signedArea);
-        return new Vector2(centroidX * factor, centroidY * factor);
+        return new System.Random(useDeterministicSeed ? seed : 0);
     }
 
-    private static float GetSignedArea(List<Vector2> polygon)
+    private static int ToCellIndex(int x, int y, int width)
     {
-        float area = 0f;
-        for (int i = 0; i < polygon.Count; i++)
-        {
-            Vector2 current = polygon[i];
-            Vector2 next = polygon[(i + 1) % polygon.Count];
-            area += current.x * next.y - next.x * current.y;
-        }
-
-        return area * 0.5f;
-    }
-
-    private static Vector2 SortRange(Vector2 range)
-    {
-        return new Vector2(Mathf.Min(range.x, range.y), Mathf.Max(range.x, range.y));
+        return x + y * width;
     }
 
     private static Vector2 RandomInsideUnitCircle(System.Random random)
