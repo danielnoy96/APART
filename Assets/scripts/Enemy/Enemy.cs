@@ -87,6 +87,7 @@ public class Enemy : MonoBehaviour
             int computedHeal = Mathf.RoundToInt(health.MaxHealth * corpseHealRatio);
             computedHeal = Mathf.Clamp(computedHeal, Mathf.Max(0, minCorpseHeal), Mathf.Max(0, maxCorpseHeal));
             corpse.ConfigureHealAmount(computedHeal);
+            corpse.RenderBehind(FindAnyObjectByType<player>());
         }
         DisableContactDamage();
 

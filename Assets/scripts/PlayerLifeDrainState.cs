@@ -25,6 +25,8 @@ public class PlayerLifeDrainState : PlayerState
             return;
         }
 
+        targetCorpse.RenderBehind(player);
+
         // Lock player in place (horizontal), keep grounded behavior.
         ApplyIdleHorizontalVelocity();
 

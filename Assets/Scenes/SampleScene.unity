@@ -5489,7 +5489,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5561,11 +5561,11 @@ MonoBehaviour:
   edgeDetailStrength: 0.283
   minIslandArea: 8
   maxPieces: 50
-  invertMask: 0
   showMaskPreview: 1
   maskPreviewAlpha: 0.45
-  bottomToTopWaveDuration: 0.98
   releaseDelayJitter: 0.06
+  crumbleAcceleration: 2.25
+  prewarmShardsOnStart: 1
 --- !u!1 &212592121
 GameObject:
   m_ObjectHideFlags: 0
@@ -30261,11 +30261,11 @@ MonoBehaviour:
   edgeDetailStrength: 0.12
   minIslandArea: 8
   maxPieces: 50
-  invertMask: 0
   showMaskPreview: 0
   maskPreviewAlpha: 0.45
-  bottomToTopWaveDuration: 0.45
   releaseDelayJitter: 0.06
+  crumbleAcceleration: 2.25
+  prewarmShardsOnStart: 1
 --- !u!50 &1173497814
 Rigidbody2D:
   serializedVersion: 5
@@ -35256,11 +35256,11 @@ MonoBehaviour:
   edgeDetailStrength: 0.12
   minIslandArea: 8
   maxPieces: 16
-  invertMask: 0
   showMaskPreview: 0
   maskPreviewAlpha: 0.45
-  bottomToTopWaveDuration: 0.45
   releaseDelayJitter: 0.06
+  crumbleAcceleration: 2.25
+  prewarmShardsOnStart: 1
 --- !u!50 &1370686013
 Rigidbody2D:
   serializedVersion: 5
@@ -37929,11 +37929,11 @@ MonoBehaviour:
   edgeDetailStrength: 0.12
   minIslandArea: 8
   maxPieces: 16
-  invertMask: 0
   showMaskPreview: 0
   maskPreviewAlpha: 0.45
-  bottomToTopWaveDuration: 0.45
   releaseDelayJitter: 0.06
+  crumbleAcceleration: 2.25
+  prewarmShardsOnStart: 1
 --- !u!50 &1541538899
 Rigidbody2D:
   serializedVersion: 5
