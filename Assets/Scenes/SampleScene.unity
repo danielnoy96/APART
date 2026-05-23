@@ -53419,7 +53419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   health: {fileID: 2074028608}
-  animator: {fileID: 0}
+  animator: {fileID: 1270956259}
   hurtTriggerParam: 
   deathTriggerParam: 
   disableOnDeath: 1
@@ -53439,7 +53439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   rb: {fileID: 2074028612}
-  animator: {fileID: 0}
+  animator: {fileID: 1270956259}
   health: {fileID: 2074028608}
   player: {fileID: 707433762}
   contactDamage: {fileID: 626552569}
@@ -53465,7 +53465,7 @@ MonoBehaviour:
   patrolPoints: []
   patrolDistance: 5
   idleTimeAtPatrolPoint: 0.5
-  moveBoolParam: 
+  moveBoolParam: isMoving
   speedFloatParam: 
   logVelocityOverrides: 0
   debugJump: 1
