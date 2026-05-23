@@ -7,7 +7,7 @@ Sources merged into this doc:
 - `COMBAT_SYSTEM_OVERVIEW.md` (combat + FSM + reusable components)
 - Chat progress notes (GOAP debugging and fixes)
 
-Date: 2026-05-10 (Asia/Jerusalem)
+Date: 2026-05-23 (Asia/Jerusalem)
 
 ---
 
@@ -167,12 +167,52 @@ Assign:
 
 ---
 
-## 6) What went wrong during the chat (and what fixes were applied)
+## 6) Breakable timed platform / wood crumble system
 
-### 6.1 “Enemy does not chase / no log lines”
+The breakable platform was upgraded from a simple hide/respawn platform into a procedural visual crumble system.
+
+### Scripts
+- `Assets/scripts/BreakableTimedPlatform.cs` is the gameplay controller.
+- `Assets/scripts/WoodCrumbleMaskGenerator.cs` creates the procedural black/white wood mask.
+- `Assets/scripts/WoodCrumbleRegionBuilder.cs` flood-fills mask regions and assigns all cells to kept shard regions.
+- `Assets/scripts/SpriteShardMeshBuilder.cs` builds sprite-textured shard meshes from mask cells.
+- `Assets/scripts/WoodCrumbleMaskPreview.cs` draws the Scene view mask preview.
+
+### Behavior
+- Put `BreakableTimedPlatform` on the collision platform object.
+- Assign `visualTarget` to the visible platform `SpriteRenderer`.
+- Player touch starts crumble immediately.
+- Shards release bottom-to-top across `breakDelay`; `crumbleAcceleration` makes the start slower and the end faster.
+- Collision remains enabled until `breakDelay` finishes, then platform disables and respawns after `respawnDelay`.
+- The original sprite hides as soon as shards spawn, so there is no full-sprite overlay behind the pieces.
+- Shards are visual-only by default: pooled `GameObject`s with `MeshRenderer`, `MeshFilter`, and `Rigidbody2D`, but no colliders.
+
+### Mask / cuts
+- The mask logic is based on the user's p5/JavaScript wood texture code.
+- Both black and white regions become visible shards; the contrast boundary is the cut.
+- Tiny/extra regions are reassigned to kept regions so the full sprite stays covered.
+- Mesh UVs sample the original platform sprite texture; no separate shard sprites and no Read/Write texture access are required.
+
+### Performance notes
+- `prewarmShardsOnStart=true` builds and pools shards before the first touch to avoid runtime allocation spikes.
+- `Show Mask Preview` is editor-only and expensive: `800x500` means 400,000 gizmo cells per object per Scene view repaint.
+- Keep mask preview enabled only on one platform while tuning, then turn it off.
+
+### Current tuned defaults
+- `breakDelay=0.9`, `respawnDelay=1.5`, `triggerLayer=Player`
+- `explosionForce=0.5`, `upwardForce=0`, `torqueForce=0`, `pieceLifetime=2`
+- `maskResolution=800x500`, `scaleX=8.2`, `scaleY=30`, `threshold=0.458`, `warp=0`
+- `noiseOctaves=6`, `noiseFalloff=0.59`, `edgeSmoothness=0.12`, `edgeDetailStrength=0.283`
+- `minIslandArea=8`, `maxPieces=50`, `releaseDelayJitter=0.06`, `crumbleAcceleration=2.25`
+
+---
+
+## 7) What went wrong during the chat (and what fixes were applied)
+
+### 7.1 “Enemy does not chase / no log lines”
 We added targeted debug logging and state reporting in `EnemyGoapAgentBridge`.
 
-### 6.2 “CurrentPlan.Action = NULL” (GOAP not producing a plan)
+### 7.2 “CurrentPlan.Action = NULL” (GOAP not producing a plan)
 We confirmed through status logs that:
 - goal requests were happening
 - but GOAP emitted `NoActionFound` for `ChasePlayerGoal`
@@ -181,14 +221,14 @@ Fix direction:
 - capability config must form a satisfiable graph (conditions/effects must align).
 - we re-centered goal satisfaction on `IsPlayerInRange` (sensor-driven) instead of “manual keys without sensors”.
 
-### 6.3 “AgentTypeConfig has errors”
+### 7.3 “AgentTypeConfig has errors”
 Earlier logs showed:
 - goals/actions missing conditions/effects/targets due to missing IDs / invalid refs.
 We addressed this by:
 - filling IDs in `Game.GOAP.asset`
 - ensuring capability points at valid IDs
 
-### 6.4 GOAP receiver wiring exceptions
+### 7.4 GOAP receiver wiring exceptions
 We observed:
 - `GoapException: There is no ActionReceiver assigned...`
 Fix direction:
@@ -197,7 +237,7 @@ Fix direction:
 
 ---
 
-## 7) How to debug GOAP quickly (practical)
+## 8) How to debug GOAP quickly (practical)
 Enable `EnemyGoapAgentBridge.debugLog`.
 
 Look for these:
@@ -213,17 +253,18 @@ If `NoActionFound` happens:
 
 ---
 
-## 8) Current status (as of this doc)
+## 9) Current status (as of this doc)
 - Combat foundation + player FSM are documented and stable in `COMBAT_SYSTEM_OVERVIEW.md`.
 - GOAP package is installed (manifest dependency).
 - GOAP-first modular enemy structure exists:
   - decision module → bridge → GOAP request → GOAP provider/receiver → action → EnemyController methods.
 - Debug instrumentation exists in bridge and actions to diagnose plan resolution.
 - Capability config is actively being iterated; when `NoActionFound` appears, the bridge provides a direct controller fallback so gameplay remains testable while GOAP config is corrected.
+- Breakable timed platforms now use the procedural pooled wood-crumble system described above.
 
 ---
 
-## 9) Where to start in a new chat
+## 10) Where to start in a new chat
 Ask the next assistant to:
 1. Read `CONVERSATION_HANDOFF.md`, `PROJECT_CONTEXT.md`, and `COMBAT_SYSTEM_OVERVIEW.md`.
 2. Check `Editor.log` for GOAP validation errors and `NoActionFound`.
@@ -233,4 +274,3 @@ Ask the next assistant to:
    - `Assets/scripts/GOAP/Config/AgentTypeScriptable.asset`
 4. Verify enemy prefab wiring:
    - `GoapRunnerResolver`, `AgentTypeBehaviour`, `GoapActionProvider`, `AgentBehaviour`, `EnemyGoapAgentBridge`, and a decision module.
-

@@ -54,6 +54,7 @@ public class player : MonoBehaviour
     [HideInInspector] public bool attackPressed;
     [HideInInspector] public bool dashPressed;
     [HideInInspector] public bool lifeDrainPressed;
+    [HideInInspector] public bool lifeDrainHeld;
 
     [Header("Dash Settings")]
     public float dashSpeed = 14f;
@@ -113,6 +114,8 @@ public class player : MonoBehaviour
 
     private float knockbackLockTimer;
     public bool IsKnockbackLocked => knockbackLockTimer > 0f;
+
+    private bool previousLifeDrainHeld;
 
     [Header("Combat Animation Params (Optional)")]
     [Tooltip("Bool parameter for 'isAttacking'. Leave empty if unused.")]
@@ -247,11 +250,13 @@ public class player : MonoBehaviour
     {
         CheckGrounded();
         SyncAnimatorMovementParams();
+        RefreshLifeDrainHeldInput();
         currentState?.FixedUpdate();
     }
 
     void Update()
     {
+        RefreshLifeDrainHeldInput();
         currentState?.Update();
 
         if (isInvincible)
@@ -305,6 +310,8 @@ public class player : MonoBehaviour
         attackPressed = false;
         dashPressed = false;
         lifeDrainPressed = false;
+        lifeDrainHeld = false;
+        previousLifeDrainHeld = false;
 
         PlayerCombo combo = GetComponent<PlayerCombo>();
         combo?.ResetCombo();
@@ -394,6 +401,8 @@ public class player : MonoBehaviour
     // Reuse existing "Interact" action as Life Drain input (Input System Send Messages calls OnInteract).
     public void OnInteract(InputValue value)
     {
+        lifeDrainHeld = value.isPressed;
+
         if (value.isPressed)
         {
             if (logInputCallbacks)
@@ -402,6 +411,33 @@ public class player : MonoBehaviour
             }
             lifeDrainPressed = true;
         }
+        else if (logInputCallbacks)
+        {
+            Debug.Log("OnInteract fired (released) -> Stop LifeDrain", this);
+        }
+    }
+
+    private void RefreshLifeDrainHeldInput()
+    {
+        if (playerInput == null || playerInput.actions == null)
+        {
+            return;
+        }
+
+        InputAction interactAction = playerInput.actions.FindAction("Interact", throwIfNotFound: false);
+        if (interactAction == null)
+        {
+            return;
+        }
+
+        bool isHeld = interactAction.IsPressed();
+        if (isHeld && !previousLifeDrainHeld)
+        {
+            lifeDrainPressed = true;
+        }
+
+        lifeDrainHeld = isHeld;
+        previousLifeDrainHeld = isHeld;
     }
 
     public void OnAttackAnimationFinished()

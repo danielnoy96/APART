@@ -2,7 +2,7 @@
 
 > Purpose: keep a persistent, repo-local snapshot of the current setup, decisions, and known friction points so we can refer back without re-explaining everything each time.
 >
-> Last updated: 2026-05-16
+> Last updated: 2026-05-23
 
 ## High-level goals (what we’re building)
 - **CrashKonijn GOAP v3.1.2** is the GOAP system (not a custom/LLamaAcademy re-implementation).
@@ -129,10 +129,36 @@ Most likely friction points:
 3. Sensors/targets aren’t producing valid world state (e.g., no `player` found, resolver not returning target, distance sensor not marking in-range).
 4. Decision module threshold too small for scene scale.
 
-## Breakable timed platform (new)
-- Script: `Assets/scripts/BreakableTimedPlatform.cs`
-- Behavior: when something in `triggerLayer` touches it, waits `0.9s`, disables all child `Collider2D` + `Renderer`, waits `0.9s`, then enables them again.
-- Defaults: `triggerLayer` auto-fills with the `Player` layer (if it exists).
+## Breakable timed platform / wood crumble system
+- Main script: `Assets/scripts/BreakableTimedPlatform.cs`
+- Helper scripts:
+  - `Assets/scripts/WoodCrumbleMaskGenerator.cs`
+  - `Assets/scripts/WoodCrumbleRegionBuilder.cs`
+  - `Assets/scripts/SpriteShardMeshBuilder.cs`
+  - `Assets/scripts/WoodCrumbleMaskPreview.cs`
+- Setup model:
+  - `BreakableTimedPlatform` stays on the collision platform object.
+  - `visualTarget` must be assigned manually to the visible platform `SpriteRenderer`.
+  - Shards are visual-only: they use `Rigidbody2D` movement/torque but no colliders.
+- Runtime behavior:
+  - Player touch starts crumble immediately.
+  - Crumble release is spread across `breakDelay` and accelerates toward the end via `crumbleAcceleration`.
+  - Collision stays active during `breakDelay`, then platform disables and respawns after `respawnDelay`.
+  - Original visible sprite is hidden as soon as shards spawn, so there is no full-sprite overlay.
+- Mask/fracture behavior:
+  - The system generates a procedural black/white wood mask inspired by the p5/JavaScript texture code.
+  - Both black and white regions become visible shards; contrast borders define the cuts.
+  - Mask regions are flood-filled, capped by `maxPieces`, and reassigned so the whole sprite remains covered with no intentional white gaps.
+  - Shard meshes sample the original sprite texture UVs; no separate shard sprites and no texture Read/Write are required.
+- Performance behavior:
+  - Shards are prewarmed and pooled by default (`prewarmShardsOnStart=true`).
+  - Avoid enabling `Show Mask Preview` on multiple objects: at `800x500`, each preview draws 400,000 gizmo cells per Scene view repaint.
+- Current tuned defaults copied from the `breakble timer platform` scene object:
+  - `breakDelay=0.9`, `respawnDelay=1.5`, `triggerLayer=Player`
+  - `explosionForce=0.5`, `upwardForce=0`, `torqueForce=0`, `pieceLifetime=2`
+  - `maskResolution=800x500`, `scaleX=8.2`, `scaleY=30`, `threshold=0.458`, `warp=0`
+  - `noiseOctaves=6`, `noiseFalloff=0.59`, `edgeSmoothness=0.12`, `edgeDetailStrength=0.283`
+  - `minIslandArea=8`, `maxPieces=50`, `releaseDelayJitter=0.06`, `crumbleAcceleration=2.25`
 
 ## Where to look (files / assets / scene)
 - Scene: `Assets/Scenes/SampleScene.unity`

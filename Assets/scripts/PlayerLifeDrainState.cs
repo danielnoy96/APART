@@ -6,6 +6,7 @@ public class PlayerLifeDrainState : PlayerState
     private float drainEndTime;
     private float nextProgressLogTime;
     private float nextStaminaSpendTime;
+    private float staminaSpent;
 
     public PlayerLifeDrainState(player player) : base(player) { }
 
@@ -13,6 +14,12 @@ public class PlayerLifeDrainState : PlayerState
     {
         // Only allow life drain while grounded.
         if (!IsGrounded)
+        {
+            TransitionOut();
+            return;
+        }
+
+        if (!player.lifeDrainHeld)
         {
             TransitionOut();
             return;
@@ -44,6 +51,7 @@ public class PlayerLifeDrainState : PlayerState
         drainEndTime = Time.time + duration;
         nextProgressLogTime = Time.time;
         nextStaminaSpendTime = Time.time;
+        staminaSpent = 0f;
 
         float tickCost = Mathf.Max(0f, player.LifeDrainStaminaCostPerTick);
         if (tickCost > 0f && player.stamina != null && !player.stamina.HasStamina(tickCost))
@@ -80,6 +88,12 @@ public class PlayerLifeDrainState : PlayerState
             return;
         }
 
+        if (!player.lifeDrainHeld)
+        {
+            TransitionOut();
+            return;
+        }
+
         float tickInterval = Mathf.Max(0.01f, player.LifeDrainStaminaTickInterval);
         float tickCost = Mathf.Max(0f, player.LifeDrainStaminaCostPerTick);
         if (tickCost > 0f && player.stamina != null && Time.time >= nextStaminaSpendTime)
@@ -89,6 +103,8 @@ public class PlayerLifeDrainState : PlayerState
                 TransitionOut();
                 return;
             }
+
+            staminaSpent += tickCost;
 
             // Advance in fixed steps to avoid "catching up" with many spends in one frame.
             nextStaminaSpendTime = Time.time + tickInterval;
@@ -110,6 +126,11 @@ public class PlayerLifeDrainState : PlayerState
         if (heal > 0 && player.health != null)
         {
             player.health.Heal(heal);
+        }
+
+        if (heal > 0 && staminaSpent > 0f && player.stamina != null)
+        {
+            player.stamina.Restore(staminaSpent * 0.5f);
         }
 
         if (heal > 0 && targetCorpse.DestroyAfterDrain)

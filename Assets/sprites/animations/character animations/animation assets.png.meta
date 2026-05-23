@@ -1346,7 +1346,7 @@ TextureImporter:
         width: 1000
         height: 500
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1355,6 +1355,28 @@ TextureImporter:
       bones: []
       spriteID: 3e0301c5e4cd19844ac95ddc3750a0a5
       internalID: 1822532235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets_49
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 0
+        width: 1000
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09ada88947a7e5b448f4b41e16605e53
+      internalID: 1254448007
       vertices: []
       indices: 
       edges: []
