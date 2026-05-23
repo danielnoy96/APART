@@ -13,32 +13,32 @@ public class BreakableTimedPlatform : MonoBehaviour
     }
 
     [SerializeField] private float breakDelay = 0.9f;
-    [SerializeField] private float respawnDelay = 0.9f;
-    [SerializeField] private LayerMask triggerLayer;
+    [SerializeField] private float respawnDelay = 1.5f;
+    [SerializeField] private LayerMask triggerLayer = 8192;
 
     [Header("Crumble Visual")]
     [SerializeField] private SpriteRenderer visualTarget;
     [SerializeField] private Material shardMaterial;
-    [SerializeField] private float explosionForce = 2.5f;
-    [SerializeField] private float upwardForce = 1.5f;
-    [SerializeField] private float torqueForce = 180f;
+    [SerializeField] private float explosionForce = 0.5f;
+    [SerializeField] private float upwardForce;
+    [SerializeField] private float torqueForce;
     [SerializeField, Min(0.05f)] private float pieceLifetime = 2f;
     [SerializeField] private bool useDeterministicSeed;
     [SerializeField] private int seed;
 
     [Header("Wood Texture Mask")]
-    [SerializeField] private Vector2Int maskResolution = new Vector2Int(128, 72);
-    [SerializeField, Range(1f, 50f)] private float scaleX = 15f;
-    [SerializeField, Range(10f, 200f)] private float scaleY = 85f;
-    [SerializeField, Range(0.3f, 0.7f)] private float threshold = 0.52f;
-    [SerializeField, Range(0f, 50f)] private float warp = 15f;
-    [SerializeField, Range(1, 8)] private int noiseOctaves = 4;
-    [SerializeField, Range(0f, 1f)] private float noiseFalloff = 0.5f;
-    [SerializeField, Range(0.001f, 0.12f)] private float edgeSmoothness = 0.03f;
-    [SerializeField, Range(0f, 0.5f)] private float edgeDetailStrength = 0.12f;
+    [SerializeField] private Vector2Int maskResolution = new Vector2Int(800, 500);
+    [SerializeField, Range(1f, 50f)] private float scaleX = 8.2f;
+    [SerializeField, Range(10f, 200f)] private float scaleY = 30f;
+    [SerializeField, Range(0.3f, 0.7f)] private float threshold = 0.458f;
+    [SerializeField, Range(0f, 50f)] private float warp;
+    [SerializeField, Range(1, 8)] private int noiseOctaves = 6;
+    [SerializeField, Range(0f, 1f)] private float noiseFalloff = 0.59f;
+    [SerializeField, Range(0.001f, 0.12f)] private float edgeSmoothness = 0.12f;
+    [SerializeField, Range(0f, 0.5f)] private float edgeDetailStrength = 0.283f;
     [SerializeField, Min(1)] private int minIslandArea = 8;
-    [SerializeField, Min(1)] private int maxPieces = 48;
-    [SerializeField] private bool showMaskPreview;
+    [SerializeField, Min(1)] private int maxPieces = 50;
+    [SerializeField] private bool showMaskPreview = true;
     [SerializeField, Range(0.05f, 0.9f)] private float maskPreviewAlpha = 0.45f;
 
     [Header("Crumble Animation")]
