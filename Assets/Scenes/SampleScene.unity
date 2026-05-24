@@ -58692,6 +58692,7 @@ MonoBehaviour:
   state: 1
   wakeFallbackSeconds: 0.75
   popBoolParam: isPopping
+  unpopBoolParam: isUnpopping
   animator: {fileID: 1270956259}
   controller: {fileID: 2074028610}
 --- !u!1 &2076639862

@@ -17,4 +17,13 @@ public class EnemyAnimationEventRelay : MonoBehaviour
         if (awareness != null)
             awareness.OnPopAnimationFinished();
     }
+
+    public void UnpopAnimationFinished()
+    {
+        if (awareness == null)
+            awareness = GetComponentInParent<EnemyAwareness>();
+
+        if (awareness != null)
+            awareness.OnUnpopAnimationFinished();
+    }
 }

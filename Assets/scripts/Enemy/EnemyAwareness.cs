@@ -7,12 +7,14 @@ public class EnemyAwareness : MonoBehaviour
         Asleep,
         Hiding,
         Waking,
+        ReturningToSleep,
         Active
     }
 
     [SerializeField] private AwarenessState state = AwarenessState.Hiding;
     [SerializeField] private float wakeFallbackSeconds = 0.75f;
     [SerializeField] private string popBoolParam = "isPopping";
+    [SerializeField] private string unpopBoolParam = "isUnpopping";
     [SerializeField] private Animator animator;
     [SerializeField] private EnemyController controller;
 
@@ -20,7 +22,7 @@ public class EnemyAwareness : MonoBehaviour
     private bool popFinished;
 
     public bool IsAsleep => state == AwarenessState.Asleep;
-    public bool IsHiding => state == AwarenessState.Hiding;
+    public bool IsHiding => state == AwarenessState.Hiding || state == AwarenessState.ReturningToSleep;
     public bool CanRunRegularBehavior => state == AwarenessState.Active;
 
     private void Awake()
@@ -37,14 +39,23 @@ public class EnemyAwareness : MonoBehaviour
 
     public void Hide()
     {
-        if (IsAsleep || state == AwarenessState.Waking)
+        if (IsAsleep || state == AwarenessState.Waking || state == AwarenessState.ReturningToSleep)
             return;
 
-        state = AwarenessState.Hiding;
         wakeFinishedAt = -1f;
         popFinished = false;
         SetPopping(false);
         StopEnemy();
+
+        if (state == AwarenessState.Active)
+        {
+            state = AwarenessState.ReturningToSleep;
+            SetUnpopping(true);
+            return;
+        }
+
+        state = AwarenessState.Hiding;
+        SetUnpopping(false);
     }
 
     public void Sleep()
@@ -53,6 +64,7 @@ public class EnemyAwareness : MonoBehaviour
         wakeFinishedAt = -1f;
         popFinished = false;
         SetPopping(false);
+        SetUnpopping(false);
         StopEnemy();
     }
 
@@ -64,13 +76,9 @@ public class EnemyAwareness : MonoBehaviour
         if (state == AwarenessState.Active)
             return true;
 
-        if (state == AwarenessState.Hiding)
+        if (state == AwarenessState.Hiding || state == AwarenessState.ReturningToSleep)
         {
-            state = AwarenessState.Waking;
-            wakeFinishedAt = Time.time + Mathf.Max(0f, wakeFallbackSeconds);
-            popFinished = false;
-            SetPopping(true);
-            StopEnemy();
+            BeginWaking();
             return false;
         }
 
@@ -92,10 +100,36 @@ public class EnemyAwareness : MonoBehaviour
         state = AwarenessState.Active;
     }
 
+    public void OnUnpopAnimationFinished()
+    {
+        if (state != AwarenessState.ReturningToSleep)
+            return;
+
+        state = AwarenessState.Hiding;
+        SetUnpopping(false);
+        StopEnemy();
+    }
+
+    private void BeginWaking()
+    {
+        state = AwarenessState.Waking;
+        wakeFinishedAt = Time.time + Mathf.Max(0f, wakeFallbackSeconds);
+        popFinished = false;
+        SetUnpopping(false);
+        SetPopping(true);
+        StopEnemy();
+    }
+
     private void SetPopping(bool value)
     {
         if (animator != null && !string.IsNullOrWhiteSpace(popBoolParam))
             animator.SetBool(popBoolParam, value);
+    }
+
+    private void SetUnpopping(bool value)
+    {
+        if (animator != null && !string.IsNullOrWhiteSpace(unpopBoolParam))
+            animator.SetBool(unpopBoolParam, value);
     }
 
     private void StopEnemy()
