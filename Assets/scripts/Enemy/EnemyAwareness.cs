@@ -13,11 +13,11 @@ public class EnemyAwareness : MonoBehaviour
     [SerializeField] private AwarenessState state = AwarenessState.Hiding;
     [SerializeField] private float wakeFallbackSeconds = 0.75f;
     [SerializeField] private string popBoolParam = "isPopping";
-    [SerializeField] private string popStateName = "pop";
     [SerializeField] private Animator animator;
     [SerializeField] private EnemyController controller;
 
     private float wakeFinishedAt = -1f;
+    private bool popFinished;
 
     public bool IsAsleep => state == AwarenessState.Asleep;
     public bool IsHiding => state == AwarenessState.Hiding;
@@ -37,11 +37,12 @@ public class EnemyAwareness : MonoBehaviour
 
     public void Hide()
     {
-        if (IsAsleep)
+        if (IsAsleep || state == AwarenessState.Waking)
             return;
 
         state = AwarenessState.Hiding;
         wakeFinishedAt = -1f;
+        popFinished = false;
         SetPopping(false);
         StopEnemy();
     }
@@ -50,6 +51,7 @@ public class EnemyAwareness : MonoBehaviour
     {
         state = AwarenessState.Asleep;
         wakeFinishedAt = -1f;
+        popFinished = false;
         SetPopping(false);
         StopEnemy();
     }
@@ -66,12 +68,13 @@ public class EnemyAwareness : MonoBehaviour
         {
             state = AwarenessState.Waking;
             wakeFinishedAt = Time.time + Mathf.Max(0f, wakeFallbackSeconds);
+            popFinished = false;
             SetPopping(true);
             StopEnemy();
             return false;
         }
 
-        if (!IsPopFinished() && Time.time < wakeFinishedAt)
+        if (!popFinished && Time.time < wakeFinishedAt)
             return false;
 
         state = AwarenessState.Active;
@@ -79,17 +82,14 @@ public class EnemyAwareness : MonoBehaviour
         return true;
     }
 
-    private bool IsPopFinished()
+    public void OnPopAnimationFinished()
     {
-        if (animator == null || string.IsNullOrWhiteSpace(popStateName))
-            return false;
+        if (state != AwarenessState.Waking)
+            return;
 
-        AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(0);
-        if (current.IsName(popStateName) || current.IsName($"Base Layer.{popStateName}"))
-            return current.normalizedTime >= 1f;
-
-        AnimatorStateInfo next = animator.GetNextAnimatorStateInfo(0);
-        return !(next.IsName(popStateName) || next.IsName($"Base Layer.{popStateName}"));
+        popFinished = true;
+        SetPopping(false);
+        state = AwarenessState.Active;
     }
 
     private void SetPopping(bool value)
