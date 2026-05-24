@@ -29,8 +29,7 @@ namespace Game.GOAP.Sensors
                 return false;
             }
 
-            return controller.IsPlayerAbove();
+            return controller.IsPlayerAboveReadyToJump();
         }
     }
 }
-

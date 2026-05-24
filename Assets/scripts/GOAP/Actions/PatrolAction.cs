@@ -17,6 +17,12 @@ namespace Game.GOAP.Actions
                 return ActionRunState.Stop;
             }
 
+            if (data.Awareness != null && !data.Awareness.CanRunRegularBehavior)
+            {
+                data.Controller.StopMoving();
+                return ActionRunState.Stop;
+            }
+
             var bridge = data.Controller.GetComponent<Game.GOAP.EnemyGoapAgentBridge>();
             if (bridge != null && !bridge.IsRequestedGoal(typeof(PatrolGoal)))
             {
@@ -39,6 +45,9 @@ namespace Game.GOAP.Actions
 
             [GetComponent]
             public EnemyController Controller { get; set; }
+
+            [GetComponent]
+            public EnemyAwareness Awareness { get; set; }
         }
     }
 }

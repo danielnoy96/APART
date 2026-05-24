@@ -7,11 +7,13 @@ namespace Game.GOAP
 {
     [RequireComponent(typeof(GoapActionProvider))]
     [RequireComponent(typeof(CrashKonijn.Agent.Runtime.AgentBehaviour))]
+    [RequireComponent(typeof(EnemyAwareness))]
     public class EnemyGoapAgentBridge : MonoBehaviour
     {
         [SerializeField] private GoapActionProvider actionProvider;
         [SerializeField] private EnemyDecisionModuleBase decisionModule;
         [SerializeField] private EnemyController controller;
+        [SerializeField] private EnemyAwareness awareness;
         [SerializeField] private Health health;
         [SerializeField] private Transform player;
         [SerializeField] private float detectionRange = 6f;
@@ -21,6 +23,7 @@ namespace Game.GOAP
         public float DetectionRange => detectionRange;
         public bool DebugLog => debugLog;
         public EnemyController Controller => controller;
+        public EnemyAwareness Awareness => awareness;
         public bool IsRequestedGoal(Type goalType) => lastRequestedGoal == null || lastRequestedGoal == goalType;
 
         private Type lastRequestedGoal;
@@ -74,6 +77,13 @@ namespace Game.GOAP
             if (controller == null)
             {
                 controller = GetComponent<EnemyController>();
+            }
+
+            if (awareness == null)
+            {
+                awareness = GetComponent<EnemyAwareness>();
+                if (awareness == null)
+                    awareness = gameObject.AddComponent<EnemyAwareness>();
             }
 
             if (health == null)
@@ -236,6 +246,17 @@ namespace Game.GOAP
                 Debug.Log("[GOAP] RequestGoal: ChasePlayerGoal", this);
             actionProvider.RequestGoal(new[] { typeof(ChasePlayerGoal) });
             StopRunningActionOnGoalChange(isGoalChange);
+        }
+
+        public void StopCurrentAction()
+        {
+            lastRequestedGoal = null;
+
+            var receiver = actionProvider != null ? actionProvider.Receiver as CrashKonijn.Agent.Runtime.AgentBehaviour : null;
+            if (receiver == null || receiver.ActionState.Action == null)
+                return;
+
+            receiver.StopAction();
         }
 
         private void StopRunningActionOnGoalChange(bool isGoalChange)

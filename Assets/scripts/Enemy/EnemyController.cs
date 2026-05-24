@@ -44,6 +44,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float playerAboveMinDeltaY = 1.25f;
     [Tooltip("Only consider jumping to the player if horizontal distance is within this range (prevents random jumps).")]
     [SerializeField] private float playerAboveMaxDeltaX = 2.5f;
+    [Tooltip("How long the player must stay above before the enemy reacts with a jump.")]
+    [SerializeField] private float playerAboveJumpDelay = 0.3f;
 
     [Header("Patrol")]
     [Tooltip("If patrolPoints is assigned (size >= 2), enemy patrols between points. Otherwise it patrols back/forth by patrolDistance.")]
@@ -77,6 +79,7 @@ public class EnemyController : MonoBehaviour
     private CrashKonijn.Goap.Runtime.GoapActionProvider goapActionProvider;
     private CrashKonijn.Agent.Runtime.AgentBehaviour goapAgentBehaviour;
     private float nextJumpTime;
+    private float playerAboveDetectedSince = -1f;
     private float lastMoveDir = 1f;
 
     public KnockbackReceiver KnockbackReceiver => knockbackReceiver;
@@ -268,16 +271,22 @@ public class EnemyController : MonoBehaviour
         }
 
         float distanceX = player.position.x - transform.position.x;
+        bool playerAboveReadyToJump = IsPlayerAboveReadyToJump();
 
         if (ShouldStopChasing(distanceX))
         {
+            if (playerAboveReadyToJump)
+            {
+                TryJump();
+            }
+
             SetHorizontalVelocity(0f);
             return;
         }
 
         // If the player is on a higher platform, attempt a jump while chasing.
         // This is also used as a safety net when GOAP planning is still being iterated.
-        if (IsPlayerAbove())
+        if (playerAboveReadyToJump)
         {
             TryJump();
         }
@@ -336,6 +345,28 @@ public class EnemyController : MonoBehaviour
 
         float deltaX = Mathf.Abs(player.position.x - transform.position.x);
         return deltaX <= playerAboveMaxDeltaX;
+    }
+
+    public bool IsPlayerAboveReadyToJump()
+    {
+        if (!IsPlayerAbove() || !IsGrounded())
+        {
+            playerAboveDetectedSince = -1f;
+            return false;
+        }
+
+        if (playerAboveJumpDelay <= 0f)
+        {
+            return true;
+        }
+
+        if (playerAboveDetectedSince < 0f)
+        {
+            playerAboveDetectedSince = Time.time;
+            return false;
+        }
+
+        return Time.time - playerAboveDetectedSince >= playerAboveJumpDelay;
     }
 
     public bool TryJump()

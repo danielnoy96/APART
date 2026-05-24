@@ -26,6 +26,12 @@ namespace Game.GOAP.Actions
                 return ActionRunState.Stop;
             }
 
+            if (data.Awareness != null && !data.Awareness.CanRunRegularBehavior)
+            {
+                data.Controller.StopMoving();
+                return ActionRunState.Stop;
+            }
+
             var bridge = data.Controller.GetComponent<Game.GOAP.EnemyGoapAgentBridge>();
             if (bridge != null && !bridge.IsRequestedGoal(typeof(ChasePlayerGoal)))
             {
@@ -40,6 +46,14 @@ namespace Game.GOAP.Actions
 
             if (!data.HasJumped)
             {
+                if (!data.Controller.IsPlayerAboveReadyToJump())
+                {
+                    data.Controller.ChasePlayer();
+                    return Time.time - data.StartTime > MaxAirSeconds
+                        ? ActionRunState.Stop
+                        : ActionRunState.Continue;
+                }
+
                 if (!data.Controller.TryJump())
                 {
                     data.Controller.ChasePlayer();
@@ -76,6 +90,9 @@ namespace Game.GOAP.Actions
 
             [GetComponent]
             public EnemyController Controller { get; set; }
+
+            [GetComponent]
+            public EnemyAwareness Awareness { get; set; }
 
             public float StartTime { get; set; }
             public float JumpTime { get; set; }

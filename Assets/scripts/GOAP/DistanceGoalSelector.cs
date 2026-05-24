@@ -30,11 +30,20 @@ namespace Game.GOAP
             if (bridge == null)
                 return;
 
+            EnemyAwareness awareness = bridge.Awareness;
+            if (awareness != null && awareness.IsAsleep)
+            {
+                chasing = false;
+                bridge.StopCurrentAction();
+                return;
+            }
+
             var player = bridge.Player;
             if (player == null)
             {
                 chasing = false;
-                bridge.RequestPatrol();
+                awareness?.Hide();
+                bridge.StopCurrentAction();
                 return;
             }
 
@@ -48,15 +57,21 @@ namespace Game.GOAP
             {
                 bool shouldChase = distance < enterChaseRange;
                 if (bridge.DebugLog && (!hasLast || lastChasing != shouldChase))
-                    Debug.Log($"[GOAP] DistanceGoalSelector: {(shouldChase ? "Chase" : "Patrol")} (d={distance:0.00}, range={enterChaseRange:0.00})", bridge);
+                    Debug.Log($"[GOAP] DistanceGoalSelector: {(shouldChase ? "Chase" : "Hide")} (d={distance:0.00}, range={enterChaseRange:0.00})", bridge);
 
                 hasLast = true;
                 lastChasing = shouldChase;
 
                 if (shouldChase)
-                    bridge.RequestChase();
+                {
+                    RequestChaseWhenAwake(bridge, awareness);
+                }
                 else
-                    bridge.RequestPatrol();
+                {
+                    awareness?.Hide();
+                    bridge.StopCurrentAction();
+                }
+
                 return;
             }
 
@@ -66,15 +81,31 @@ namespace Game.GOAP
                 chasing = false;
 
             if (chasing)
-                bridge.RequestChase();
+            {
+                RequestChaseWhenAwake(bridge, awareness);
+            }
             else
-                bridge.RequestPatrol();
+            {
+                awareness?.Hide();
+                bridge.StopCurrentAction();
+            }
 
             if (bridge.DebugLog && (!hasLast || lastChasing != chasing))
-                Debug.Log($"[GOAP] DistanceGoalSelector: {(chasing ? "Chase" : "Patrol")} (d={distance:0.00}, enter={enterChaseRange:0.00}, exit={exitChaseRange:0.00})", bridge);
+                Debug.Log($"[GOAP] DistanceGoalSelector: {(chasing ? "Chase" : "Hide")} (d={distance:0.00}, enter={enterChaseRange:0.00}, exit={exitChaseRange:0.00})", bridge);
 
             hasLast = true;
             lastChasing = chasing;
+        }
+
+        private void RequestChaseWhenAwake(EnemyGoapAgentBridge bridge, EnemyAwareness awareness)
+        {
+            if (awareness != null && !awareness.WakeAndReady())
+            {
+                bridge.StopCurrentAction();
+                return;
+            }
+
+            bridge.RequestChase();
         }
     }
 }

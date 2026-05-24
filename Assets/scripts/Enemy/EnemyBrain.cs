@@ -5,6 +5,7 @@ public class EnemyBrain : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] private EnemyController controller;
+    [SerializeField] private EnemyAwareness awareness;
     [SerializeField] private Health health;
     [SerializeField] private Transform player;
 
@@ -28,6 +29,11 @@ public class EnemyBrain : MonoBehaviour
         if (health == null)
         {
             health = GetComponent<Health>();
+        }
+
+        if (awareness == null)
+        {
+            awareness = GetComponent<EnemyAwareness>();
         }
 
         if (player == null)
@@ -56,18 +62,28 @@ public class EnemyBrain : MonoBehaviour
             return;
         }
 
+        if (awareness != null && awareness.IsAsleep)
+        {
+            controller.StopMoving();
+            return;
+        }
+
         bool playerInRange = player != null &&
                              Vector2.Distance(transform.position, player.position) < detectionRange;
 
         if (playerInRange)
         {
+            if (awareness != null && !awareness.WakeAndReady())
+            {
+                return;
+            }
+
             // GOAP action will call ChasePlayer() later.
             controller.SetStateChase();
         }
         else
         {
-            // GOAP action will call Patrol() later.
-            controller.SetStatePatrol();
+            awareness?.Hide();
         }
     }
 }
