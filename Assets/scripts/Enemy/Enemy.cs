@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -11,6 +12,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private string hurtTriggerParam = "";
     [Tooltip("Trigger parameter used to play a death animation (if you have one).")]
     [SerializeField] private string deathTriggerParam = "";
+    [Tooltip("Animator state to play immediately on death. Used to make death override hurt/pop/unpop transitions.")]
+    [SerializeField] private string deathStateName = "small enemy dead";
+    [Tooltip("Seconds to wait after the death transition starts before this enemy becomes drainable corpse.")]
+    [SerializeField] private float corpseTransitionDelay = 0.25f;
 
     [Header("Death Handling")]
     [Tooltip("Disable this GameObject when health reaches 0 (if no death animation is used).")]
@@ -21,6 +26,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float corpseHealRatio = 0.3f;
     [SerializeField] private int minCorpseHeal = 1;
     [SerializeField] private int maxCorpseHeal = 8;
+
+    private bool corpseFinalized;
 
     private void Awake()
     {
@@ -64,6 +71,11 @@ public class Enemy : MonoBehaviour
             return;
         }
 
+        if (health != null && health.CurrentHealth <= 0)
+        {
+            return;
+        }
+
         if (!string.IsNullOrWhiteSpace(hurtTriggerParam))
         {
             animator.SetTrigger(hurtTriggerParam);
@@ -76,11 +88,48 @@ public class Enemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrWhiteSpace(deathTriggerParam))
         {
+            if (!string.IsNullOrWhiteSpace(hurtTriggerParam))
+            {
+                animator.ResetTrigger(hurtTriggerParam);
+            }
+
             animator.SetTrigger(deathTriggerParam);
+            if (!string.IsNullOrWhiteSpace(deathStateName))
+            {
+                animator.Play(deathStateName, 0, 0f);
+            }
+
             playedDeathAnimation = true;
         }
 
-        // Leave a drainable corpse in the scene (do not destroy immediately).
+        DisableContactDamage();
+        StopMovement();
+
+        if (playedDeathAnimation && corpseTransitionDelay > 0f)
+        {
+            StartCoroutine(FinalizeCorpseAfterTransition());
+            return;
+        }
+
+        FinalizeCorpse();
+    }
+
+    private IEnumerator FinalizeCorpseAfterTransition()
+    {
+        yield return new WaitForSeconds(corpseTransitionDelay);
+        FinalizeCorpse();
+    }
+
+    private void FinalizeCorpse()
+    {
+        if (corpseFinalized)
+        {
+            return;
+        }
+
+        corpseFinalized = true;
+
+        // Leave a drainable corpse in the scene after the corpse-transition animation.
         DrainableCorpse corpse = EnsureDrainableCorpse();
         if (corpse != null && health != null)
         {
@@ -89,31 +138,23 @@ public class Enemy : MonoBehaviour
             corpse.ConfigureHealAmount(computedHeal);
             corpse.RenderBehind(FindAnyObjectByType<player>());
         }
-        DisableContactDamage();
 
         // Disable this Enemy behavior so it stops reacting/acting as an enemy.
         enabled = false;
 
-        // Optionally disable physics-driven movement (keeps the corpse in place).
+        if (disableOnDeath)
+        {
+            // Legacy option is intentionally a no-op: the dead enemy remains as a drainable corpse.
+        }
+    }
+
+    private void StopMovement()
+    {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
-        }
-
-        // Optional legacy behavior (keep off by default for corpse-based drain design).
-        if (!playedDeathAnimation)
-        {
-            if (disableOnDeath)
-            {
-                // Don't disable the whole GameObject; we need it present for draining.
-                // Kept for backward compatibility; no-op intentionally.
-            }
-            else
-            {
-                // Don't destroy the GameObject; corpse must persist.
-            }
         }
     }
 
