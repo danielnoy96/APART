@@ -441,6 +441,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: animation assets 2_14
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 3000
+        width: 1000
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc338339097b3074aaecb8ca78f60eab
+      internalID: -1159566087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2500
+        width: 1000
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09f089df8b1b0474092d136dbef2548e
+      internalID: 1279822739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -463,6 +507,8 @@ TextureImporter:
       animation assets 2_11: 2032494805
       animation assets 2_12: -438334439
       animation assets 2_13: 1404471610
+      animation assets 2_14: -1159566087
+      animation assets 2_15: 1279822739
       animation assets 2_2: -2020987296273821061
       animation assets 2_3: 1775548243261363524
       animation assets 2_4: 8732842325751616570

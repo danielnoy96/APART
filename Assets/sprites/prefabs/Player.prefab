@@ -78,8 +78,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 26673157
-  m_SortingLayer: 4
+  m_SortingLayerID: 1779884001
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 647829052, guid: 9d360b99dc0dc0f4bbeaa83032b8c659, type: 3}
@@ -322,6 +322,7 @@ MonoBehaviour:
   attackPressed: 0
   dashPressed: 0
   lifeDrainPressed: 0
+  lifeDrainHeld: 0
   dashSpeed: 13
   dashDuration: 0.5
   dashCost: 20

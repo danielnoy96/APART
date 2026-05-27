@@ -48,6 +48,10 @@ public class BreakableTimedPlatform : MonoBehaviour
     [Header("Performance")]
     [SerializeField] private bool prewarmShardsOnStart = true;
 
+    [Header("Linked Crumble VFX")]
+    [SerializeField] private BushCrumbleVFX[] linkedCrumbleVFX;
+    [SerializeField] private bool autoFindChildCrumbleVFX = true;
+
     private readonly List<ShardInstance> shardCache = new List<ShardInstance>();
     private Collider2D[] colliders;
     private Renderer[] renderers;
@@ -119,6 +123,7 @@ public class BreakableTimedPlatform : MonoBehaviour
     {
         busy = true;
         float crumbleDuration = Mathf.Max(0f, breakDelay);
+        PlayLinkedCrumbleVFX(crumbleDuration);
         bool spawnedShards = TrySpawnShards(crumbleDuration);
 
         if (spawnedShards)
@@ -140,6 +145,7 @@ public class BreakableTimedPlatform : MonoBehaviour
         yield return new WaitForSeconds(respawnDelay);
         SetEnabled(true);
         SetVisualTargetEnabled(true);
+        RestoreLinkedCrumbleVFX();
         busy = false;
     }
 
@@ -384,6 +390,67 @@ public class BreakableTimedPlatform : MonoBehaviour
         if (visualTarget != null)
         {
             visualTarget.enabled = enabled;
+        }
+    }
+
+    private void PlayLinkedCrumbleVFX(float duration)
+    {
+        List<BushCrumbleVFX> crumbleVFX = GetLinkedCrumbleVFX();
+        for (int i = 0; i < crumbleVFX.Count; i++)
+        {
+            if (crumbleVFX[i] != null)
+            {
+                crumbleVFX[i].Play(duration);
+            }
+        }
+    }
+
+    private void RestoreLinkedCrumbleVFX()
+    {
+        List<BushCrumbleVFX> crumbleVFX = GetLinkedCrumbleVFX();
+        for (int i = 0; i < crumbleVFX.Count; i++)
+        {
+            if (crumbleVFX[i] != null)
+            {
+                crumbleVFX[i].Restore();
+            }
+        }
+    }
+
+    private List<BushCrumbleVFX> GetLinkedCrumbleVFX()
+    {
+        List<BushCrumbleVFX> results = new List<BushCrumbleVFX>();
+        HashSet<BushCrumbleVFX> seen = new HashSet<BushCrumbleVFX>();
+
+        AddLinkedCrumbleVFX(linkedCrumbleVFX, results, seen);
+
+        if (autoFindChildCrumbleVFX)
+        {
+            AddLinkedCrumbleVFX(GetComponentsInChildren<BushCrumbleVFX>(true), results, seen);
+
+            if (visualTarget != null && visualTarget.transform.parent != null)
+            {
+                AddLinkedCrumbleVFX(visualTarget.transform.parent.GetComponentsInChildren<BushCrumbleVFX>(true), results, seen);
+            }
+        }
+
+        return results;
+    }
+
+    private static void AddLinkedCrumbleVFX(BushCrumbleVFX[] source, List<BushCrumbleVFX> results, HashSet<BushCrumbleVFX> seen)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < source.Length; i++)
+        {
+            BushCrumbleVFX crumbleVFX = source[i];
+            if (crumbleVFX != null && seen.Add(crumbleVFX))
+            {
+                results.Add(crumbleVFX);
+            }
         }
     }
 

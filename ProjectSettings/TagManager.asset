@@ -21,7 +21,7 @@ TagManager:
   - Player
   - EnemyDamageTrigger
   - preforground
-  - 
+  - 2D Lights
   - 
   - 
   - 
@@ -53,11 +53,17 @@ TagManager:
   - name: ground
     uniqueID: 26673157
     locked: 0
+  - name: player
+    uniqueID: 1779884001
+    locked: 0
   - name: preforground
     uniqueID: 951266269
     locked: 0
   - name: forground
     uniqueID: 3963190481
+    locked: 0
+  - name: forground blur
+    uniqueID: 1779884002
     locked: 0
   m_RenderingLayers:
   - Default
