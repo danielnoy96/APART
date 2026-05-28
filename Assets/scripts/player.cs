@@ -115,7 +115,14 @@ public class player : MonoBehaviour
     private float knockbackLockTimer;
     public bool IsKnockbackLocked => knockbackLockTimer > 0f;
 
+    [Header("Hit Animation Params (Optional)")]
+    [Tooltip("Bool parameter for the knockback/hit animation. Leave empty if unused.")]
+    public string hitBoolParam = "isHit";
+    [Tooltip("Seconds to play the hit animation when damage is accepted but no knockback duration is supplied.")]
+    public float hitAnimHoldSeconds = 0.25f;
+
     private bool previousLifeDrainHeld;
+    private float hitAnimationTimer;
 
     [Header("Combat Animation Params (Optional)")]
     [Tooltip("Bool parameter for 'isAttacking'. Leave empty if unused.")]
@@ -188,6 +195,10 @@ public class player : MonoBehaviour
         if (string.IsNullOrWhiteSpace(lifeDrainBoolParam))
         {
             lifeDrainBoolParam = "isLifeDraining";
+        }
+        if (string.IsNullOrWhiteSpace(hitBoolParam))
+        {
+            hitBoolParam = "isHit";
         }
 
         rb.gravityScale = normalGravity;
@@ -276,6 +287,11 @@ public class player : MonoBehaviour
         {
             knockbackLockTimer -= Time.deltaTime;
         }
+        if (hitAnimationTimer > 0f)
+        {
+            hitAnimationTimer -= Time.deltaTime;
+        }
+        SyncAnimatorHitParam();
     }
 
     private void LateUpdate()
@@ -302,6 +318,8 @@ public class player : MonoBehaviour
         isInvincible = false;
         invincibilityTimer = 0f;
         knockbackLockTimer = 0f;
+        hitAnimationTimer = 0f;
+        SyncAnimatorHitParam();
 
         coyoteTimer = 0f;
         jumpBufferTimer = 0f;
@@ -336,6 +354,16 @@ public class player : MonoBehaviour
         anim.SetBool(IsGroundedParam, isGrounded);
         anim.SetBool(IsJumpingParam, !isGrounded);
         anim.SetFloat(YVelocityParam, rb.linearVelocity.y);
+
+        SyncAnimatorHitParam();
+    }
+
+    private void SyncAnimatorHitParam()
+    {
+        if (anim != null && !string.IsNullOrWhiteSpace(hitBoolParam))
+        {
+            anim.SetBool(hitBoolParam, IsKnockbackLocked || hitAnimationTimer > 0f);
+        }
     }
 
     public void Flip()
@@ -475,6 +503,7 @@ public class player : MonoBehaviour
         }
 
         health.TakeDamage(damage);
+        StartHitAnimationHold(hitAnimHoldSeconds);
 
         if (invincibilityDuration > 0f)
         {
@@ -497,6 +526,18 @@ public class player : MonoBehaviour
         }
 
         knockbackLockTimer = Mathf.Max(knockbackLockTimer, duration);
+        StartHitAnimationHold(duration);
+    }
+
+    private void StartHitAnimationHold(float duration)
+    {
+        if (duration <= 0f)
+        {
+            return;
+        }
+
+        hitAnimationTimer = Mathf.Max(hitAnimationTimer, duration);
+        SyncAnimatorHitParam();
     }
 
     public DrainableCorpse GetDrainableCorpse()
