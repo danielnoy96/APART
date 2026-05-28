@@ -103,8 +103,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
-      y: 1133
+      x: 3018
+      y: 4
       width: 1626
       height: 1077
     spriteID: 2f47eff6bf963d548be27b50a2b16799
@@ -836,7 +836,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0.658
-    uvTransform: {x: 4, y: 1133}
+    uvTransform: {x: 3018, y: 4}
     spritePosition: {x: 6658, y: 2640}
   - name: tree branch
     originalName: 
@@ -846,8 +846,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 896
-      y: 2218
+      x: 2928
+      y: 1841
       width: 692
       height: 473
     spriteID: f5841adab1d69a14796a0bae172f61d8
@@ -858,7 +858,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 896, y: 2218}
+    uvTransform: {x: 2928, y: 1841}
     spritePosition: {x: 6548, y: 4399}
   - name: small stump 4
     originalName: 
@@ -868,8 +868,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 3044
-      y: 2019
+      x: 683
+      y: 1841
       width: 974
       height: 405
     spriteID: ea3dd66b94ca818449d03b693cf23d72
@@ -880,7 +880,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 3044, y: 2019}
+    uvTransform: {x: 683, y: 1841}
     spritePosition: {x: 7344, y: 5754}
   - name: small stump 3
     originalName: 
@@ -890,8 +890,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 2818
-      y: 703
+      x: 1665
+      y: 1841
       width: 644
       height: 568
     spriteID: cd089f9830dc1a148a4643bdcd263a4f
@@ -902,8 +902,30 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 2818, y: 703}
+    uvTransform: {x: 1665, y: 1841}
     spritePosition: {x: 7759, y: 4376}
+  - name: Layer 1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 1348
+      height: 1829
+    spriteID: 1f592a43f0b170544804fedba47c1e44
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 3572, y: 110}
   - name: stump 6
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -912,8 +934,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 3060
-      y: 1433
+      x: 5544
+      y: 1121
       width: 961
       height: 473
     spriteID: e6c80b9acdc845046b809fb6d1882abc
@@ -924,7 +946,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 3060, y: 1433}
+    uvTransform: {x: 5544, y: 1121}
     spritePosition: {x: 3791, y: 2512}
   - name: stump 5
     originalName: 
@@ -934,8 +956,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 1433
+      x: 6700
+      y: 4
       width: 1390
       height: 578
     spriteID: 4d804f1151ea6be45922745a94ed9dba
@@ -946,7 +968,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 1433}
+    uvTransform: {x: 6700, y: 4}
     spritePosition: {x: 3501, y: 3064}
   - name: small stump 2
     originalName: 
@@ -956,8 +978,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 3302
+      x: 6513
+      y: 1438
       width: 1404
       height: 228
     spriteID: be65f31137a50fa42a231e4242bcc358
@@ -968,7 +990,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 3302}
+    uvTransform: {x: 6513, y: 1438}
     spritePosition: {x: 4562, y: 4337}
   - name: small stump
     originalName: 
@@ -978,8 +1000,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 2985
+      x: 6513
+      y: 1121
       width: 1346
       height: 309
     spriteID: 6bfc5b1642a6f54488df983a150f8d2f
@@ -990,7 +1012,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 2985}
+    uvTransform: {x: 6513, y: 1121}
     spritePosition: {x: 4518, y: 4674}
   - name: tree 1
     originalName: 
@@ -1000,7 +1022,7 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
+      x: 1360
       y: 4
       width: 1650
       height: 1121
@@ -1012,7 +1034,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 4}
+    uvTransform: {x: 1360, y: 4}
     spritePosition: {x: 2339, y: 4635}
   - name: stump 1
     originalName: 
@@ -1022,8 +1044,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 3470
-      y: 703
+      x: 2317
+      y: 1841
       width: 603
       height: 592
     spriteID: 061950022a552fa48b0cf67d8e33c5d7
@@ -1034,7 +1056,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 3470, y: 703}
+    uvTransform: {x: 2317, y: 1841}
     spritePosition: {x: 1248, y: 209}
   - name: stump 2
     originalName: 
@@ -1044,8 +1066,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 2983
-      y: 4
+      x: 4
+      y: 1841
       width: 671
       height: 616
     spriteID: 2b282c151daf8fd4ea4fe83beeee4577
@@ -1056,7 +1078,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 2983, y: 4}
+    uvTransform: {x: 4, y: 1841}
     spritePosition: {x: 1248, y: 1166}
   - name: stump7
     originalName: 
@@ -1066,8 +1088,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
-      y: 2218
+      x: 4652
+      y: 4
       width: 884
       height: 1631
     spriteID: 67922eee1a5af004eba916beb5d55357
@@ -1078,7 +1100,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 2218}
+    uvTransform: {x: 4652, y: 4}
     spritePosition: {x: 116, y: 209}
   - name: stump 4
     originalName: 
@@ -1088,8 +1110,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 2019
+      x: 1360
+      y: 1133
       width: 1374
       height: 571
     spriteID: fa79ecb963e44c94386d269d8a415816
@@ -1100,7 +1122,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 2019}
+    uvTransform: {x: 1360, y: 1133}
     spritePosition: {x: 324, y: 2348}
   - name: stump 2
     originalName: 
@@ -1110,8 +1132,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 703
+      x: 5544
+      y: 4
       width: 1148
       height: 722
     spriteID: 7099284de2ea8724396adfb7d7b27588
@@ -1122,7 +1144,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 703}
+    uvTransform: {x: 5544, y: 4}
     spritePosition: {x: 489, y: 3246}
   - name: stump 1
     originalName: 
@@ -1132,8 +1154,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 4
+      x: 3018
+      y: 1089
       width: 1313
       height: 691
     spriteID: fad7c4163e600054e8bbb36521b76920
@@ -1144,7 +1166,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 4}
+    uvTransform: {x: 3018, y: 1089}
     spritePosition: {x: 324, y: 5351}
   - name: stump 3
     originalName: 
@@ -1154,8 +1176,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1662
-      y: 2598
+      x: 5544
+      y: 734
       width: 1735
       height: 379
     spriteID: 1ca57ae974a2b4b49a862651a0235f3f
@@ -1166,7 +1188,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1662, y: 2598}
+    uvTransform: {x: 5544, y: 734}
     spritePosition: {x: 116, y: 4399}
   spriteImportData: []
   rigSpriteImportData: []
@@ -1267,7 +1289,7 @@ ScriptedImporter:
     parentIndex: 0
     spriteID: 2f47eff6bf963d548be27b50a2b16799
     layerID: 124
-    mosaicPosition: {x: 4, y: 1133}
+    mosaicPosition: {x: 3018, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1287,7 +1309,7 @@ ScriptedImporter:
     parentIndex: 2
     spriteID: f5841adab1d69a14796a0bae172f61d8
     layerID: 127
-    mosaicPosition: {x: 896, y: 2218}
+    mosaicPosition: {x: 2928, y: 1841}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1297,7 +1319,7 @@ ScriptedImporter:
     parentIndex: 2
     spriteID: ea3dd66b94ca818449d03b693cf23d72
     layerID: 129
-    mosaicPosition: {x: 3044, y: 2019}
+    mosaicPosition: {x: 683, y: 1841}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1307,7 +1329,27 @@ ScriptedImporter:
     parentIndex: 2
     spriteID: cd089f9830dc1a148a4643bdcd263a4f
     layerID: 128
-    mosaicPosition: {x: 2818, y: 703}
+    mosaicPosition: {x: 1665, y: 1841}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Artboard 9
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: b74dd88851b2ad74097dcf01759d8c3f
+    layerID: 205
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: Layer 1
+    spriteName: Layer 1
+    isGroup: 0
+    parentIndex: 6
+    spriteID: 1f592a43f0b170544804fedba47c1e44
+    layerID: 207
+    mosaicPosition: {x: 4, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1324,20 +1366,20 @@ ScriptedImporter:
   - name: stump 6
     spriteName: stump 6
     isGroup: 0
-    parentIndex: 6
+    parentIndex: 8
     spriteID: e6c80b9acdc845046b809fb6d1882abc
     layerID: 122
-    mosaicPosition: {x: 3060, y: 1433}
+    mosaicPosition: {x: 5544, y: 1121}
     flatten: 0
     isImported: 1
     isVisible: 1
   - name: stump 5
     spriteName: stump 5
     isGroup: 0
-    parentIndex: 6
+    parentIndex: 8
     spriteID: 4d804f1151ea6be45922745a94ed9dba
     layerID: 121
-    mosaicPosition: {x: 1662, y: 1433}
+    mosaicPosition: {x: 6700, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1354,20 +1396,20 @@ ScriptedImporter:
   - name: small stump 2
     spriteName: small stump 2
     isGroup: 0
-    parentIndex: 9
+    parentIndex: 11
     spriteID: be65f31137a50fa42a231e4242bcc358
     layerID: 131
-    mosaicPosition: {x: 1662, y: 3302}
+    mosaicPosition: {x: 6513, y: 1438}
     flatten: 0
     isImported: 1
     isVisible: 1
   - name: small stump
     spriteName: small stump
     isGroup: 0
-    parentIndex: 9
+    parentIndex: 11
     spriteID: 6bfc5b1642a6f54488df983a150f8d2f
     layerID: 130
-    mosaicPosition: {x: 1662, y: 2985}
+    mosaicPosition: {x: 6513, y: 1121}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1384,10 +1426,10 @@ ScriptedImporter:
   - name: tree 1
     spriteName: tree 1
     isGroup: 0
-    parentIndex: 12
+    parentIndex: 14
     spriteID: 4de9c9d2b66b9e24d8110ad0b41c750e
     layerID: 123
-    mosaicPosition: {x: 4, y: 4}
+    mosaicPosition: {x: 1360, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1404,30 +1446,30 @@ ScriptedImporter:
   - name: stump 1
     spriteName: stump 1
     isGroup: 0
-    parentIndex: 14
+    parentIndex: 16
     spriteID: 061950022a552fa48b0cf67d8e33c5d7
     layerID: 193
-    mosaicPosition: {x: 3470, y: 703}
+    mosaicPosition: {x: 2317, y: 1841}
     flatten: 0
     isImported: 1
     isVisible: 1
   - name: stump 2
     spriteName: stump 2
     isGroup: 0
-    parentIndex: 14
+    parentIndex: 16
     spriteID: 2b282c151daf8fd4ea4fe83beeee4577
     layerID: 192
-    mosaicPosition: {x: 2983, y: 4}
+    mosaicPosition: {x: 4, y: 1841}
     flatten: 0
     isImported: 1
     isVisible: 1
   - name: stump7
     spriteName: stump7
     isGroup: 0
-    parentIndex: 14
+    parentIndex: 16
     spriteID: 67922eee1a5af004eba916beb5d55357
     layerID: 191
-    mosaicPosition: {x: 4, y: 2218}
+    mosaicPosition: {x: 4652, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1444,20 +1486,20 @@ ScriptedImporter:
   - name: stump 4
     spriteName: stump 4
     isGroup: 0
-    parentIndex: 18
+    parentIndex: 20
     spriteID: fa79ecb963e44c94386d269d8a415816
     layerID: 120
-    mosaicPosition: {x: 1662, y: 2019}
+    mosaicPosition: {x: 1360, y: 1133}
     flatten: 0
     isImported: 1
     isVisible: 1
   - name: stump 2
     spriteName: stump 2
     isGroup: 0
-    parentIndex: 18
+    parentIndex: 20
     spriteID: 7099284de2ea8724396adfb7d7b27588
     layerID: 5
-    mosaicPosition: {x: 1662, y: 703}
+    mosaicPosition: {x: 5544, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -1474,20 +1516,20 @@ ScriptedImporter:
   - name: stump 1
     spriteName: stump 1
     isGroup: 0
-    parentIndex: 21
+    parentIndex: 23
     spriteID: fad7c4163e600054e8bbb36521b76920
     layerID: 8
-    mosaicPosition: {x: 1662, y: 4}
+    mosaicPosition: {x: 3018, y: 1089}
     flatten: 0
     isImported: 1
     isVisible: 1
   - name: stump 3
     spriteName: stump 3
     isGroup: 0
-    parentIndex: 21
+    parentIndex: 23
     spriteID: 1ca57ae974a2b4b49a862651a0235f3f
     layerID: 7
-    mosaicPosition: {x: 1662, y: 2598}
+    mosaicPosition: {x: 5544, y: 734}
     flatten: 0
     isImported: 1
     isVisible: 1
