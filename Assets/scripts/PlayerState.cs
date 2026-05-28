@@ -15,7 +15,6 @@ public abstract class PlayerState
     public virtual void FixedUpdate() { }
 
     protected Rigidbody2D RB => player.rb;
-    protected Animator Anim => player.anim;
 
     protected Vector2 MoveInput
     {

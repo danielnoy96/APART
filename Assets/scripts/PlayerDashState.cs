@@ -39,13 +39,7 @@ public class PlayerDashState : PlayerState
             endLagEndTime = easeOutEndTime;
         }
 
-        if (player.anim != null)
-        {
-            if (!string.IsNullOrWhiteSpace(player.dashBoolParam))
-            {
-                player.HoldAnimatorBool(player.dashBoolParam, player.dashAnimHoldSeconds);
-            }
-        }
+        player.AnimationDriver.PlayTimedAction(PlayerAnim.Dash, player.dashAnimHoldSeconds);
 
         previousGravityScale = RB.gravityScale;
         if (player.DashIgnoreGravity)

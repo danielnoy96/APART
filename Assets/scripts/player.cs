@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +7,8 @@ public class player : MonoBehaviour
     public Rigidbody2D rb;
     public PlayerInput playerInput;
     public Animator anim;
+    [SerializeField] private PlayerAnimationDriver animationDriver;
+    [SerializeField] private PlayerAnimationEventRelay animationEventRelay;
     public Combat combat;
     public Stamina stamina;
     public Health health;
@@ -123,6 +124,7 @@ public class player : MonoBehaviour
 
     private bool previousLifeDrainHeld;
     private float hitAnimationTimer;
+    private float hitAnimationDuration;
 
     [Header("Combat Animation Params (Optional)")]
     [Tooltip("Bool parameter for 'isAttacking'. Leave empty if unused.")]
@@ -130,7 +132,6 @@ public class player : MonoBehaviour
     [Tooltip("Seconds to keep the attack animation bool true so the attack clip can play fully (even if the attack gameplay state ends earlier).")]
     public float attackAnimHoldSeconds = 0.5f;
 
-    private Coroutine animatorBoolHoldRoutine;
     private Vector3 startingScale;
 
     [Header("Life Drain")]
@@ -149,9 +150,7 @@ public class player : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
 
-    private static readonly int IsGroundedParam = Animator.StringToHash("isGrounded");
-    private static readonly int IsJumpingParam = Animator.StringToHash("isJumping");
-    private static readonly int YVelocityParam = Animator.StringToHash("yVelocity");
+    public PlayerAnimationDriver AnimationDriver => animationDriver;
 
 
     private void Awake()
@@ -165,6 +164,34 @@ public class player : MonoBehaviour
         if (anim == null)
         {
             anim = GetComponent<Animator>();
+            if (anim == null)
+            {
+                anim = GetComponentInChildren<Animator>();
+            }
+        }
+        if (animationDriver == null)
+        {
+            animationDriver = GetComponent<PlayerAnimationDriver>();
+            if (animationDriver == null)
+            {
+                animationDriver = gameObject.AddComponent<PlayerAnimationDriver>();
+            }
+        }
+        if (anim != null)
+        {
+            animationEventRelay = anim.GetComponent<PlayerAnimationEventRelay>();
+            if (animationEventRelay == null)
+            {
+                animationEventRelay = anim.gameObject.AddComponent<PlayerAnimationEventRelay>();
+            }
+        }
+        else if (animationEventRelay == null)
+        {
+            animationEventRelay = GetComponent<PlayerAnimationEventRelay>();
+            if (animationEventRelay == null)
+            {
+                animationEventRelay = gameObject.AddComponent<PlayerAnimationEventRelay>();
+            }
         }
         if (combat == null)
         {
@@ -200,6 +227,8 @@ public class player : MonoBehaviour
         {
             hitBoolParam = "isHit";
         }
+        animationDriver.Initialize(anim);
+        animationDriver.ConfigureParams(dashBoolParam, attackBoolParam, lifeDrainBoolParam, hitBoolParam);
 
         rb.gravityScale = normalGravity;
 
@@ -211,39 +240,6 @@ public class player : MonoBehaviour
         lifeDrainState = new PlayerLifeDrainState(this);
 
         ChangeState(idleState);
-    }
-
-    public void HoldAnimatorBool(string boolParam, float seconds)
-    {
-        if (anim == null || string.IsNullOrWhiteSpace(boolParam))
-        {
-            return;
-        }
-
-        if (animatorBoolHoldRoutine != null)
-        {
-            StopCoroutine(animatorBoolHoldRoutine);
-            animatorBoolHoldRoutine = null;
-        }
-
-        anim.SetBool(boolParam, true);
-
-        if (seconds > 0f)
-        {
-            animatorBoolHoldRoutine = StartCoroutine(HoldAnimatorBoolRoutine(boolParam, seconds));
-        }
-    }
-
-    private System.Collections.IEnumerator HoldAnimatorBoolRoutine(string boolParam, float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-
-        if (anim != null && !string.IsNullOrWhiteSpace(boolParam))
-        {
-            anim.SetBool(boolParam, false);
-        }
-
-        animatorBoolHoldRoutine = null;
     }
 
     public void ChangeState(PlayerState newState)
@@ -260,9 +256,9 @@ public class player : MonoBehaviour
     void FixedUpdate()
     {
         CheckGrounded();
-        SyncAnimatorMovementParams();
         RefreshLifeDrainHeldInput();
         currentState?.FixedUpdate();
+        SyncAnimationState();
     }
 
     void Update()
@@ -291,7 +287,7 @@ public class player : MonoBehaviour
         {
             hitAnimationTimer -= Time.deltaTime;
         }
-        SyncAnimatorHitParam();
+        SyncAnimationState();
     }
 
     private void LateUpdate()
@@ -319,7 +315,8 @@ public class player : MonoBehaviour
         invincibilityTimer = 0f;
         knockbackLockTimer = 0f;
         hitAnimationTimer = 0f;
-        SyncAnimatorHitParam();
+        hitAnimationDuration = 0f;
+        animationDriver?.ResetAll();
 
         coyoteTimer = 0f;
         jumpBufferTimer = 0f;
@@ -335,6 +332,7 @@ public class player : MonoBehaviour
         combo?.ResetCombo();
 
         ChangeState(idleState);
+        SyncAnimationState();
     }
 
     public bool IsGrounded => isGrounded;
@@ -344,26 +342,20 @@ public class player : MonoBehaviour
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     }
 
-    private void SyncAnimatorMovementParams()
+    private void SyncAnimationState()
     {
-        if (anim == null || rb == null)
+        if (animationDriver == null || rb == null)
             return;
 
         // These parameters exist in `Assets/sprites/animations/character animations/sprite.controller`.
         // If a different controller is used, Unity will ignore unknown parameters.
-        anim.SetBool(IsGroundedParam, isGrounded);
-        anim.SetBool(IsJumpingParam, !isGrounded);
-        anim.SetFloat(YVelocityParam, rb.linearVelocity.y);
+        bool hitActive = IsKnockbackLocked || hitAnimationTimer > 0f;
+        bool canUseGroundLocomotion = isGrounded && !(currentState is PlayerJumpState) && !hitActive;
+        bool isIdle = Mathf.Abs(moveInput.x) < 0.1f && canUseGroundLocomotion;
+        bool isRunning = Mathf.Abs(moveInput.x) > 0.1f && canUseGroundLocomotion;
+        animationDriver.SetLocomotion(isIdle, isRunning, isGrounded, rb.linearVelocity.y);
 
-        SyncAnimatorHitParam();
-    }
-
-    private void SyncAnimatorHitParam()
-    {
-        if (anim != null && !string.IsNullOrWhiteSpace(hitBoolParam))
-        {
-            anim.SetBool(hitBoolParam, IsKnockbackLocked || hitAnimationTimer > 0f);
-        }
+        animationDriver.SetHit(hitActive, GetHitAnimationNormalizedTime(hitActive));
     }
 
     public void Flip()
@@ -526,18 +518,38 @@ public class player : MonoBehaviour
         }
 
         knockbackLockTimer = Mathf.Max(knockbackLockTimer, duration);
-        StartHitAnimationHold(duration);
+        StartHitAnimationHold(knockbackLockTimer, true);
     }
 
-    private void StartHitAnimationHold(float duration)
+    private void StartHitAnimationHold(float duration, bool overrideExisting = false)
     {
         if (duration <= 0f)
         {
             return;
         }
 
-        hitAnimationTimer = Mathf.Max(hitAnimationTimer, duration);
-        SyncAnimatorHitParam();
+        if (overrideExisting || duration >= hitAnimationTimer)
+        {
+            hitAnimationTimer = duration;
+            hitAnimationDuration = duration;
+        }
+        else if (hitAnimationDuration <= 0f)
+        {
+            hitAnimationDuration = hitAnimationTimer;
+        }
+
+        animationDriver?.SetHit(true, 0f);
+    }
+
+    private float GetHitAnimationNormalizedTime(bool hitActive)
+    {
+        if (!hitActive || hitAnimationDuration <= 0f)
+        {
+            return 0f;
+        }
+
+        float remaining = Mathf.Max(0f, hitAnimationTimer);
+        return Mathf.Clamp01(1f - (remaining / hitAnimationDuration));
     }
 
     public DrainableCorpse GetDrainableCorpse()

@@ -51,7 +51,7 @@ public class Combat : MonoBehaviour
         }
     }
 
-    // Animation event (hit frame)
+    // Legacy animation event. Prefer PlayerAnimationEventRelay.AttackHit on new clips.
     public void PerformHitCheck()
     {
         Transform origin = attackPoint != null ? attackPoint : transform;
@@ -143,7 +143,7 @@ public class Combat : MonoBehaviour
         }
     }
 
-    // Animation event (final frame)
+    // Legacy animation event. Prefer PlayerAnimationEventRelay.AttackFinished on new clips.
     public void AttackAnimationFinished()
     {
         if (player == null)

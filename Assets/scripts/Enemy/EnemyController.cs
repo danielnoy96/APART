@@ -13,6 +13,7 @@ public class EnemyController : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator animator;
+    [SerializeField] private EnemyAnimationDriver animationDriver;
     [SerializeField] private Health health;
     [SerializeField] private Transform player;
     [SerializeField] private ContactDamage contactDamage;
@@ -94,6 +95,16 @@ public class EnemyController : MonoBehaviour
         {
             animator = GetComponent<Animator>();
         }
+        if (animationDriver == null)
+        {
+            animationDriver = GetComponent<EnemyAnimationDriver>();
+            if (animationDriver == null)
+            {
+                animationDriver = gameObject.AddComponent<EnemyAnimationDriver>();
+            }
+        }
+        animationDriver.Initialize(animator);
+        animationDriver.ConfigureMovement(moveBoolParam, speedFloatParam);
         if (health == null)
         {
             health = GetComponent<Health>();
@@ -544,22 +555,13 @@ public class EnemyController : MonoBehaviour
 
     private void UpdateAnimation()
     {
-        if (animator == null)
+        if (animationDriver == null)
         {
             return;
         }
 
         float speedAbs = rb != null ? Mathf.Abs(rb.linearVelocity.x) : 0f;
-
-        if (!string.IsNullOrWhiteSpace(moveBoolParam))
-        {
-            animator.SetBool(moveBoolParam, speedAbs > 0.05f);
-        }
-
-        if (!string.IsNullOrWhiteSpace(speedFloatParam))
-        {
-            animator.SetFloat(speedFloatParam, speedAbs);
-        }
+        animationDriver.SetMovement(speedAbs);
     }
 
     private void HandleDeath()

@@ -17,13 +17,7 @@ public class PlayerAttackState : PlayerState
         enterTime = Time.time;
 
         // Start attack animation (parameter name is inspector-configured on the Player).
-        if (player.anim != null)
-        {
-            if (!string.IsNullOrWhiteSpace(player.attackBoolParam))
-            {
-                player.HoldAnimatorBool(player.attackBoolParam, player.attackAnimHoldSeconds);
-            }
-        }
+        player.AnimationDriver.PlayTimedAction(PlayerAnim.Attack, player.attackAnimHoldSeconds);
 
         // Stop horizontal velocity but preserve vertical.
         RB.linearVelocity = new Vector2(0f, RB.linearVelocity.y);
@@ -40,7 +34,7 @@ public class PlayerAttackState : PlayerState
 
     public override void Update()
     {
-        // If the animation event (Combat.AttackAnimationFinished -> player.OnAttackAnimationFinished) isn't wired,
+        // If the animation event (PlayerAnimationEventRelay.AttackFinished -> player.OnAttackAnimationFinished) isn't wired,
         // fall back to ending the state once the attack cooldown has elapsed. This prevents "stuck" controls.
         if (Time.time - enterTime < 0.05f)
             return;
@@ -53,7 +47,7 @@ public class PlayerAttackState : PlayerState
 
     public override void Exit()
     {
-        // Animator bool is cleared by the timed hold in player.HoldAnimatorBool to ensure the clip can play fully.
+        // Animator bool is cleared by the driver timed hold to ensure the clip can play fully.
     }
 
     public override void FixedUpdate()

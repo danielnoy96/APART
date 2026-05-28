@@ -7,16 +7,11 @@ public class PlayerIdleState : PlayerState
     public override void Enter()
     {
         ApplyIdleHorizontalVelocity();
-        Anim.SetBool("isIdle", true);
-        Anim.SetBool("isRunning", false);
     }
 
     public override void Update()
     {
         Flip();
-
-        Anim.SetBool("isIdle", Mathf.Abs(MoveInput.x) < 0.1f && IsGrounded);
-        Anim.SetBool("isRunning", Mathf.Abs(MoveInput.x) > 0.1f && IsGrounded);
 
         // Dash > LifeDrain > Attack > Jump > Move > Idle (priority).
         if (player.dashPressed && player.CanDash)

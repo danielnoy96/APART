@@ -25,18 +25,12 @@ public class PlayerJumpState : PlayerState
         }
         JumpReleased = false;
 
-        // No airborne parameters exist in the current Animator setup; keep the original behavior:
-        // when not grounded, both isIdle/isRunning evaluate false.
-        Anim.SetBool("isIdle", false);
-        Anim.SetBool("isRunning", false);
+        // Locomotion animation is synced centrally by player.SyncAnimationState().
     }
 
     public override void Update()
     {
         Flip();
-
-        Anim.SetBool("isIdle", false);
-        Anim.SetBool("isRunning", false);
 
         // Allow dash while airborne (if available).
         if (player.dashPressed && player.CanDash)

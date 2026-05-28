@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Health health;
     [SerializeField] private Animator animator;
+    [SerializeField] private EnemyAnimationDriver animationDriver;
 
     [Header("Animator Parameters (Optional)")]
     [Tooltip("Trigger parameter used to play a short hurt animation.")]
@@ -51,6 +52,16 @@ public class Enemy : MonoBehaviour
         {
             animator = GetComponent<Animator>();
         }
+        if (animationDriver == null)
+        {
+            animationDriver = GetComponent<EnemyAnimationDriver>();
+            if (animationDriver == null)
+            {
+                animationDriver = gameObject.AddComponent<EnemyAnimationDriver>();
+            }
+        }
+        animationDriver.Initialize(animator);
+        animationDriver.ConfigureDamage(hurtTriggerParam, deathTriggerParam, deathStateName);
 
         if (hitEffect == null)
         {
@@ -98,7 +109,7 @@ public class Enemy : MonoBehaviour
     {
         PlayHitEffectTrail();
 
-        if (animator == null)
+        if (animationDriver == null)
         {
             return;
         }
@@ -108,10 +119,7 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        if (!string.IsNullOrWhiteSpace(hurtTriggerParam))
-        {
-            animator.SetTrigger(hurtTriggerParam);
-        }
+        animationDriver.PlayHurt();
     }
 
     private void HandleDeath()
@@ -122,21 +130,7 @@ public class Enemy : MonoBehaviour
 
         bool playedDeathAnimation = false;
 
-        if (animator != null && !string.IsNullOrWhiteSpace(deathTriggerParam))
-        {
-            if (!string.IsNullOrWhiteSpace(hurtTriggerParam))
-            {
-                animator.ResetTrigger(hurtTriggerParam);
-            }
-
-            animator.SetTrigger(deathTriggerParam);
-            if (!string.IsNullOrWhiteSpace(deathStateName))
-            {
-                animator.Play(deathStateName, 0, 0f);
-            }
-
-            playedDeathAnimation = true;
-        }
+        playedDeathAnimation = animationDriver != null && animationDriver.PlayDeath();
 
         DisableContactDamage();
         StopMovement();

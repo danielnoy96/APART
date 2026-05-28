@@ -16,6 +16,7 @@ public class EnemyAwareness : MonoBehaviour
     [SerializeField] private string popBoolParam = "isPopping";
     [SerializeField] private string unpopBoolParam = "isUnpopping";
     [SerializeField] private Animator animator;
+    [SerializeField] private EnemyAnimationDriver animationDriver;
     [SerializeField] private EnemyController controller;
 
     private float wakeFinishedAt = -1f;
@@ -29,6 +30,17 @@ public class EnemyAwareness : MonoBehaviour
     {
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
+
+        if (animationDriver == null)
+        {
+            animationDriver = GetComponent<EnemyAnimationDriver>();
+            if (animationDriver == null)
+            {
+                animationDriver = gameObject.AddComponent<EnemyAnimationDriver>();
+            }
+        }
+        animationDriver.Initialize(animator);
+        animationDriver.ConfigureAwareness(popBoolParam, unpopBoolParam);
 
         if (controller == null)
             controller = GetComponent<EnemyController>();
@@ -122,14 +134,14 @@ public class EnemyAwareness : MonoBehaviour
 
     private void SetPopping(bool value)
     {
-        if (animator != null && !string.IsNullOrWhiteSpace(popBoolParam))
-            animator.SetBool(popBoolParam, value);
+        if (animationDriver != null)
+            animationDriver.SetPopping(value);
     }
 
     private void SetUnpopping(bool value)
     {
-        if (animator != null && !string.IsNullOrWhiteSpace(unpopBoolParam))
-            animator.SetBool(unpopBoolParam, value);
+        if (animationDriver != null)
+            animationDriver.SetUnpopping(value);
     }
 
     private void StopEnemy()

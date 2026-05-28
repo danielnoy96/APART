@@ -37,13 +37,7 @@ public class PlayerLifeDrainState : PlayerState
         // Lock player in place (horizontal), keep grounded behavior.
         ApplyIdleHorizontalVelocity();
 
-        if (player.anim != null)
-        {
-            if (!string.IsNullOrWhiteSpace(player.lifeDrainBoolParam))
-            {
-                player.anim.SetBool(player.lifeDrainBoolParam, true);
-            }
-        }
+        player.AnimationDriver.SetAction(PlayerAnim.LifeDrain, true);
 
         player.lifeDrainPressed = false;
 
@@ -65,10 +59,7 @@ public class PlayerLifeDrainState : PlayerState
 
     public override void Exit()
     {
-        if (player.anim != null && !string.IsNullOrWhiteSpace(player.lifeDrainBoolParam))
-        {
-            player.anim.SetBool(player.lifeDrainBoolParam, false);
-        }
+        player.AnimationDriver.SetAction(PlayerAnim.LifeDrain, false);
 
         targetCorpse = null;
     }
