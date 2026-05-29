@@ -26,7 +26,39 @@ public sealed class InGameResetButton : MonoBehaviour
     [SerializeField] private Color backgroundColor = new Color(0f, 0f, 0f, 0.65f);
     [SerializeField] private Color textColor = Color.white;
 
+    private static bool isListeningForSceneLoads;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStaticState()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        isListeningForSceneLoads = false;
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void Initialize()
+    {
+        ListenForSceneLoads();
+        EnsureResetButtonExists();
+    }
+
+    private static void ListenForSceneLoads()
+    {
+        if (isListeningForSceneLoads)
+        {
+            return;
+        }
+
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+        isListeningForSceneLoads = true;
+    }
+
+    private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        EnsureResetButtonExists();
+    }
+
     private static void EnsureResetButtonExists()
     {
         if (GameObject.Find(RootName) != null)

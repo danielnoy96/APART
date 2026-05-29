@@ -29,7 +29,6 @@ public class Enemy : MonoBehaviour
 
     [Header("Death VFX")]
     [SerializeField] private ParticleSystem deathEffect;
-    [SerializeField, Min(0)] private int deathEffectBurstCount = 160;
 
     [Header("Life Drain Corpse")]
     [Tooltip("Corpse stored HP = round(MaxHealth * ratio), clamped to min/max.")]
@@ -39,7 +38,6 @@ public class Enemy : MonoBehaviour
 
     private bool corpseFinalized;
     private Coroutine hitEffectTrailRoutine;
-    private Coroutine deathEffectTrailRoutine;
 
     private void Awake()
     {
@@ -124,9 +122,7 @@ public class Enemy : MonoBehaviour
 
     private void HandleDeath()
     {
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        Vector2 deathVelocity = rb != null ? rb.linearVelocity : Vector2.zero;
-        PlayDeathEffect(deathVelocity);
+        PlayDeathEffect();
 
         bool playedDeathAnimation = false;
 
@@ -186,67 +182,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void PlayDeathEffect(Vector2 deathVelocity)
+    private void PlayDeathEffect()
     {
-        if (deathEffect == null || deathEffectBurstCount <= 0)
+        if (deathEffect == null)
         {
             return;
         }
 
         StopHitEffectTrail();
-        ConfigureDeathEffect(deathEffect);
 
-        int centerBurstCount = Mathf.RoundToInt(deathEffectBurstCount * 0.7f);
-        int explosiveBurstCount = Mathf.Max(0, deathEffectBurstCount - centerBurstCount);
-
-        deathEffect.Emit(centerBurstCount);
-        if (explosiveBurstCount > 0)
-        {
-            ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams
-            {
-                velocity = GetDeathParticleVelocity(deathVelocity)
-            };
-            deathEffect.Emit(emitParams, explosiveBurstCount);
-        }
-
-        if (deathEffectTrailRoutine != null)
-        {
-            StopCoroutine(deathEffectTrailRoutine);
-        }
-
-        deathEffectTrailRoutine = StartCoroutine(DeathEffectTrailRoutine(deathVelocity));
-    }
-
-    private IEnumerator DeathEffectTrailRoutine(Vector2 deathVelocity)
-    {
-        int trailBursts = 3;
-        int trailBurstSize = Mathf.Max(1, Mathf.RoundToInt(deathEffectBurstCount * 0.08f));
-        float interval = 0.08f;
-
-        for (int i = 0; i < trailBursts; i++)
-        {
-            yield return new WaitForSeconds(interval);
-
-            if (deathEffect == null)
-            {
-                break;
-            }
-
-            ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams
-            {
-                velocity = GetDeathParticleVelocity(deathVelocity) * Mathf.Lerp(0.35f, 0.1f, i / (float)Mathf.Max(1, trailBursts - 1))
-            };
-            deathEffect.Emit(emitParams, trailBurstSize);
-        }
-
-        deathEffectTrailRoutine = null;
-    }
-
-    private static Vector3 GetDeathParticleVelocity(Vector2 deathVelocity)
-    {
-        Vector2 baseVelocity = deathVelocity.sqrMagnitude > 0.01f ? deathVelocity * 0.35f : Vector2.up * 1.2f;
-        baseVelocity += Vector2.up * 0.65f;
-        return baseVelocity;
+        deathEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        deathEffect.Clear(true);
+        ConfigureParticleRenderer(deathEffect, 20);
+        deathEffect.Play(true);
     }
 
     private void ConfigureHitEffect(ParticleSystem particleSystem)
@@ -285,53 +233,6 @@ public class Enemy : MonoBehaviour
 
         ConfigureParticleFade(particleSystem, 0f, 1f, 0.15f, 0f);
         ConfigureParticleRenderer(particleSystem, 6);
-    }
-
-    private void ConfigureDeathEffect(ParticleSystem particleSystem)
-    {
-        particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        particleSystem.Clear(true);
-
-        ParticleSystem.MainModule main = particleSystem.main;
-        main.loop = false;
-        main.playOnAwake = false;
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(1.2f, 2.1f);
-        main.startSpeed = new ParticleSystem.MinMaxCurve(1.2f, 3.3f);
-        main.startSize = new ParticleSystem.MinMaxCurve(0.22f, 0.58f);
-        main.gravityModifier = new ParticleSystem.MinMaxCurve(0.18f, 0.45f);
-        main.maxParticles = Mathf.Max(480, deathEffectBurstCount * 3);
-
-        ParticleSystem.EmissionModule emission = particleSystem.emission;
-        emission.enabled = false;
-
-        ParticleSystem.VelocityOverLifetimeModule velocity = particleSystem.velocityOverLifetime;
-        velocity.enabled = true;
-        velocity.space = ParticleSystemSimulationSpace.World;
-        velocity.x = new ParticleSystem.MinMaxCurve(-0.65f, 0.65f);
-        velocity.y = new ParticleSystem.MinMaxCurve(0.15f, 1.2f);
-        velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
-
-        ParticleSystem.ForceOverLifetimeModule force = particleSystem.forceOverLifetime;
-        force.enabled = true;
-        force.space = ParticleSystemSimulationSpace.World;
-        force.y = new ParticleSystem.MinMaxCurve(-0.8f, -0.35f);
-
-        ParticleSystem.NoiseModule noise = particleSystem.noise;
-        noise.enabled = true;
-        noise.strength = 0.35f;
-        noise.frequency = 0.7f;
-        noise.scrollSpeed = 0.25f;
-
-        ParticleSystem.RotationOverLifetimeModule rotation = particleSystem.rotationOverLifetime;
-        rotation.enabled = true;
-        rotation.z = new ParticleSystem.MinMaxCurve(-360f, 360f);
-
-        ParticleSystem.TrailModule trails = particleSystem.trails;
-        trails.enabled = false;
-
-        ConfigureParticleFade(particleSystem, 0f, 1f, 0.9f, 0f);
-        ConfigureParticleRenderer(particleSystem, 20);
     }
 
     private void ConfigureParticleRenderer(ParticleSystem particleSystem, int sortingOrderOffset)
