@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class BreakableTimedPlatform : MonoBehaviour
 {
@@ -56,6 +57,7 @@ public class BreakableTimedPlatform : MonoBehaviour
     private Collider2D[] colliders;
     private Renderer[] renderers;
     private GameObject shardContainer;
+    private SortingGroup shardSortingGroup;
     private Material cachedShardMaterial;
     private Sprite cachedSprite;
     private bool busy;
@@ -164,6 +166,7 @@ public class BreakableTimedPlatform : MonoBehaviour
 
         Rect localBounds = GetSpriteLocalBounds(visualTarget.sprite);
         shardActivationVersion++;
+        ApplyShardSorting();
         shardContainer.SetActive(true);
 
         foreach (ShardInstance shard in shardCache)
@@ -200,8 +203,10 @@ public class BreakableTimedPlatform : MonoBehaviour
 
         shardContainer = new GameObject($"{visualTarget.name}_CrumbleShards");
         shardContainer.SetActive(false);
+        shardSortingGroup = shardContainer.AddComponent<SortingGroup>();
         cachedShardMaterial = CreateShardMaterial(sprite);
         cachedSprite = sprite;
+        ApplyShardSorting();
 
         foreach (List<int> region in regions)
         {
@@ -231,8 +236,7 @@ public class BreakableTimedPlatform : MonoBehaviour
 
         MeshRenderer meshRenderer = shardObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = cachedShardMaterial;
-        meshRenderer.sortingLayerID = visualTarget.sortingLayerID;
-        meshRenderer.sortingOrder = visualTarget.sortingOrder;
+        ApplyRendererSorting(meshRenderer);
 
         Rigidbody2D body = shardObject.AddComponent<Rigidbody2D>();
         body.simulated = false;
@@ -286,7 +290,53 @@ public class BreakableTimedPlatform : MonoBehaviour
             shardContainer = null;
         }
 
+        shardSortingGroup = null;
         cachedSprite = null;
+    }
+
+    private void ApplyShardSorting()
+    {
+        if (visualTarget == null)
+        {
+            return;
+        }
+
+        if (shardSortingGroup != null)
+        {
+            SortingGroup sourceGroup = visualTarget.GetComponentInParent<SortingGroup>(true);
+            if (sourceGroup != null)
+            {
+                shardSortingGroup.sortingLayerID = sourceGroup.sortingLayerID;
+                shardSortingGroup.sortingOrder = sourceGroup.sortingOrder;
+            }
+            else
+            {
+                shardSortingGroup.sortingLayerID = visualTarget.sortingLayerID;
+                shardSortingGroup.sortingOrder = visualTarget.sortingOrder;
+            }
+        }
+
+        for (int i = 0; i < shardCache.Count; i++)
+        {
+            if (shardCache[i]?.gameObject == null)
+            {
+                continue;
+            }
+
+            MeshRenderer meshRenderer = shardCache[i].gameObject.GetComponent<MeshRenderer>();
+            ApplyRendererSorting(meshRenderer);
+        }
+    }
+
+    private void ApplyRendererSorting(MeshRenderer meshRenderer)
+    {
+        if (meshRenderer == null || visualTarget == null)
+        {
+            return;
+        }
+
+        meshRenderer.sortingLayerID = visualTarget.sortingLayerID;
+        meshRenderer.sortingOrder = visualTarget.sortingOrder;
     }
 
     private bool[] GenerateMask(System.Random random, out int width, out int height)

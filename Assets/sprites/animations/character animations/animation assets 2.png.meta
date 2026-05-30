@@ -442,7 +442,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: animation assets 2_14
+      name: animation assets 2_15
       rect:
         serializedVersion: 2
         x: 3000
@@ -450,29 +450,7 @@ TextureImporter:
         width: 1000
         height: 500
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cc338339097b3074aaecb8ca78f60eab
-      internalID: -1159566087
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: animation assets 2_15
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 2500
-        width: 1000
-        height: 500
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -481,6 +459,182 @@ TextureImporter:
       bones: []
       spriteID: 09f089df8b1b0474092d136dbef2548e
       internalID: 1279822739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_17
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2501
+        width: 1000
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c70c38c610f67c1488946254e8e8ceaf
+      internalID: -584999581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_18
+      rect:
+        serializedVersion: 2
+        x: 1000
+        y: 2500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a17b718393eb6cd409375de6364cc012
+      internalID: -1526244976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_19
+      rect:
+        serializedVersion: 2
+        x: 1500
+        y: 2500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cfde40fb714bc74ba5f763a4beb7052
+      internalID: -1044628496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_20
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4030ae032dfff14c8f93879b1d34bd3
+      internalID: 608938733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_21
+      rect:
+        serializedVersion: 2
+        x: 2500
+        y: 2500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32b50181f5ad4df47b58acbe2bcddc35
+      internalID: -1884538255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_22
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 2500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a58f3ab0eb7d2fd4aa07f12b1b5cb681
+      internalID: -1454562001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_23
+      rect:
+        serializedVersion: 2
+        x: 3500
+        y: 2500
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 984fcd4b8c78cae4f907c453c7f9601c
+      internalID: 438585522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: animation assets 2_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2000
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0e31e50281f8a0408c726fbe4ab8d37
+      internalID: 445773722
       vertices: []
       indices: 
       edges: []
@@ -509,7 +663,16 @@ TextureImporter:
       animation assets 2_13: 1404471610
       animation assets 2_14: -1159566087
       animation assets 2_15: 1279822739
+      animation assets 2_16: -1383579479
+      animation assets 2_17: -584999581
+      animation assets 2_18: -1526244976
+      animation assets 2_19: -1044628496
       animation assets 2_2: -2020987296273821061
+      animation assets 2_20: 608938733
+      animation assets 2_21: -1884538255
+      animation assets 2_22: -1454562001
+      animation assets 2_23: 438585522
+      animation assets 2_24: 445773722
       animation assets 2_3: 1775548243261363524
       animation assets 2_4: 8732842325751616570
       animation assets 2_5: -4858179341651627288
