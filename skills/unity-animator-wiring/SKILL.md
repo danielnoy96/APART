@@ -2,6 +2,8 @@
 
 Use this skill when working on APART's Unity animation wiring, especially player or enemy 2D sprite animations, Animator parameters, Animation Events, or any future animation-system refactor.
 
+Updated: 2026-05-31
+
 ## Purpose
 
 APART currently uses Unity-native animation assets:
@@ -12,6 +14,19 @@ APART currently uses Unity-native animation assets:
 - Gameplay is driven by C# state machines and components.
 
 The long-term goal is not to hide animation frames in code. The goal is to keep the Unity Animation window as the place where frames, timing, and events are tuned, while cleaning the code so animation requests are centralized and easy to reason about.
+
+## Related Project Docs
+
+Before changing animation code, also check:
+
+- `../../AGENTS.md`
+- `../../PROJECT_CONTEXT.md`
+- `../../Docs/SYSTEMS_INDEX.md`
+- `../../Docs/Enemy/EnemyAwareness.md`
+- `../../Docs/Enemy/EnemyController.md`
+- `../../COMBAT_SYSTEM_OVERVIEW.md`
+
+Code is still the source of truth. If this skill conflicts with `Assets/scripts/**`, trust code and update this skill.
 
 ## Core Design Principle
 

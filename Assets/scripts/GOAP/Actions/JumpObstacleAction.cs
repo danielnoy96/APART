@@ -38,7 +38,7 @@ namespace Game.GOAP.Actions
                 return ActionRunState.Stop;
             }
 
-            if (!data.Controller.IsPlayerAbove())
+            if (!data.Controller.IsObstacleAhead())
             {
                 data.Controller.ChasePlayer();
                 return ActionRunState.Stop;
@@ -46,7 +46,7 @@ namespace Game.GOAP.Actions
 
             if (!data.HasJumped)
             {
-                if (!data.Controller.IsPlayerAboveReadyToJump())
+                if (!data.Controller.IsGrounded())
                 {
                     data.Controller.ChasePlayer();
                     return Time.time - data.StartTime > MaxAirSeconds

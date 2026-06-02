@@ -7,6 +7,32 @@ Docs reviewed: 2026-05-18
 
 This is not a copy of the docs. It is a practical implementation guide for how I should work with the system in this repository.
 
+## Project-current APART GOAP snapshot
+
+For the current high-level project state, start with:
+
+- `PROJECT_CONTEXT.md`
+- `Docs/SYSTEMS_INDEX.md`
+- `Docs/AI/GOAPOverview.md`
+- `Docs/Enemy/EnemyController.md`
+- `Docs/Enemy/EnemyAwareness.md`
+
+Current APART GOAP rules:
+
+- CrashKonijn GOAP is planning/orchestration only; `EnemyController` owns Rigidbody2D movement execution.
+- `EnemyAwareness` is not a GOAP system. It is an enemy wake/hide/asleep gameplay gate, and GOAP actions must stop when `EnemyAwareness.CanRunRegularBehavior` is false.
+- Legacy `EnemyBrain` is fallback-only and disables itself when GOAP components are present.
+- GOAP enemy prefabs use `GoapRunnerResolver` to inject the scene `GoapBehaviour` runner into `AgentTypeBehaviour`.
+- Keep `[GoapId]` values stable and verify `Assets/scripts/GOAP/Game.GOAP.asset`, `Config/CapabilityConfigScriptable.asset`, and `Config/AgentTypeScriptable.asset` when changing GOAP classes.
+
+Current APART GOAP behavior:
+
+- Goals: `PatrolGoal`, `ChasePlayerGoal`.
+- Actions: `PatrolAction`, `ChasePlayerAction`, `JumpToPlayerAction`, `JumpObstacleAction`.
+- Sensors: `PlayerDistanceSensor`, `HasPlayerTargetSensor`, `PlayerAboveSensor`, `ObstacleAheadSensor`.
+- Targets: `PlayerTarget`, `PlayerTargetResolver`.
+- World keys include `HasTarget`, `IsPlayerInRange`, `IsPlayerAbove`, `IsObstacleAhead`, `IsPatrolling`, and `IsChasing`.
+
 ## Non-negotiable rules
 
 - GOAP is a planner/executor framework, not the authoritative game state.

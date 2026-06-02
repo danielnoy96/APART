@@ -1,265 +1,264 @@
-# APART Combat Foundation (Systems Overview)
+# APART Combat Foundation
 
-This document describes how the current 2D Metroidvania combat foundation is wired and how the main systems connect.
+> Purpose: overview of the current combat, damage, stamina, knockback, corpse, and player action systems.
+>
+> Last updated: 2026-05-31
 
-Notes:
-- The player script class is named `player` (lowercase).
-- Player gameplay logic is driven by a plain-C# Finite State Machine (FSM): states inherit `PlayerState` (not `MonoBehaviour`).
-- Shared gameplay components (`Health`, `Stamina`, knockback, contact damage) are `MonoBehaviour`s intended to be reusable for both player and enemies.
-
----
+## Related Docs
+- `PROJECT_CONTEXT.md` - high-level project snapshot.
+- `Docs/SYSTEMS_INDEX.md` - focused system doc map.
+- `Docs/Combat/PlayerCombo.md` - combo-specific details.
+- `Docs/World/CheckpointsRespawnHazards.md` - respawn, permanent checkpoints, mini checkpoints, hazards.
+- `Docs/UI/HUDAndReset.md` - health/stamina HUD and runtime reset.
+- `Docs/Enemy/EnemyController.md` - enemy movement, contact damage sensor, knockback behavior.
 
 ## High-Level Architecture
 
-**Player**
-- Input + action decisions: `player` + FSM states (Idle/Move/Jump/Attack/Dash/LifeDrain).
-- Execution helpers:
-  - `Combat` for melee hit detection + cooldown.
-  - `Stamina` for spending + regen.
-  - `Health` for HP storage + events.
-  - `KnockbackReceiver` for knockback velocity.
+### Player
+- Main owner: `Assets/scripts/player.cs`.
+- Action selection: plain C# FSM states inheriting from `PlayerState`, not MonoBehaviours.
+- Combat execution:
+  - `Combat` for melee hit detection and cooldown.
+  - `Stamina` for jump/attack/dash/life-drain costs and regeneration.
+  - `Health` for HP, damage, heal, death, and revive.
+  - `KnockbackReceiver` for Rigidbody2D knockback velocity.
+  - `PlayerCombo` for successful-hit chain stamina refunds.
 - Player-specific rules:
-  - I-frames (invincibility) live in `player` via `TryTakeDamage`.
-  - Knockback lock (prevents movement overwriting knockback) lives in `player` and is respected by movement helpers in `PlayerState`.
+  - Invincibility lives in `player.TryTakeDamage`.
+  - Player damage should go through `player.TryTakeDamage`, not directly through `Health.TakeDamage`, unless intentionally bypassing i-frames.
+  - Knockback lock lives in `player` and is respected by `PlayerState` movement helpers.
+  - Respawn uses `player.ResetForRespawn`.
 
-**Enemy**
-- Lifecycle/damage reaction/corpse: `Enemy`.
-- Movement/execution: `EnemyController`.
-- Optional temporary decision-making (pre-GOAP): `EnemyBrain`.
-- Contact damage: `ContactDamage` (usually on a child trigger sensor).
-- Corpse interaction: `DrainableCorpse` is added/enabled on death and remains in-scene for Life Drain.
-
----
+### Enemy
+- Lifecycle, hurt/death presentation, and corpse setup: `Enemy`.
+- Movement execution: `EnemyController`.
+- Contact damage: `ContactDamage`, usually on a child trigger sensor.
+- Damage storage: `Health`.
+- Corpse interaction: `DrainableCorpse` is ensured on death and remains in scene for life drain.
+- Enemy death disables contact damage and stops movement; dead enemies are not destroyed by default.
 
 ## Core Components
 
 ### `Assets/scripts/Combat/Health.cs`
 Reusable HP component.
-- Serialized: `maxHealth`, `currentHealth` (initialized to `maxHealth` in `Awake`).
-- API:
-  - `TakeDamage(int damage)`
-  - `Heal(int amount)`
-  - `Die()` (protected virtual)
-- Events:
-  - `OnDamaged(int damageApplied)`
-  - `OnHealed(int healApplied)`
-  - `OnDeath()`
-- Death event fires once (guarded by `isDead`).
+
+API:
+- `TakeDamage(int damage)`
+- `Heal(int amount)`
+- `ReviveFull()`
+- `Die()` protected virtual
+
+Events:
+- `OnDamaged(int damageApplied)`
+- `OnHealed(int healApplied)`
+- `OnDeath()`
+
+Rules:
+- `Awake()` clamps max health and initializes current health to max.
+- Death fires once because it is guarded by `isDead`.
+- `ReviveFull()` clears `isDead`, restores full health, and invokes `OnHealed` if health increased.
+- Permanent checkpoint respawn uses `ReviveFull()`.
 
 ### `Assets/scripts/Combat/Stamina.cs`
 Reusable stamina component.
-- Serialized: `maxStamina`, `currentStamina`, `staminaRegenRate`, `regenDelayAfterSpend`
-- API:
-  - `HasStamina(float amount)`
-  - `TrySpend(float amount)` (starts regen delay)
-  - `Restore(float amount)`
-  - `RestoreFull()`
-- Events:
-  - `OnStaminaChanged(current,max)`
-  - `OnStaminaEmpty()`, `OnStaminaFull()` (edge-triggered; not spammed every frame)
+
+API:
+- `HasStamina(float amount)`
+- `TrySpend(float amount)`
+- `Restore(float amount)`
+- `RestoreFull()`
+
+Events:
+- `OnStaminaChanged(current, max)`
+- `OnStaminaEmpty()`
+- `OnStaminaFull()`
+
+Rules:
+- `TrySpend` blocks regeneration until `regenDelayAfterSpend` passes.
+- Regeneration happens in `Update`.
+- `Restore` and `RestoreFull` are clamped to max stamina.
+- Permanent checkpoint respawn uses `RestoreFull()`.
 
 ### `Assets/scripts/Combat/Combat.cs`
-Player melee hit detection + attack cooldown.
-- Serialized: `attackPoint`, `attackRadius`, `damageableLayer`, `damage`, `attackCooldown`
-- API:
-  - `BeginAttack()` (sets cooldown timestamp)
-  - `PerformHitCheck()` (Animation Event: hit frame)
-  - `AttackAnimationFinished()` (Animation Event: final frame; calls `player.OnAttackAnimationFinished()`)
-- Hit check uses `Physics2D.OverlapCircleAll` and ensures a `Health` is only damaged once per attack (HashSet).
-- Optional debug (if enabled in inspector):
-  - `debugInstantAttack`: runs hit+finish without animation events (for early testing).
-  - `logHits`: logs hit results / no-hit diagnostics.
+Player melee hit detection and attack cooldown.
 
-### `Assets/scripts/Combat/DrainableCorpse.cs`
-Corpse interaction data for Life Drain.
-- Serialized: `healAmount`, `drainDuration`, `destroyAfterDrain`
-- Properties: `HealAmount`, `DrainDuration`, `IsDrained`, `DestroyAfterDrain`
-- `Drain()`:
-  - Returns `0` if already drained.
-  - Marks drained and logs: `"Life drain complete"`.
-  - Returns `healAmount`.
-- `DestroyCorpse()`:
-  - Only destroys if `destroyAfterDrain` is true.
-  - Logs: `"Drainable corpse destroyed"`.
+Key behavior:
+- `BeginAttack()` starts cooldown and optionally runs debug instant attack.
+- `PerformHitCheck()` uses `Physics2D.OverlapCircleAll`.
+- Each `Health` is damaged at most once per attack using a `HashSet`.
+- Hit checks emit:
+  - `OnHitCheckCompleted(bool hitSomething)`
+  - `OnSuccessfulHit(int damagedCount)`
+- Knockback prefers the target's `EnemyController.KnockbackReceiver`, then falls back to receivers on parent/children.
+- Animation clips should prefer `PlayerAnimationEventRelay.AttackHit`; legacy direct animation events to `Combat.PerformHitCheck` still work.
 
 ### `Assets/scripts/Combat/ContactDamage.cs`
-Reusable contact damage applicator (commonly attached to an enemy child trigger sensor).
-- Serialized: `damageAmount`, `damageCooldown`, `targetLayer`
-- Uses cooldown timestamp to avoid per-frame damage.
-- On overlap/collision:
-  - If owner has `Health` and `IsDead == true`, it does nothing.
-  - If target has `player`: calls `player.TryTakeDamage(damageAmount)` (respects i-frames).
-    - If damage accepted: applies knockback if `KnockbackReceiver` exists and starts knockback lock on player.
-  - Otherwise falls back to `Health.TakeDamage(damageAmount)` on target.
+Reusable contact damage applicator, commonly used on enemy child trigger sensors.
+
+Rules:
+- Respects owner `Health.IsDead`; dead damage sources do nothing.
+- Uses `damageCooldown` to avoid per-frame damage spam.
+- Checks `targetLayer`.
+- For player targets, calls `player.TryTakeDamage(damageAmount)`.
+- If player damage is accepted, applies knockback and starts the player's knockback lock.
+- For non-player targets, falls back to `Health.TakeDamage`.
 
 ### `Assets/scripts/Combat/KnockbackReceiver.cs`
-Reusable knockback velocity setter.
-- Serialized: `knockbackForce`, `knockbackUpwardForce`, `knockbackDuration`, `minHorizontalFactor`
-- `ApplyKnockback(sourcePosition)`:
-  - Pushes away from source with guaranteed horizontal separation (avoids “pure knockup”).
-  - Adds upward component.
-- `IsKnockbackActive` is true for `knockbackDuration` after application (used by AI to avoid overriding velocity).
+Reusable Rigidbody2D knockback velocity setter.
 
----
+Rules:
+- Receiver can live on the Rigidbody2D object or a child; it searches parents for Rigidbody2D.
+- `ApplyKnockback(sourcePosition)` pushes away from the source with guaranteed horizontal separation.
+- `IsKnockbackActive` stays true for `knockbackDuration`.
+- Player and enemy movement code should not overwrite velocity during active knockback.
 
-## Player FSM
+### `Assets/scripts/Combat/DrainableCorpse.cs`
+Corpse interaction data for life drain.
 
-### `Assets/scripts/PlayerState.cs`
-Base for all player states.
-- Provides helper methods:
-  - `ApplyHorizontalMovement()` and `ApplyIdleHorizontalVelocity()` are **knockback-lock aware**: they early-return if `player.IsKnockbackLocked` is true.
-- Jump buffering/coyote time uses existing `player` timers.
+API:
+- `ConfigureHealAmount(int newHealAmount)`
+- `RenderBehind(Component drainer)`
+- `Drain()`
+- `DestroyCorpse()`
 
-### `Assets/scripts/player.cs`
-Main player component + FSM owner.
-- Creates state instances in `Awake`:
-  - `idleState`, `moveState`, `jumpState`, `attackState`, `dashState`, `lifeDrainState`
-- Holds references (auto-found if null):
-  - `Combat combat`, `Health health`, `Stamina stamina`
-- Input flags (1-frame):
-  - `attackPressed` via `OnAttack`
-  - `dashPressed` via `OnSprint` (Dash reuses the existing Input Action named `Sprint`)
-  - `lifeDrainPressed` via `OnInteract` (Life Drain reuses existing Input Action named `Interact`)
-  - These flags reset in `LateUpdate`.
-- Player i-frames:
-  - `invincibilityDuration`, `TryTakeDamage(int damage)`
-  - `TryTakeDamage` returns false while invincible.
-- Knockback lock:
-  - `StartKnockbackLock(duration)` and `IsKnockbackLocked`
-- Life Drain detection:
-  - Serialized: `drainCheckPoint`, `drainCheckRadius`, `drainableLayer`
-  - `GetDrainableCorpse()` uses `Physics2D.OverlapCircle` at feet area and returns a non-drained corpse.
+Rules:
+- `ConfigureHealAmount` sets heal amount, recalculates drain duration from `secondsPerHealPoint`, and clears drained state.
+- `RenderBehind` adjusts corpse and drainer sorting so the corpse renders behind the player during drain.
+- `Drain()` returns `0` after the corpse has already been drained.
+- `DestroyCorpse()` only destroys if `destroyAfterDrain` is true.
 
-### State transitions (priority)
-Current priority in Idle/Move:
-`Dash > LifeDrain > Attack > Jump > Move > Idle`
+### `Assets/scripts/Combat/PlayerCombo.cs`
+Successful-hit combo reward.
 
-Attack is **not cancelled by dash** (dash transitions are not allowed from `PlayerAttackState`).
+Rules:
+- Requires `player`.
+- Subscribes to `Combat.OnHitCheckCompleted`.
+- Only successful hit checks increment combo progress.
+- Combo resets on timeout or after reward.
+- Completing the combo restores stamina through `Stamina.Restore`.
+- Respawn resets combo through `player.ResetForRespawn`.
 
-### `Assets/scripts/PlayerAttackState.cs`
-- On enter:
-  - Triggers attack animation using player inspector string params (optional).
-  - Stops horizontal velocity (keeps vertical).
-  - Calls `combat.BeginAttack()` to start cooldown.
-- Damage timing:
-  - Damage is applied only by `Combat.PerformHitCheck()` (animation event or debug instant mode).
+## Player FSM Combat Flow
 
-### `Assets/scripts/PlayerDashState.cs`
-- On enter:
-  - Spends stamina (`stamina.TrySpend(dashCost)`).
-  - Applies dash velocity for `dashDuration`.
-  - Optional end lag via `dashEndLag`.
-  - Dash uses `dashPreserveVerticalVelocity` to choose horizontal-only or momentum dash.
-- Cooldown:
-  - `player.StartDashCooldown()` sets timestamp.
-  - `player.CanDash` checks cooldown + stamina + not already dashing.
+Main files:
+- `Assets/scripts/player.cs`
+- `Assets/scripts/PlayerState.cs`
+- `Assets/scripts/PlayerIdleState.cs`
+- `Assets/scripts/PlayerMoveState.cs`
+- `Assets/scripts/PlayerJumpState.cs`
+- `Assets/scripts/PlayerAttackState.cs`
+- `Assets/scripts/PlayerDashState.cs`
+- `Assets/scripts/PlayerLifeDrainState.cs`
 
-### `Assets/scripts/PlayerLifeDrainState.cs`
-Corpse interaction (not an attack).
-- Entry requirements:
-  - Must be grounded.
-  - `player.GetDrainableCorpse()` must return a valid corpse.
-- During drain:
-  - Logs `"Life drain in progress"` periodically (throttled).
-  - Locks player horizontal movement.
-- On completion:
-  - Calls `corpse.Drain()`; only then heals player (`player.health.Heal(heal)`).
-  - Destroys corpse **only after** completion (if configured).
+Input priorities in idle/move:
+- `Dash > LifeDrain > Attack > Jump > Move > Idle`
 
----
+Important behavior:
+- Attack spends stamina on entry, triggers timed attack animation, stops horizontal velocity, and starts `Combat` cooldown.
+- Attack damage happens only through hit check timing: animation event or debug instant mode.
+- Attack state has a fallback exit when cooldown is ready, so missing attack-finished events do not permanently lock controls.
+- Dash spends stamina, starts cooldown, applies dash velocity, then eases out or applies end lag depending on settings.
+- Jump spends stamina only when the jump impulse is actually applied.
+- Life drain is corpse interaction, not attack hit detection.
+- Life drain requires grounded state, held interact input, and a valid non-drained corpse.
+- Life drain spends stamina over time, heals on successful drain completion, and can refund half of stamina spent during a successful drain.
 
-## Enemy Systems
+## Enemy Combat Flow
 
-### `Assets/scripts/Enemy/Enemy.cs`
-Enemy damage reaction + corpse setup.
-- Subscribes to `Health.OnDamaged` and `Health.OnDeath`.
-- On death:
-  - Ensures `DrainableCorpse` exists/enabled (corpse remains in scene).
-  - Disables all `ContactDamage` components on itself/children so corpses stop hurting.
-  - Disables itself (the `Enemy` script) to stop further behavior.
+Main files:
+- `Assets/scripts/Enemy/Enemy.cs`
+- `Assets/scripts/Enemy/EnemyController.cs`
+- `Assets/scripts/Combat/ContactDamage.cs`
+- `Assets/scripts/Combat/DrainableCorpse.cs`
 
-### `Assets/scripts/Enemy/EnemyController.cs`
-Movement executor (patrol/chase) + death stop.
-- Uses Rigidbody2D velocity in `FixedUpdate`.
-- Respects knockback:
-  - If it has a `KnockbackReceiver` and `IsKnockbackActive` is true, it will not set velocity that tick.
-- Flipping:
-  - Uses `SpriteRenderer.flipX` to avoid physics snapping from scaling the rigidbody root.
-  - Mirrors the contact sensor child offset (if `ContactDamage` is on an offset child).
-- Supports two chase stop modes:
-  - Stop at a distance (transform-distance on X), **or**
-  - Stop only when the `ContactDamage` sensor collider overlaps the player collider.
+Important behavior:
+- `Enemy` subscribes to `Health.OnDamaged` and `Health.OnDeath`.
+- On damage, `Enemy` can play hurt animation and hit particles.
+- On death, `Enemy` plays death presentation, disables contact damage, stops Rigidbody2D movement, and finalizes a drainable corpse.
+- Corpse heal amount is computed from enemy max health using `corpseHealRatio`, `minCorpseHeal`, and `maxCorpseHeal`.
+- `EnemyController.SetDead()` also stops movement, disables child `ContactDamage`, and disables the controller.
+- Contact damage should usually live on a child `DamageSensor` with a trigger collider.
 
-### `Assets/scripts/Enemy/EnemyBrain.cs`
-Temporary decision-maker (pre-GOAP).
-- Disables itself automatically if a `GoapActionProvider` exists on the same enemy (prevents double-driving).
+## Respawn And Hazards
 
----
+Main files:
+- `Assets/scripts/PlayerRespawnController.cs`
+- `Assets/scripts/CheckpointManager.cs`
+- `Assets/scripts/Checkpoint.cs`
+- `Assets/scripts/InstantKillHazard.cs`
+
+Important behavior:
+- `PlayerRespawnController` listens to player `Health.OnDeath`.
+- Normal death respawns to the permanent checkpoint and restores health/stamina fully.
+- Hazard contact can damage the player and respawn to the mini checkpoint.
+- Mini checkpoint respawn does not fully restore health/stamina.
+- Respawn grace prevents immediate retrigger loops from hazards or death events.
 
 ## UI
 
-### `Assets/scripts/UI/PlayerHUD.cs`
-Simple health + stamina bars.
-- References:
-  - `Health` and `Stamina` (auto-found if not assigned).
-  - Each bar can be either an `Image` (filled) or a `Slider`.
-- Subscribes/unsubscribes cleanly in `OnEnable`/`OnDisable`.
+Main file:
+- `Assets/scripts/UI/PlayerHUD.cs`
 
----
+Behavior:
+- Finds player, health, and stamina if not assigned.
+- Subscribes to health/stamina events in `OnEnable`.
+- Updates either filled `Image` bars or `Slider` bars.
+- Unsubscribes in `OnDisable`.
 
-## Input Actions (New Input System, Send Messages)
+## Input Actions
 
-Expected Input Action names:
-- `Attack` → calls `player.OnAttack(InputValue)`
-- `Sprint` → calls `player.OnSprint(InputValue)` (Dash)
-- `Interact` → calls `player.OnInteract(InputValue)` (Life Drain)
-- `Jump` → calls `player.OnJump(InputValue)`
-- `Move` → calls `player.OnMove(InputValue)`
+Expected New Input System action names for Send Messages:
+- `Move` -> `player.OnMove(InputValue)`
+- `Jump` -> `player.OnJump(InputValue)`
+- `Attack` -> `player.OnAttack(InputValue)`
+- `Sprint` -> `player.OnSprint(InputValue)` for dash
+- `Interact` -> `player.OnInteract(InputValue)` for life drain
 
-If your action names differ, either rename the actions or rename the methods to match the Send Messages convention.
+If action names differ, rename the actions or rename the callback methods to match Send Messages conventions.
 
----
+## Inspector Wiring Checklist
 
-## Unity Inspector Wiring Checklist
+### Player
+Required or expected components:
+- `player`
+- `Rigidbody2D`
+- `PlayerInput` using Send Messages
+- `Health`
+- `Stamina`
+- `Combat`
+- `KnockbackReceiver`
+- `PlayerRespawnController`
+- Optional `PlayerCombo`
 
-### Player GameObject
-Must have:
-- `player`, `Rigidbody2D`, `Animator`, `PlayerInput (Send Messages)`
-- `Health`, `Stamina`, `KnockbackReceiver`
-- `Combat` (on root or on a child if animation events will be on the child)
-
-Assign:
+Important assignments:
 - Grounding: `groundCheck`, `groundLayer`
-- Drain: `drainCheckPoint` (near feet), `drainableLayer`
 - Combat: `attackPoint`, `damageableLayer`
-- Animator params: optional string fields on `player`/`Enemy` if you use triggers/bools.
+- Life drain: `drainCheckPoint`, `drainCheckRadius`, `drainableLayer`
+- HUD references if not auto-found
+- Animation bool params if defaults differ
 
-### Enemy Prefab/GameObject
-Must have:
-- `Health`, `Enemy`, `EnemyController`, `KnockbackReceiver`
-- `ContactDamage` on a child **DamageSensor** object with a trigger collider
+### Enemy
+Required or expected components:
+- `Health`
+- `Enemy`
+- `EnemyController`
+- `KnockbackReceiver`
+- Child `ContactDamage` trigger sensor
+- Optional `EnemyAwareness`
+- Optional GOAP components described in `PROJECT_CONTEXT.md` and `Docs/AI/GOAPOverview.md`
 
-Layer/collision:
-- If you want no physical pushing:
-  - Disable Enemy↔Player body collision in the matrix.
-  - Put the DamageSensor on a layer that DOES overlap the Player layer (for triggers).
+Important assignments:
+- Contact damage `targetLayer` includes Player layer.
+- Enemy body collision and contact trigger collision should be configured deliberately in the physics matrix.
+- Jumping enemies need `groundCheck`, `groundLayer`, `wallCheck`, and `obstacleLayer`.
 
----
-
-## GOAP Notes (if/when enabled)
-
-The project includes the CrashKonijn GOAP package dependency in `Packages/manifest.json`:
-- `com.crashkonijn.goap` (Git URL, version pinned)
-
-Current GOAP scripts (if present in your project) live under:
-- `Assets/Scripts/GOAP/...`
-
-GOAP should replace decision-making only. `EnemyController` remains the executor that GOAP actions call.
-
----
-
-## Suggested Next Steps
-- Add enemy “attack” actions (not contact damage) as separate GOAP actions later.
-- Replace `EnemyBrain` completely with GOAP agent goal selection once your GOAP configs/AgentTypes are set up.
-- Add visual feedback: i-frame blink, hit flash, drain VFX, etc. (no gameplay changes).
+## Rules To Preserve
+- Player i-frames live in `player.TryTakeDamage`.
+- Damageable objects should use `Health`.
+- Contact damage from dead enemies must stop.
+- Knockback should not be overwritten by player/enemy movement while active.
+- Dead enemies remain as drainable corpses unless a specific mechanic says otherwise.
+- Life drain heals only after `DrainableCorpse.Drain()` succeeds.
+- Combo progress is based on successful hit checks, not button presses.
+- Respawn must reset player state before restoring health/stamina.
 
