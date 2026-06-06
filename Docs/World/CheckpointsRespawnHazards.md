@@ -21,12 +21,14 @@ There are two checkpoint types:
 2. `Checkpoint` triggers set either the permanent or mini checkpoint on `CheckpointManager`.
 3. Player death triggers `PlayerRespawnController.HandleDeath()`.
 4. Normal death respawns to the permanent checkpoint and restores health/stamina fully.
-5. `InstantKillHazard` optionally damages the player and then respawns to the mini checkpoint.
-6. `CheckpointManager` applies respawn grace to avoid immediate retrigger loops.
+5. `InstantKillHazard` optionally damages the player immediately, freezes the player in place for the hurt animation duration, then respawns.
+6. Non-lethal hazard damage respawns to the mini checkpoint when enabled; lethal damage respawns to the permanent checkpoint after the same hurt-animation delay.
+7. `CheckpointManager` applies respawn grace to avoid immediate retrigger loops.
 
 ## Inspector Wiring
 - Checkpoint object needs a trigger or collision collider and `Checkpoint`.
 - `Checkpoint.respawnPoint` can point to a child marker; if missing, the checkpoint transform is used.
+- Checkpoint respawns use `CheckpointManager.checkpointRespawnOffset`, defaulting to a small upward offset above the checkpoint marker so the player falls into place.
 - Hazard object needs trigger collider and `InstantKillHazard`.
 - Player should have `PlayerRespawnController`, `player`, `Health`, and `Stamina`.
 
@@ -41,4 +43,3 @@ There are two checkpoint types:
 
 ## Related Docs
 - `../../COMBAT_SYSTEM_OVERVIEW.md`
-

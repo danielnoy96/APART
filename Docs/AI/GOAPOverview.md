@@ -7,11 +7,14 @@ CrashKonijn GOAP chooses enemy intent. It should decide which behavior an enemy 
 - `Assets/scripts/GOAP/EnemyGoapAgentBridge.cs`
 - `Assets/scripts/GOAP/EnemyDecisionModuleBase.cs`
 - `Assets/scripts/GOAP/DistanceGoalSelector.cs`
+- `Assets/scripts/GOAP/ChargeGoalSelector.cs`
 - `Assets/scripts/GOAP/GoapRunnerResolver.cs`
 - `Assets/scripts/GOAP/Goals/PatrolGoal.cs`
 - `Assets/scripts/GOAP/Goals/ChasePlayerGoal.cs`
+- `Assets/scripts/GOAP/Goals/ChargePlayerGoal.cs`
 - `Assets/scripts/GOAP/Actions/PatrolAction.cs`
 - `Assets/scripts/GOAP/Actions/ChasePlayerAction.cs`
+- `Assets/scripts/GOAP/Actions/ChargePlayerAction.cs`
 - `Assets/scripts/GOAP/Actions/JumpToPlayerAction.cs`
 - `Assets/scripts/GOAP/Actions/JumpObstacleAction.cs`
 - `Assets/scripts/GOAP/Sensors/PlayerDistanceSensor.cs`
@@ -25,20 +28,22 @@ CrashKonijn GOAP chooses enemy intent. It should decide which behavior an enemy 
 1. `EnemyGoapAgentBridge` prepares GOAP components, assigns the player to `EnemyController`, and disables legacy `EnemyBrain` when GOAP is present.
 2. A decision module such as `DistanceGoalSelector` requests a goal from `GoapActionProvider`.
 3. GOAP uses world sensors and configured actions to pick an action.
-4. Actions call real gameplay methods on `EnemyController`, such as `Patrol()`, `ChasePlayer()`, or `TryJump()`.
+4. Actions call real gameplay methods on `EnemyController`, such as `Patrol()`, `ChasePlayer()`, `TryJump()`, or `TryJumpToPlayerAbove()`.
 5. If the enemy dies, the bridge/controller stop GOAP-driven behavior.
 
 ## Current Behaviors
 - Patrol.
 - Chase player.
-- Jump toward a player on a higher platform.
-- Jump when an obstacle is ahead; this is separate from player-above jumping.
+- Charge player at a higher horizontal speed without jumping.
+- Jump once toward a player on a higher platform for each continuous player-above opportunity.
+- Obstacle-ahead checks can route to the jump action only when the player-above jump opportunity is also ready.
 
 ## Inspector Wiring
 - Scene must contain a `GoapBehaviour` and controller component such as `ReactiveControllerBehaviour`.
 - Enemy prefab needs `AgentTypeBehaviour`, `GoapActionProvider`, `CrashKonijn.Agent.Runtime.AgentBehaviour`, `GoapRunnerResolver`, and `EnemyGoapAgentBridge`.
 - `AgentTypeBehaviour.runner` is a scene reference; prefabs should rely on `GoapRunnerResolver` to inject it.
 - Capability/agent type assets must include the relevant goals, actions, world keys, target keys, and sensors.
+- A non-jumping charger prefab should use `ChargeGoalSelector`, `ChargePlayerGoal`, `ChargePlayerAction`, and `IsCharging`, and its capability should exclude `JumpToPlayerAction` and `JumpObstacleAction`.
 
 ## Important Rules
 - GOAP does not own movement physics. `EnemyController` remains the movement executor.

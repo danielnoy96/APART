@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour
         Idle,
         Patrol,
         Chase,
+        Charge,
         Dead
     }
 
@@ -25,6 +26,10 @@ public class EnemyController : MonoBehaviour
     [Tooltip("If true, enemy stops when within Stop Distance of the player (good for later melee attacks). If false, enemy approaches until its contact-damage sensor overlaps the player.")]
     [SerializeField] private bool stopAtDistance = true;
     [SerializeField] private float stopDistance = 1.2f;
+
+    [Header("Charge")]
+    [Tooltip("Horizontal speed used by ChargePlayer. Keep this above Move Speed for charger enemies.")]
+    [SerializeField] private float chargeSpeed = 5f;
 
     [Header("Jump")]
     [Tooltip("Upward velocity applied when the enemy jumps.")]
@@ -81,6 +86,7 @@ public class EnemyController : MonoBehaviour
     private CrashKonijn.Agent.Runtime.AgentBehaviour goapAgentBehaviour;
     private float nextJumpTime;
     private float playerAboveDetectedSince = -1f;
+    private bool playerAboveJumpConsumed;
     private float lastMoveDir = 1f;
 
     public KnockbackReceiver KnockbackReceiver => knockbackReceiver;
@@ -208,6 +214,10 @@ public class EnemyController : MonoBehaviour
             case State.Chase:
                 ChasePlayer();
                 break;
+
+            case State.Charge:
+                ChargePlayer();
+                break;
         }
     }
 
@@ -215,6 +225,7 @@ public class EnemyController : MonoBehaviour
     internal void SetStateIdle() => state = State.Idle;
     internal void SetStatePatrol() => state = State.Patrol;
     internal void SetStateChase() => state = State.Chase;
+    internal void SetStateCharge() => state = State.Charge;
 
     // GOAP action will call Patrol() later.
     public void Patrol()
@@ -282,14 +293,10 @@ public class EnemyController : MonoBehaviour
         }
 
         float distanceX = player.position.x - transform.position.x;
-        bool playerAboveReadyToJump = IsPlayerAboveReadyToJump();
 
         if (ShouldStopChasing(distanceX))
         {
-            if (playerAboveReadyToJump)
-            {
-                TryJump();
-            }
+            TryJumpToPlayerAbove();
 
             SetHorizontalVelocity(0f);
             return;
@@ -297,13 +304,38 @@ public class EnemyController : MonoBehaviour
 
         // If the player is on a higher platform, attempt a jump while chasing.
         // This is also used as a safety net when GOAP planning is still being iterated.
-        if (playerAboveReadyToJump)
-        {
-            TryJump();
-        }
+        TryJumpToPlayerAbove();
 
         float dir = Mathf.Sign(distanceX);
         SetHorizontalVelocity(dir * moveSpeed);
+        lastMoveDir = dir;
+        FlipByVelocity(dir);
+    }
+
+    // GOAP charge actions call this for fast, grounded pursuit. It intentionally
+    // does not call TryJumpToPlayerAbove so charger enemies remain non-jumpers.
+    public void ChargePlayer()
+    {
+        if (state != State.Dead)
+            state = State.Charge;
+
+        if (player == null)
+        {
+            state = State.Patrol;
+            return;
+        }
+
+        float distanceX = player.position.x - transform.position.x;
+
+        if (ShouldStopChasing(distanceX))
+        {
+            SetHorizontalVelocity(0f);
+            return;
+        }
+
+        float dir = Mathf.Sign(distanceX);
+        float speed = Mathf.Max(chargeSpeed, moveSpeed);
+        SetHorizontalVelocity(dir * speed);
         lastMoveDir = dir;
         FlipByVelocity(dir);
     }
@@ -360,7 +392,24 @@ public class EnemyController : MonoBehaviour
 
     public bool IsPlayerAboveReadyToJump()
     {
-        if (!IsPlayerAbove() || !IsGrounded())
+        bool grounded = IsGrounded();
+
+        if (!IsPlayerAbove())
+        {
+            playerAboveDetectedSince = -1f;
+            if (grounded)
+            {
+                playerAboveJumpConsumed = false;
+            }
+            return false;
+        }
+
+        if (playerAboveJumpConsumed)
+        {
+            return false;
+        }
+
+        if (!grounded)
         {
             playerAboveDetectedSince = -1f;
             return false;
@@ -378,6 +427,23 @@ public class EnemyController : MonoBehaviour
         }
 
         return Time.time - playerAboveDetectedSince >= playerAboveJumpDelay;
+    }
+
+    public bool TryJumpToPlayerAbove()
+    {
+        if (!IsPlayerAboveReadyToJump())
+        {
+            return false;
+        }
+
+        if (!TryJump())
+        {
+            return false;
+        }
+
+        playerAboveJumpConsumed = true;
+        playerAboveDetectedSince = -1f;
+        return true;
     }
 
     public bool TryJump()

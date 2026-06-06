@@ -10,6 +10,7 @@
 - `Assets/scripts/Combat/KnockbackReceiver.cs`
 - `Assets/scripts/GOAP/Actions/PatrolAction.cs`
 - `Assets/scripts/GOAP/Actions/ChasePlayerAction.cs`
+- `Assets/scripts/GOAP/Actions/ChargePlayerAction.cs`
 - `Assets/scripts/GOAP/Actions/JumpToPlayerAction.cs`
 - `Assets/scripts/GOAP/Actions/JumpObstacleAction.cs`
 
@@ -19,8 +20,10 @@
 3. `FixedUpdate()` runs patrol/chase/idle movement unless dead or knockback is active.
 4. `Patrol()` moves between patrol points when assigned, otherwise moves around spawn position using `patrolDistance`.
 5. `ChasePlayer()` moves toward the player and may jump if the player is above.
-6. `TryJump()` applies upward velocity when grounded and jump cooldown allows it.
-7. On death, movement stops, contact damage sources are disabled, and the controller disables itself.
+6. `ChargePlayer()` moves toward the player with `chargeSpeed` and intentionally never jumps.
+7. `TryJump()` applies upward velocity when grounded and jump cooldown allows it.
+8. `TryJumpToPlayerAbove()` consumes one player-above jump opportunity so the enemy does not keep jumping every cooldown while the same above condition remains true.
+9. On death, movement stops, contact damage sources are disabled, and the controller disables itself.
 
 ## Inspector Wiring
 - Required for movement: `Rigidbody2D`.
@@ -28,6 +31,7 @@
 - Ground jump checks need `groundCheck`, `groundCheckRadius`, and `groundLayer`.
 - Obstacle checks need `wallCheck`, `wallCheckDistance`, and `obstacleLayer`.
 - Patrol can use `patrolPoints` or fallback to `patrolDistance`.
+- Charger enemies should set `chargeSpeed` above `moveSpeed` and use a GOAP capability without jump actions.
 
 ## Important Rules
 - Do not bypass `EnemyController` for movement unless deliberately replacing the movement system.
@@ -35,7 +39,7 @@
 - Prefer flipping `SpriteRenderer.flipX`; root scale flips can affect collider offsets.
 - Contact damage sensor local X offset is mirrored when the enemy turns.
 - Death keeps the corpse active for life drain; it does not destroy the enemy immediately.
-- GOAP obstacle jumping should be driven by `IsObstacleAhead()`; player-above jumping should be driven by `IsPlayerAboveReadyToJump()`.
+- Player-above jumping should be driven by `IsPlayerAboveReadyToJump()` and executed through `TryJumpToPlayerAbove()`. Obstacle-ahead GOAP checks must not cause raw cooldown-based jumps by themselves.
 
 ## Known Issues
 - `IsGrounded()` returns true if `groundCheck` is missing, which avoids breaking basic behavior but can hide setup mistakes.

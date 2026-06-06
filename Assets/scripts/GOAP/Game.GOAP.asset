@@ -15,6 +15,11 @@ MonoBehaviour:
   nameSpace: Game.GOAP
   scripts:
     goals:
+    - <Name>k__BackingField: ChargePlayerGoal
+      fullName: Game.GOAP.Goals.ChargePlayerGoal, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Goals/ChargePlayerGoal.cs
+      <Id>k__BackingField: game.goap.goal.charge_player
     - <Name>k__BackingField: ChasePlayerGoal
       fullName: Game.GOAP.Goals.ChasePlayerGoal, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
@@ -26,6 +31,11 @@ MonoBehaviour:
       <Path>k__BackingField: Assets/scripts/GOAP/Goals/PatrolGoal.cs
       <Id>k__BackingField: game.goap.goal.patrol
     actions:
+    - <Name>k__BackingField: ChargePlayerAction
+      fullName: Game.GOAP.Actions.ChargePlayerAction, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/Actions/ChargePlayerAction.cs
+      <Id>k__BackingField: game.goap.action.charge_player
     - <Name>k__BackingField: ChasePlayerAction
       fullName: Game.GOAP.Actions.ChasePlayerAction, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
@@ -73,6 +83,11 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/HasTarget.cs
       <Id>k__BackingField: game.goap.worldkey.has_target
+    - <Name>k__BackingField: IsCharging
+      fullName: Game.GOAP.WorldKeys.IsCharging, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      <Path>k__BackingField: Assets/scripts/GOAP/WorldKeys/IsCharging.cs
+      <Id>k__BackingField: game.goap.worldkey.is_charging
     - <Name>k__BackingField: IsChasing
       fullName: Game.GOAP.WorldKeys.IsChasing, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null

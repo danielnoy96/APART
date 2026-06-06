@@ -63,7 +63,12 @@ public class ContactDamage : MonoBehaviour
         player player = other.GetComponentInParent<player>();
         if (player != null)
         {
-            if (player.TryTakeDamage(damageAmount))
+            Vector2 knockbackSource = selfCollider != null
+                ? selfCollider.ClosestPoint(player.transform.position)
+                : (Vector2)transform.position;
+            Vector2 vfxSource = transform.position;
+
+            if (player.TryTakeDamage(damageAmount, vfxSource))
             {
                 // KnockbackReceiver may be on the root or a child.
                 KnockbackReceiver knockback = player.GetComponentInParent<KnockbackReceiver>();
@@ -73,10 +78,7 @@ public class ContactDamage : MonoBehaviour
                 }
                 if (knockback != null)
                 {
-                    Vector2 source = selfCollider != null
-                        ? selfCollider.ClosestPoint(player.transform.position)
-                        : (Vector2)transform.position;
-                    knockback.ApplyKnockback(source);
+                    knockback.ApplyKnockback(knockbackSource);
                     player.StartKnockbackLock(knockback.KnockbackDuration);
                 }
 

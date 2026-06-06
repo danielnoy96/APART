@@ -24,6 +24,9 @@ Purpose: quick map of the game systems so future work can start from the right c
 ### Combat
 - `Combat/PlayerCombo.md` - successful-hit combo counter and stamina refund.
 
+### VFX
+- `VFX/GameplayVFX.md` - ownership and debugging guide for gameplay-triggered player/enemy particle effects.
+
 ### UI
 - `UI/HUDAndReset.md` - player health/stamina HUD and runtime reset button.
 
@@ -32,4 +35,4 @@ Purpose: quick map of the game systems so future work can start from the right c
 - `EnemyAwareness` is an enemy gameplay gate, not a GOAP system, but GOAP actions must respect it.
 - Checkpoint mini-respawn and permanent-respawn have different restore behavior.
 - Breakable platform visuals are not cosmetic-only; they are coupled to platform enable/disable timing.
-
+- Gameplay-triggered particles are owned by VFX controller scripts; ParticleSystem inspector settings own the look.

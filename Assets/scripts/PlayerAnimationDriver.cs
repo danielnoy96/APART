@@ -21,8 +21,6 @@ public class PlayerAnimationDriver : MonoBehaviour
     private static readonly int IsGroundedParam = Animator.StringToHash("isGrounded");
     private static readonly int IsJumpingParam = Animator.StringToHash("isJumping");
     private static readonly int YVelocityParam = Animator.StringToHash("yVelocity");
-    private static readonly int HitState = Animator.StringToHash("hit");
-
     private readonly Coroutine[] timedActionRoutines = new Coroutine[System.Enum.GetValues(typeof(PlayerAnim)).Length];
 
     private Animator animator;
@@ -81,12 +79,6 @@ public class PlayerAnimationDriver : MonoBehaviour
         debugHitActive = active;
         debugHitNormalizedTime = active ? Mathf.Clamp01(normalizedTime) : 0f;
         SetOptionalBool(hitParam, active);
-
-        if (animator != null && active && hitParam != 0)
-        {
-            float frameTime = debugHitNormalizedTime < 0.5f ? 0f : 0.5f;
-            animator.Play(HitState, 0, frameTime);
-        }
     }
 
     public void SetAction(PlayerAnim anim, bool active)

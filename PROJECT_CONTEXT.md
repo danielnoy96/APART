@@ -2,11 +2,12 @@
 
 > Purpose: repo-local current snapshot for future work. This file is the high-level map; detailed system notes live under `Docs/`.
 >
-> Last updated: 2026-05-31
+> Last updated: 2026-06-04
 
 ## Read Order
 - `AGENTS.md` - project rules for AI agents.
 - `Docs/SYSTEMS_INDEX.md` - system map and focused doc links.
+- `Docs/VFX/GameplayVFX.md` - ownership and debugging notes for gameplay-triggered particle effects.
 - This file - current high-level architecture and source-of-truth summary.
 - Focused docs in `Docs/` before editing a specific system.
 - `GOAP_CRASHKONIJN_WORKING_NOTES.md` only by targeted section search for GOAP details.
@@ -31,6 +32,7 @@
 - GOAP actions call real gameplay methods on `EnemyController`; GOAP does not own physics movement.
 - `EnemyAwareness` is not GOAP. It is a wake/hide/asleep gameplay gate that both GOAP and legacy enemy logic must respect.
 - Dead enemies remain in the scene as drainable corpses; do not destroy them by default.
+- Gameplay-triggered particles are owned by VFX controller scripts. ParticleSystem inspector settings own the visual tuning.
 
 ## Player System
 Main files:
@@ -44,6 +46,7 @@ Main files:
 - `Assets/scripts/PlayerLifeDrainState.cs`
 - `Assets/scripts/PlayerAnimationDriver.cs`
 - `Assets/scripts/PlayerAnimationEventRelay.cs`
+- `Assets/scripts/PlayerVfxController.cs`
 
 Current behavior:
 - Player uses a plain C# FSM, not MonoBehaviour states.
@@ -59,10 +62,13 @@ Current behavior:
 - Player damage should go through `player.TryTakeDamage` to preserve invincibility and hit animation.
 - Respawn calls `player.ResetForRespawn`, clears velocity/input/FSM damage state, resets animation, resets combo, and returns to idle.
 - Player animation is centralized through `PlayerAnimationDriver`; attack animation events should use `PlayerAnimationEventRelay.AttackHit` and `AttackFinished`.
+- Player gameplay particles are centralized through `PlayerVfxController`: hit feedback is emitted from accepted damage, and life-drain feedback starts/stops with `PlayerLifeDrainState`.
+- Contact damage passes source position into `player.TryTakeDamage` so player hit VFX can orient from the damage source.
 - Attack state has a fallback exit when `Combat.CanAttack` becomes true, so missing animation events do not permanently lock controls.
 
 Player setup expectations:
 - Root should have `player`, `Rigidbody2D`, `PlayerInput`, `Health`, `Stamina`, `Combat`, and usually `KnockbackReceiver`.
+- Root should have `PlayerVfxController` when player gameplay particles are used.
 - Assign `groundCheck`, `groundLayer`, `drainCheckPoint`, `drainCheckRadius`, and `drainableLayer`.
 - Default animation bool params include `isDashing`, `isAttacking`, `isLifeDraining`, and `isHit`.
 
@@ -95,6 +101,7 @@ Main files:
 - `Assets/scripts/Enemy/EnemyAwareness.cs`
 - `Assets/scripts/Enemy/EnemyAnimationDriver.cs`
 - `Assets/scripts/Enemy/EnemyAnimationEventRelay.cs`
+- `Assets/scripts/Enemy/EnemyVfxController.cs`
 
 Current behavior:
 - `EnemyController` is the movement executor for patrol, chase, stop, facing, contact sensor mirroring, jumping, obstacle checks, player-above checks, and death movement shutdown.
@@ -103,13 +110,15 @@ Current behavior:
 - Patrol supports assigned patrol points or fallback patrol around spawn position.
 - Chase supports stopping by distance or by actual contact sensor overlap.
 - Enemy jump behavior includes grounded checks, jump cooldown, player-above detection, obstacle-ahead raycast, and player-above reaction delay.
-- `Enemy` owns hurt/death presentation, hit/death particles, corpse finalization, and ensuring a `DrainableCorpse` exists on death.
+- `Enemy` owns hurt/death presentation, corpse finalization, and ensuring a `DrainableCorpse` exists on death; `EnemyVfxController` owns hit/death/corpse particle playback.
+- Corpse VFX starts from `Enemy.FinalizeCorpse`, after the enemy is actually configured as a drainable corpse.
 - `EnemyAwareness` states are `Asleep`, `Hiding`, `Waking`, `ReturningToSleep`, and `Active`.
 - `EnemyAwareness.CanRunRegularBehavior` gates regular behavior. GOAP actions stop movement and stop running when awareness is not active.
 - `EnemyBrain` is legacy fallback logic. It disables itself when GOAP components are present.
 
 Enemy prefab expectations:
 - Root should have `Health`, `Enemy`, `EnemyController`, and relevant animation/controller components.
+- Root should have `EnemyVfxController` when enemy hit/death/corpse particles are used.
 - Contact damage should usually be on a child trigger sensor with `ContactDamage` targeting the Player layer.
 - Jumping enemies need `groundCheck`, `groundLayer`, `wallCheck`, and `obstacleLayer` configured.
 - If using awareness, animation events should call `EnemyAnimationEventRelay.PopAnimationFinished` and `UnpopAnimationFinished`.
@@ -119,11 +128,14 @@ Main files:
 - `Assets/scripts/GOAP/EnemyGoapAgentBridge.cs`
 - `Assets/scripts/GOAP/EnemyDecisionModuleBase.cs`
 - `Assets/scripts/GOAP/DistanceGoalSelector.cs`
+- `Assets/scripts/GOAP/ChargeGoalSelector.cs`
 - `Assets/scripts/GOAP/GoapRunnerResolver.cs`
 - `Assets/scripts/GOAP/Goals/PatrolGoal.cs`
 - `Assets/scripts/GOAP/Goals/ChasePlayerGoal.cs`
+- `Assets/scripts/GOAP/Goals/ChargePlayerGoal.cs`
 - `Assets/scripts/GOAP/Actions/PatrolAction.cs`
 - `Assets/scripts/GOAP/Actions/ChasePlayerAction.cs`
+- `Assets/scripts/GOAP/Actions/ChargePlayerAction.cs`
 - `Assets/scripts/GOAP/Actions/JumpToPlayerAction.cs`
 - `Assets/scripts/GOAP/Actions/JumpObstacleAction.cs`
 - `Assets/scripts/GOAP/Sensors/PlayerDistanceSensor.cs`
@@ -138,9 +150,11 @@ Current GOAP behavior:
 - Goals:
   - `PatrolGoal`
   - `ChasePlayerGoal`
+  - `ChargePlayerGoal`
 - Actions:
   - `PatrolAction` -> calls `EnemyController.Patrol()`
   - `ChasePlayerAction` -> calls `EnemyController.ChasePlayer()`
+  - `ChargePlayerAction` -> calls `EnemyController.ChargePlayer()` for faster non-jumping pursuit
   - `JumpToPlayerAction` -> jumps when the player is above, then continues chasing until landing or timeout
   - `JumpObstacleAction` -> jumps during chase when `ObstacleAheadSensor` reports a blocker, then continues chasing until landing or timeout
 - Sensors:
@@ -160,11 +174,12 @@ GOAP bridge behavior:
 - It hooks GOAP resolve/no-action/goal events for debug logging.
 - If `OnNoActionFound` fires, it clears the last requested goal and falls back to direct patrol/chase execution so enemies do not freeze while config is being iterated.
 - `DistanceGoalSelector` currently chooses chase/hide based on horizontal or full distance, optional hysteresis, and awareness wake readiness.
+- `ChargeGoalSelector` chooses charge/hide for non-jumping charger enemies.
 - `GoapRunnerResolver` uses early execution order and reflection to inject the scene `GoapBehaviour` runner into prefab `AgentTypeBehaviour.runner`.
 
 Scene/prefab wiring:
 - Scene needs a GOAP GameObject with `GoapBehaviour` and a controller such as `ReactiveControllerBehaviour`.
-- GOAP enemy needs `GoapRunnerResolver`, `AgentTypeBehaviour`, `GoapActionProvider`, `CrashKonijn.Agent.Runtime.AgentBehaviour`, `EnemyGoapAgentBridge`, and a decision module such as `DistanceGoalSelector`.
+- GOAP enemy needs `GoapRunnerResolver`, `AgentTypeBehaviour`, `GoapActionProvider`, `CrashKonijn.Agent.Runtime.AgentBehaviour`, `EnemyGoapAgentBridge`, and a decision module such as `DistanceGoalSelector` or `ChargeGoalSelector`.
 - Prefabs should leave runner references empty and rely on `GoapRunnerResolver`.
 - When changing GOAP classes, keep `[GoapId]` attributes stable and verify generated/config assets.
 
@@ -180,8 +195,10 @@ Current behavior:
 - `CheckpointManager` is a singleton and can auto-create itself if missing.
 - `PlayerRespawnController` registers the player starting position as fallback spawn and respawns to permanent checkpoint on death.
 - Permanent respawn restores health and stamina fully.
-- Mini respawn is used by hazards and does not fully restore health/stamina.
-- `InstantKillHazard` can apply damage through `player.TryTakeDamage` and optionally respawn to the mini checkpoint.
+- Mini respawn is used by non-lethal hazard hits and does not fully restore health/stamina.
+- Checkpoint respawns offset the player slightly above checkpoint markers so the player falls into place.
+- `InstantKillHazard` applies damage through `player.TryTakeDamage`, freezes the player during the hurt animation duration, and only respawns to the mini checkpoint when the hit is non-lethal.
+- Lethal hazard damage respawns to the permanent checkpoint/save after the same hurt-animation delay.
 - Respawn grace prevents immediate loops from hazards/death events.
 
 ## Breakable Crumble Platforms
@@ -218,6 +235,7 @@ Current behavior:
 - Older docs may still describe GOAP as patrol/chase only; current code also includes jump-to-player and jump-obstacle behavior.
 - GOAP ScriptableObject config can drift from code if generated IDs or capability assets are not refreshed.
 - GOAP enemies can appear frozen if scene runner, receiver wiring, agent type, sensors, targets, or capability config are missing.
+- Particle direction may come from ParticleSystem `Shape` and `Main > Start Speed`, not only `Velocity over Lifetime`; inspect modules before changing VFX gameplay code.
 - `EnemyController.IsGrounded()` returns true when `groundCheck` is missing. This preserves basic behavior but can hide prefab setup mistakes.
 - Player attack and awareness animation systems have fallback timers, but missing animation events can still cause visual/gameplay timing mismatch.
 - `InstantKillHazard` is a historical name; with non-lethal `damageAmount`, it behaves as damage-plus-mini-respawn.

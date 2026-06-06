@@ -13,6 +13,8 @@ public class Checkpoint : MonoBehaviour
     [SerializeField] private Transform respawnPoint;
     [SerializeField] private bool logActivation = false;
 
+    public bool IsMini => checkpointType == CheckpointType.Mini;
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         TryActivate(other);

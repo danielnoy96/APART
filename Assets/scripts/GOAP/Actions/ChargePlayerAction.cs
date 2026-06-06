@@ -1,0 +1,51 @@
+using CrashKonijn.Agent.Core;
+using CrashKonijn.Agent.Runtime;
+using CrashKonijn.Goap.Runtime;
+using Game.GOAP.Goals;
+using UnityEngine;
+
+namespace Game.GOAP.Actions
+{
+    [GoapId("game.goap.action.charge_player")]
+    public class ChargePlayerAction : GoapActionBase<ChargePlayerAction.Data>
+    {
+        public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
+        {
+            if (data.Controller == null || data.Controller.IsDead)
+            {
+                return ActionRunState.Stop;
+            }
+
+            if (data.Awareness != null && !data.Awareness.CanRunRegularBehavior)
+            {
+                data.Controller.StopMoving();
+                return ActionRunState.Stop;
+            }
+
+            var bridge = data.Controller.GetComponent<Game.GOAP.EnemyGoapAgentBridge>();
+            if (bridge != null && !bridge.IsRequestedGoal(typeof(ChargePlayerGoal)))
+            {
+                return ActionRunState.Stop;
+            }
+
+            if (bridge != null && bridge.DebugLog && (Time.frameCount % 30 == 0))
+                Debug.Log("[GOAP] ChargePlayerAction.Perform", data.Controller);
+
+            data.Controller.ChargePlayer();
+            return ActionRunState.Continue;
+        }
+
+        public override bool IsInRange(IMonoAgent agent, float distance, Data data, IComponentReference references) => true;
+
+        public class Data : IActionData
+        {
+            public ITarget Target { get; set; }
+
+            [GetComponent]
+            public EnemyController Controller { get; set; }
+
+            [GetComponent]
+            public EnemyAwareness Awareness { get; set; }
+        }
+    }
+}

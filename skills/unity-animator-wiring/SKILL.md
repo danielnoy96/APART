@@ -2,7 +2,7 @@
 
 Use this skill when working on APART's Unity animation wiring, especially player or enemy 2D sprite animations, Animator parameters, Animation Events, or any future animation-system refactor.
 
-Updated: 2026-05-31
+Updated: 2026-06-04
 
 ## Purpose
 
@@ -24,6 +24,7 @@ Before changing animation code, also check:
 - `../../Docs/SYSTEMS_INDEX.md`
 - `../../Docs/Enemy/EnemyAwareness.md`
 - `../../Docs/Enemy/EnemyController.md`
+- `../../Docs/VFX/GameplayVFX.md`
 - `../../COMBAT_SYSTEM_OVERVIEW.md`
 
 Code is still the source of truth. If this skill conflicts with `Assets/scripts/**`, trust code and update this skill.
@@ -39,6 +40,8 @@ Idle, Run, JumpRise, Fall, Dash, Attack, LifeDrain, Hit
 Animation code should decide how that intent is applied to Unity's `Animator`.
 
 The player follows that split through `PlayerAnimationDriver`. Enemy animation follows the same split through `EnemyAnimationDriver`.
+
+Gameplay-triggered particle effects are not owned by animation clips. `PlayerVfxController` and `EnemyVfxController` own hit, life-drain, death, and corpse particle playback. ParticleSystem inspector settings own the visual tuning.
 
 ## Current System Map
 
@@ -163,6 +166,7 @@ Player states now request animation intent through `player.AnimationDriver`:
 - `PlayerAttackState` calls `PlayTimedAction(PlayerAnim.Attack, player.attackAnimHoldSeconds)`.
 - `PlayerDashState` calls `PlayTimedAction(PlayerAnim.Dash, player.dashAnimHoldSeconds)`.
 - `PlayerLifeDrainState` calls `SetAction(PlayerAnim.LifeDrain, true/false)`.
+- `PlayerLifeDrainState` starts/stops life-drain particles through `PlayerVfxController`.
 
 States should not call `Animator` directly. Locomotion and hit animation sync are centralized in `player.SyncAnimationState()`.
 
@@ -194,9 +198,12 @@ Current animation behavior:
 Current animation behavior:
 
 - On enter, calls `player.AnimationDriver.SetAction(PlayerAnim.LifeDrain, true)`.
+- On enter, starts life-drain VFX through `player.StartLifeDrainFeedback()`.
 - On exit, calls `player.AnimationDriver.SetAction(PlayerAnim.LifeDrain, false)`.
+- On exit, stops life-drain VFX through `player.StopLifeDrainFeedback()`.
 - Drain duration comes from `DrainableCorpse.DrainDuration`, not from the animation clip.
 - Life Drain currently has no required animation event.
+- Do not use the `lifedrain` animation clip as the primary ParticleSystem play trigger; the state owns playback timing.
 
 ## Current Animation Events
 
@@ -462,8 +469,8 @@ Current driver responsibilities:
   - `SetHit(bool active, float normalizedTime)`
 - Keep independent timed action holds per `PlayerAnim`.
 - Reset all visual bools on respawn.
-- Expose optional inspector debug state for current locomotion, last action request, timed-action activity, hit activity, and Y velocity.
-- Scrub the `hit` animation state from normalized hit/knockback progress so the first hit sprite holds for the first half and the second hit sprite holds for the second half.
+- Expose optional inspector debug state for current locomotion, last action request, timed-action activity, hit activity, hit progress, and Y velocity.
+- Let the `hit` clip play normally while `isHit` is true; hit sprite timing belongs in the Animation window, while hit particle playback belongs in `PlayerVfxController`.
 
 ### What Gameplay States Should Do
 

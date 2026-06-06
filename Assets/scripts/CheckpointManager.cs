@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CheckpointManager : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class CheckpointManager : MonoBehaviour
 
     [Header("Respawn")]
     [SerializeField] private float respawnGraceSeconds = 0.25f;
+    [Tooltip("Offset applied when respawning to checkpoint markers so the player falls into place.")]
+    [FormerlySerializedAs("miniRespawnOffset")]
+    [SerializeField] private Vector2 checkpointRespawnOffset = new Vector2(0f, 0.5f);
     [SerializeField] private bool logEvents = false;
 
     private Transform permanentCheckpoint;
@@ -36,6 +40,11 @@ public class CheckpointManager : MonoBehaviour
     }
 
     public bool IsRespawnGraceActive => Time.time < respawnGraceUntilTime;
+
+    public void BeginRespawnGrace()
+    {
+        respawnGraceUntilTime = Time.time + Mathf.Max(0f, respawnGraceSeconds);
+    }
 
     private void Awake()
     {
@@ -90,7 +99,7 @@ public class CheckpointManager : MonoBehaviour
             return;
         }
 
-        Vector3 pos = permanentCheckpoint != null ? permanentCheckpoint.position : GetFallbackSpawn(p);
+        Vector3 pos = permanentCheckpoint != null ? GetCheckpointSpawnPosition(permanentCheckpoint) : GetFallbackSpawn(p);
         if (logEvents)
         {
             string src = permanentCheckpoint != null ? $"permanent ({permanentCheckpoint.name})" : "fallback (default spawn / current pos)";
@@ -106,7 +115,7 @@ public class CheckpointManager : MonoBehaviour
             return;
         }
 
-        Vector3 pos = miniCheckpoint != null ? miniCheckpoint.position : GetFallbackSpawn(p);
+        Vector3 pos = miniCheckpoint != null ? GetCheckpointSpawnPosition(miniCheckpoint) : GetFallbackSpawn(p);
         if (logEvents)
         {
             string src = miniCheckpoint != null ? $"mini ({miniCheckpoint.name})" : "fallback (default spawn / current pos)";
@@ -125,9 +134,14 @@ public class CheckpointManager : MonoBehaviour
         return p.transform.position;
     }
 
+    private Vector3 GetCheckpointSpawnPosition(Transform checkpoint)
+    {
+        return checkpoint.position + (Vector3)checkpointRespawnOffset;
+    }
+
     private void DoRespawn(player p, Vector3 position, bool restoreHealthFull, bool restoreStaminaFull)
     {
-        respawnGraceUntilTime = Time.time + Mathf.Max(0f, respawnGraceSeconds);
+        BeginRespawnGrace();
 
         p.ResetForRespawn(position);
 

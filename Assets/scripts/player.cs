@@ -9,6 +9,7 @@ public class player : MonoBehaviour
     public Animator anim;
     [SerializeField] private PlayerAnimationDriver animationDriver;
     [SerializeField] private PlayerAnimationEventRelay animationEventRelay;
+    [SerializeField] private PlayerVfxController vfxController;
     public Combat combat;
     public Stamina stamina;
     public Health health;
@@ -177,6 +178,10 @@ public class player : MonoBehaviour
                 animationDriver = gameObject.AddComponent<PlayerAnimationDriver>();
             }
         }
+        if (vfxController == null)
+        {
+            vfxController = GetComponent<PlayerVfxController>();
+        }
         if (anim != null)
         {
             animationEventRelay = anim.GetComponent<PlayerAnimationEventRelay>();
@@ -317,6 +322,8 @@ public class player : MonoBehaviour
         hitAnimationTimer = 0f;
         hitAnimationDuration = 0f;
         animationDriver?.ResetAll();
+        vfxController?.ClearHitFeedback();
+        vfxController?.StopLifeDrainFeedback();
 
         coyoteTimer = 0f;
         jumpBufferTimer = 0f;
@@ -475,6 +482,11 @@ public class player : MonoBehaviour
 
     public bool TryTakeDamage(int damage)
     {
+        return TryTakeDamage(damage, null);
+    }
+
+    public bool TryTakeDamage(int damage, Vector2? hitSourcePosition)
+    {
         if (damage <= 0)
         {
             return false;
@@ -495,6 +507,14 @@ public class player : MonoBehaviour
         }
 
         health.TakeDamage(damage);
+        if (hitSourcePosition.HasValue)
+        {
+            vfxController?.PlayHitFeedbackFromSource(hitSourcePosition.Value);
+        }
+        else
+        {
+            vfxController?.PlayHitFeedback(GetCurrentFacingDirection());
+        }
         StartHitAnimationHold(hitAnimHoldSeconds);
 
         if (invincibilityDuration > 0f)
@@ -508,6 +528,31 @@ public class player : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void StartLifeDrainFeedback()
+    {
+        vfxController?.StartLifeDrainFeedback();
+    }
+
+    public void StopLifeDrainFeedback()
+    {
+        vfxController?.StopLifeDrainFeedback();
+    }
+
+    private int GetCurrentFacingDirection()
+    {
+        if (transform.localScale.x < 0f)
+        {
+            return -1;
+        }
+
+        if (transform.localScale.x > 0f)
+        {
+            return 1;
+        }
+
+        return facingDirection != 0 ? facingDirection : 1;
     }
 
     public void StartKnockbackLock(float duration)

@@ -248,6 +248,31 @@ namespace Game.GOAP
             StopRunningActionOnGoalChange(isGoalChange);
         }
 
+        public void RequestCharge()
+        {
+            if (actionProvider == null)
+                return;
+
+            EnsureGoapReceiver();
+            if (actionProvider.Receiver == null)
+            {
+                Debug.LogError("GOAP action provider has no Receiver. Add CrashKonijn.Agent.Runtime.AgentBehaviour to this enemy and assign its ActionProviderBase to the GoapActionProvider.", this);
+                return;
+            }
+
+            // Don't permanently suppress requests: the resolver may initially fail due to missing
+            // sensors/targets during scene startup. Allow re-requesting if there is no plan yet.
+            if (lastRequestedGoal == typeof(ChargePlayerGoal) && actionProvider.CurrentPlan != null)
+                return;
+
+            bool isGoalChange = lastRequestedGoal != typeof(ChargePlayerGoal);
+            lastRequestedGoal = typeof(ChargePlayerGoal);
+            if (debugLog)
+                Debug.Log("[GOAP] RequestGoal: ChargePlayerGoal", this);
+            actionProvider.RequestGoal(new[] { typeof(ChargePlayerGoal) });
+            StopRunningActionOnGoalChange(isGoalChange);
+        }
+
         public void StopCurrentAction()
         {
             lastRequestedGoal = null;
@@ -322,6 +347,12 @@ namespace Game.GOAP
                 if (debugLog)
                     Debug.Log("[GOAP] NoActionFound fallback: ChasePlayer", this);
                 controller.ChasePlayer();
+            }
+            else if (failedGoal == typeof(ChargePlayerGoal))
+            {
+                if (debugLog)
+                    Debug.Log("[GOAP] NoActionFound fallback: ChargePlayer", this);
+                controller.ChargePlayer();
             }
             else if (failedGoal == typeof(PatrolGoal))
             {

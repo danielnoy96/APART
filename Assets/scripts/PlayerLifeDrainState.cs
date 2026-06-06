@@ -38,6 +38,7 @@ public class PlayerLifeDrainState : PlayerState
         ApplyIdleHorizontalVelocity();
 
         player.AnimationDriver.SetAction(PlayerAnim.LifeDrain, true);
+        player.StartLifeDrainFeedback();
 
         player.lifeDrainPressed = false;
 
@@ -60,6 +61,7 @@ public class PlayerLifeDrainState : PlayerState
     public override void Exit()
     {
         player.AnimationDriver.SetAction(PlayerAnim.LifeDrain, false);
+        player.StopLifeDrainFeedback();
 
         targetCorpse = null;
     }
