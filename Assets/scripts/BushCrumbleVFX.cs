@@ -11,7 +11,7 @@ public class BushCrumbleVFX : MonoBehaviour
     [SerializeField] private bool forceWorldSimulation = true;
     [SerializeField, Min(0)] private int forcedEmissionCount = 18;
     [SerializeField] private bool boostParticleVisibility = true;
-    [SerializeField] private int particleSortingOrderOffset = 8;
+    [SerializeField] private int particleSortingOrderOffset;
 
     [Header("Vertical Crumble")]
     [SerializeField] private bool useVerticalCrumble = true;

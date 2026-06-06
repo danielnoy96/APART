@@ -57,7 +57,6 @@ public class BreakableTimedPlatform : MonoBehaviour
     private Collider2D[] colliders;
     private Renderer[] renderers;
     private GameObject shardContainer;
-    private SortingGroup shardSortingGroup;
     private Material cachedShardMaterial;
     private Sprite cachedSprite;
     private bool busy;
@@ -202,8 +201,8 @@ public class BreakableTimedPlatform : MonoBehaviour
         }
 
         shardContainer = new GameObject($"{visualTarget.name}_CrumbleShards");
+        AttachShardContainerToSortingContext();
         shardContainer.SetActive(false);
-        shardSortingGroup = shardContainer.AddComponent<SortingGroup>();
         cachedShardMaterial = CreateShardMaterial(sprite);
         cachedSprite = sprite;
         ApplyShardSorting();
@@ -257,7 +256,7 @@ public class BreakableTimedPlatform : MonoBehaviour
         Transform shardTransform = shard.gameObject.transform;
         shardTransform.position = worldPosition;
         shardTransform.rotation = visualTarget.transform.rotation;
-        shardTransform.localScale = visualTarget.transform.lossyScale;
+        SetWorldScale(shardTransform, visualTarget.transform.lossyScale);
         shard.gameObject.layer = visualTarget.gameObject.layer;
         shard.gameObject.SetActive(true);
 
@@ -289,9 +288,22 @@ public class BreakableTimedPlatform : MonoBehaviour
             Destroy(shardContainer);
             shardContainer = null;
         }
-
-        shardSortingGroup = null;
         cachedSprite = null;
+    }
+
+    private void AttachShardContainerToSortingContext()
+    {
+        if (shardContainer == null || visualTarget == null)
+        {
+            return;
+        }
+
+        SortingGroup sourceGroup = visualTarget.GetComponentInParent<SortingGroup>(true);
+        Transform sortingParent = sourceGroup != null ? sourceGroup.transform : visualTarget.transform.parent;
+        if (sortingParent != null)
+        {
+            shardContainer.transform.SetParent(sortingParent, false);
+        }
     }
 
     private void ApplyShardSorting()
@@ -299,21 +311,6 @@ public class BreakableTimedPlatform : MonoBehaviour
         if (visualTarget == null)
         {
             return;
-        }
-
-        if (shardSortingGroup != null)
-        {
-            SortingGroup sourceGroup = visualTarget.GetComponentInParent<SortingGroup>(true);
-            if (sourceGroup != null)
-            {
-                shardSortingGroup.sortingLayerID = sourceGroup.sortingLayerID;
-                shardSortingGroup.sortingOrder = sourceGroup.sortingOrder;
-            }
-            else
-            {
-                shardSortingGroup.sortingLayerID = visualTarget.sortingLayerID;
-                shardSortingGroup.sortingOrder = visualTarget.sortingOrder;
-            }
         }
 
         for (int i = 0; i < shardCache.Count; i++)
@@ -397,6 +394,12 @@ public class BreakableTimedPlatform : MonoBehaviour
 
     private Material CreateDefaultShardMaterial()
     {
+        Material source = visualTarget != null ? visualTarget.sharedMaterial : null;
+        if (source != null)
+        {
+            return new Material(source);
+        }
+
         Shader shader = Shader.Find("Sprites/Default")
             ?? Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default")
             ?? Shader.Find("Universal Render Pipeline/Unlit");
@@ -406,8 +409,7 @@ public class BreakableTimedPlatform : MonoBehaviour
             return new Material(shader);
         }
 
-        Material source = visualTarget != null ? visualTarget.sharedMaterial : null;
-        return source != null ? new Material(source) : null;
+        return null;
     }
 
     private void SetEnabled(bool enabled)
@@ -611,5 +613,31 @@ public class BreakableTimedPlatform : MonoBehaviour
     private static float RandomRange(System.Random random, float min, float max)
     {
         return min + (float)random.NextDouble() * (max - min);
+    }
+
+    private static void SetWorldScale(Transform target, Vector3 worldScale)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        Transform parent = target.parent;
+        if (parent == null)
+        {
+            target.localScale = worldScale;
+            return;
+        }
+
+        Vector3 parentScale = parent.lossyScale;
+        target.localScale = new Vector3(
+            SafeDivideScale(worldScale.x, parentScale.x),
+            SafeDivideScale(worldScale.y, parentScale.y),
+            SafeDivideScale(worldScale.z, parentScale.z));
+    }
+
+    private static float SafeDivideScale(float value, float divisor)
+    {
+        return Mathf.Abs(divisor) > 0.0001f ? value / divisor : value;
     }
 }
