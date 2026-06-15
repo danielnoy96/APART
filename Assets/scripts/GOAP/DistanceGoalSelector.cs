@@ -14,6 +14,9 @@ namespace Game.GOAP
         [SerializeField] private float enterChaseRange = 6f;
         [Tooltip("Exit chase when distance is above this value (must be >= Enter Chase Range).")]
         [SerializeField] private float exitChaseRange = 7f;
+        [Header("Patrol")]
+        [Tooltip("If true, request PatrolGoal while the player is outside chase range instead of hiding/stopping.")]
+        [SerializeField] private bool patrolOutsideChaseRange = true;
 
         private bool chasing;
         private bool hasLast;
@@ -42,8 +45,7 @@ namespace Game.GOAP
             if (player == null)
             {
                 chasing = false;
-                awareness?.Hide();
-                bridge.StopCurrentAction();
+                RequestPatrolOrHide(bridge, awareness);
                 return;
             }
 
@@ -57,7 +59,7 @@ namespace Game.GOAP
             {
                 bool shouldChase = distance < enterChaseRange;
                 if (bridge.DebugLog && (!hasLast || lastChasing != shouldChase))
-                    Debug.Log($"[GOAP] DistanceGoalSelector: {(shouldChase ? "Chase" : "Hide")} (d={distance:0.00}, range={enterChaseRange:0.00})", bridge);
+                    Debug.Log($"[GOAP] DistanceGoalSelector: {(shouldChase ? "Chase" : (patrolOutsideChaseRange ? "Patrol" : "Hide"))} (d={distance:0.00}, range={enterChaseRange:0.00})", bridge);
 
                 hasLast = true;
                 lastChasing = shouldChase;
@@ -68,8 +70,7 @@ namespace Game.GOAP
                 }
                 else
                 {
-                    awareness?.Hide();
-                    bridge.StopCurrentAction();
+                    RequestPatrolOrHide(bridge, awareness);
                 }
 
                 return;
@@ -86,12 +87,11 @@ namespace Game.GOAP
             }
             else
             {
-                awareness?.Hide();
-                bridge.StopCurrentAction();
+                RequestPatrolOrHide(bridge, awareness);
             }
 
             if (bridge.DebugLog && (!hasLast || lastChasing != chasing))
-                Debug.Log($"[GOAP] DistanceGoalSelector: {(chasing ? "Chase" : "Hide")} (d={distance:0.00}, enter={enterChaseRange:0.00}, exit={exitChaseRange:0.00})", bridge);
+                Debug.Log($"[GOAP] DistanceGoalSelector: {(chasing ? "Chase" : (patrolOutsideChaseRange ? "Patrol" : "Hide"))} (d={distance:0.00}, enter={enterChaseRange:0.00}, exit={exitChaseRange:0.00})", bridge);
 
             hasLast = true;
             lastChasing = chasing;
@@ -106,6 +106,30 @@ namespace Game.GOAP
             }
 
             bridge.RequestChase();
+        }
+
+        private void RequestPatrolOrHide(EnemyGoapAgentBridge bridge, EnemyAwareness awareness)
+        {
+            if (!patrolOutsideChaseRange)
+            {
+                awareness?.Hide();
+                bridge.StopCurrentAction();
+                return;
+            }
+
+            RequestPatrolWhenAwake(bridge, awareness);
+        }
+
+        private void RequestPatrolWhenAwake(EnemyGoapAgentBridge bridge, EnemyAwareness awareness)
+        {
+            if (awareness != null && !awareness.WakeAndReady())
+            {
+                bridge.Controller?.StopMoving();
+                bridge.StopCurrentAction();
+                return;
+            }
+
+            bridge.RequestPatrol();
         }
     }
 }

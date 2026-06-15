@@ -173,8 +173,8 @@ GOAP bridge behavior:
 - On death it calls `EnemyController.SetDead()` and disables `GoapActionProvider`.
 - It hooks GOAP resolve/no-action/goal events for debug logging.
 - If `OnNoActionFound` fires, it clears the last requested goal and falls back to direct patrol/chase execution so enemies do not freeze while config is being iterated.
-- `DistanceGoalSelector` currently chooses chase/hide based on horizontal or full distance, optional hysteresis, and awareness wake readiness.
-- `ChargeGoalSelector` chooses charge/hide for non-jumping charger enemies.
+- `DistanceGoalSelector` currently chooses chase/patrol based on horizontal or full distance, optional hysteresis, and awareness wake readiness. Prefabs can disable `patrolOutsideChaseRange` to hide instead; the small enemy prefab uses that exception.
+- `ChargeGoalSelector` chooses patrol/charge for non-jumping charger enemies, using assigned patrol points outside charge range and waiting through the configured charge-start duration before requesting charge.
 - `GoapRunnerResolver` uses early execution order and reflection to inject the scene `GoapBehaviour` runner into prefab `AgentTypeBehaviour.runner`.
 
 Scene/prefab wiring:

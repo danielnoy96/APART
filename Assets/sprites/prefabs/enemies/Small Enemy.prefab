@@ -10150,6 +10150,7 @@ MonoBehaviour:
   useHorizontalDistanceOnly: 1
   enterChaseRange: 6
   exitChaseRange: 7
+  patrolOutsideChaseRange: 0
 --- !u!114 &7485786215782458429
 MonoBehaviour:
   m_ObjectHideFlags: 0

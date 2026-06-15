@@ -104,6 +104,13 @@ public class Combat : MonoBehaviour
                 Debug.Log($"Hit {health.gameObject.name} for {damage}", health.gameObject);
             }
 
+            // Death handlers stop enemy movement immediately. Do not apply a new
+            // knockback velocity afterward, or the corpse can slide away.
+            if (health.IsDead)
+            {
+                continue;
+            }
+
             // Prefer the EnemyController's configured receiver (avoids mismatches when enemies have multiple receivers).
             KnockbackReceiver knockback = null;
             EnemyController enemyController = health.GetComponentInParent<EnemyController>();

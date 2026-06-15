@@ -32,9 +32,9 @@ CrashKonijn GOAP chooses enemy intent. It should decide which behavior an enemy 
 5. If the enemy dies, the bridge/controller stop GOAP-driven behavior.
 
 ## Current Behaviors
-- Patrol.
+- Patrol. Distance-based enemies patrol outside chase range by default; prefab types that should hide instead disable `patrolOutsideChaseRange`.
 - Chase player.
-- Charge player at a higher horizontal speed without jumping.
+- Charge enemies patrol outside charge range. Inside charge range, GOAP requests charge intent while `EnemyController` runs the fixed stand-still windup, locked-direction charge burst, stand-still recovery, and charge cooldown cycle.
 - Jump once toward a player on a higher platform for each continuous player-above opportunity.
 - Obstacle-ahead checks can route to the jump action only when the player-above jump opportunity is also ready.
 
@@ -44,6 +44,9 @@ CrashKonijn GOAP chooses enemy intent. It should decide which behavior an enemy 
 - `AgentTypeBehaviour.runner` is a scene reference; prefabs should rely on `GoapRunnerResolver` to inject it.
 - Capability/agent type assets must include the relevant goals, actions, world keys, target keys, and sensors.
 - A non-jumping charger prefab should use `ChargeGoalSelector`, `ChargePlayerGoal`, `ChargePlayerAction`, and `IsCharging`, and its capability should exclude `JumpToPlayerAction` and `JumpObstacleAction`.
+- Charger prefabs tune fixed charge timing on `EnemyController`: `chargeStartDuration`, `chargeDuration`, `chargeDistance`, `chargeRecoveryDuration`, and `chargeCooldownDuration`. Optional charge-start/charging Animator bool params still drive the visual telegraph and active charge animation.
+- Charger prefabs can set `patrolOutsideChargeRange` so assigned `EnemyController.patrolPoints` are used while the player is outside charge range.
+- Distance-based prefabs can set `patrolOutsideChaseRange` to control whether they resume patrol or hide when the player leaves chase range. The small enemy prefab disables this to keep its hide behavior.
 
 ## Important Rules
 - GOAP does not own movement physics. `EnemyController` remains the movement executor.

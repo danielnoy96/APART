@@ -18,20 +18,24 @@
 1. `Awake()` resolves Rigidbody2D, Animator, health, contact damage, knockback, sprite renderer, and player references.
 2. Default state is patrol.
 3. `FixedUpdate()` runs patrol/chase/idle movement unless dead or knockback is active.
-4. `Patrol()` moves between patrol points when assigned, otherwise moves around spawn position using `patrolDistance`.
-5. `ChasePlayer()` moves toward the player and may jump if the player is above.
-6. `ChargePlayer()` moves toward the player with `chargeSpeed` and intentionally never jumps.
-7. `TryJump()` applies upward velocity when grounded and jump cooldown allows it.
-8. `TryJumpToPlayerAbove()` consumes one player-above jump opportunity so the enemy does not keep jumping every cooldown while the same above condition remains true.
-9. On death, movement stops, contact damage sources are disabled, and the controller disables itself.
+4. `Patrol()` moves between valid assigned patrol points when at least two are assigned, otherwise moves around spawn position using `patrolDistance`.
+5. If assigned patrol points exist and the enemy has chased outside their horizontal span, patrol first returns it to the nearest patrol point, then resumes moving between the points.
+6. `ChasePlayer()` moves toward the player and may jump if the player is above.
+7. `ChargePlayer()` runs a fixed charger cycle: stand still for charge start, lock the player's horizontal direction, charge for the configured duration/distance, stand still for recovery, then wait for charge cooldown before another windup can start.
+8. `TryJump()` applies upward velocity when grounded and jump cooldown allows it.
+9. `TryJumpToPlayerAbove()` consumes one player-above jump opportunity so the enemy does not keep jumping every cooldown while the same above condition remains true.
+10. On death, movement stops, the runtime movement material is cleared from the root collider, contact damage sources are disabled, and the controller disables itself.
 
 ## Inspector Wiring
 - Required for movement: `Rigidbody2D`.
 - Recommended: `Health`, `KnockbackReceiver`, `SpriteRenderer`, `ContactDamage` child sensor.
 - Ground jump checks need `groundCheck`, `groundCheckRadius`, and `groundLayer`.
 - Obstacle checks need `wallCheck`, `wallCheckDistance`, and `obstacleLayer`.
-- Patrol can use `patrolPoints` or fallback to `patrolDistance`.
-- Charger enemies should set `chargeSpeed` above `moveSpeed` and use a GOAP capability without jump actions.
+- Patrol can use `patrolPoints` or fallback to `patrolDistance`. Point arrays must have at least two non-null entries to override the fallback patrol range.
+- Assigned patrol point transforms are captured as world-position anchors during `Awake()`. This means marker objects can be children of the enemy for scene organization without the patrol target moving along with the enemy at runtime.
+- Velocity-driven enemies apply a no-friction runtime material to their root movement collider when no explicit physics material is assigned. This keeps patrol/chase speed from being reduced by default floor friction. The runtime material is removed again on death so corpses use normal contact friction.
+- Charger enemies should set `chargeSpeed` above `moveSpeed` and tune `chargeStartDuration`, `chargeDuration`, `chargeDistance`, `chargeRecoveryDuration`, and `chargeCooldownDuration`. Set `chargeDistance <= 0` to use duration only.
+- Charger enemies should use a GOAP capability without jump actions.
 
 ## Important Rules
 - Do not bypass `EnemyController` for movement unless deliberately replacing the movement system.

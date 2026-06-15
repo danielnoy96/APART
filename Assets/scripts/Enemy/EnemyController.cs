@@ -11,6 +11,14 @@ public class EnemyController : MonoBehaviour
         Dead
     }
 
+    private enum ChargePhase
+    {
+        None,
+        Windup,
+        Charging,
+        Recovery
+    }
+
     [Header("Refs")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator animator;
@@ -26,10 +34,22 @@ public class EnemyController : MonoBehaviour
     [Tooltip("If true, enemy stops when within Stop Distance of the player (good for later melee attacks). If false, enemy approaches until its contact-damage sensor overlaps the player.")]
     [SerializeField] private bool stopAtDistance = true;
     [SerializeField] private float stopDistance = 1.2f;
+    [Tooltip("If true, root movement colliders without an explicit material get a no-friction runtime material so velocity-driven patrol/chase is not slowed by floor friction.")]
+    [SerializeField] private bool useNoFrictionMovementMaterial = true;
 
     [Header("Charge")]
-    [Tooltip("Horizontal speed used by ChargePlayer. Keep this above Move Speed for charger enemies.")]
+    [Tooltip("Horizontal speed used by fixed ChargePlayer bursts. Keep this above Move Speed for charger enemies.")]
     [SerializeField] private float chargeSpeed = 5f;
+    [Tooltip("Seconds the charger stays still before locking direction and starting a charge burst.")]
+    [SerializeField] private float chargeStartDuration = 0.45f;
+    [Tooltip("Maximum seconds for one fixed charge burst.")]
+    [SerializeField] private float chargeDuration = 0.65f;
+    [Tooltip("Maximum horizontal distance for one fixed charge burst. Set <= 0 to use duration only.")]
+    [SerializeField] private float chargeDistance = 3.25f;
+    [Tooltip("Seconds the charger stays still after a charge burst before it can wind up again.")]
+    [SerializeField] private float chargeRecoveryDuration = 0.45f;
+    [Tooltip("Extra seconds after recovery before a new charge windup can start.")]
+    [SerializeField] private float chargeCooldownDuration = 0.5f;
 
     [Header("Jump")]
     [Tooltip("Upward velocity applied when the enemy jumps.")]
@@ -64,6 +84,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private string moveBoolParam = "";
     [Tooltip("Float parameter for speed (e.g. speed). Leave empty if unused.")]
     [SerializeField] private string speedFloatParam = "";
+    [Tooltip("Bool parameter for charge windup/start animation. Leave empty if unused.")]
+    [SerializeField] private string chargeStartBoolParam = "";
+    [Tooltip("Bool parameter for active charge animation. Leave empty if unused.")]
+    [SerializeField] private string chargingBoolParam = "";
 
     [Header("Debug")]
     [Tooltip("Logs when EnemyController is overriding velocity (useful to debug knockback being canceled).")]
@@ -88,8 +112,19 @@ public class EnemyController : MonoBehaviour
     private float playerAboveDetectedSince = -1f;
     private bool playerAboveJumpConsumed;
     private float lastMoveDir = 1f;
+    private float[] patrolPointWorldXs;
+    private bool[] validPatrolPointAnchors;
+    private ChargePhase chargePhase;
+    private float chargePhaseEndTime;
+    private float chargeDirection = 1f;
+    private float chargeStartX;
+    private float nextChargeAllowedTime;
+    private bool chargeCycleStartAllowed = true;
+    private const float PatrolPointArrivalDistance = 0.1f;
+    private static PhysicsMaterial2D noFrictionMovementMaterial;
 
     public KnockbackReceiver KnockbackReceiver => knockbackReceiver;
+    public bool IsFixedChargeCycleActive => chargePhase != ChargePhase.None;
 
     private void Awake()
     {
@@ -111,6 +146,7 @@ public class EnemyController : MonoBehaviour
         }
         animationDriver.Initialize(animator);
         animationDriver.ConfigureMovement(moveBoolParam, speedFloatParam);
+        animationDriver.ConfigureCharge(chargeStartBoolParam, chargingBoolParam);
         if (health == null)
         {
             health = GetComponent<Health>();
@@ -149,8 +185,10 @@ public class EnemyController : MonoBehaviour
         }
 
         selfCollider = GetComponent<Collider2D>();
+        ApplyMovementPhysicsMaterial();
 
         spawnPosition = transform.position;
+        CachePatrolPointAnchors();
         state = State.Patrol;
 
         goapActionProvider = GetComponent<CrashKonijn.Goap.Runtime.GoapActionProvider>();
@@ -222,14 +260,31 @@ public class EnemyController : MonoBehaviour
     }
 
     // Called by EnemyBrain; kept internal to avoid external state abuse.
-    internal void SetStateIdle() => state = State.Idle;
-    internal void SetStatePatrol() => state = State.Patrol;
-    internal void SetStateChase() => state = State.Chase;
+    internal void SetStateIdle()
+    {
+        ResetChargeCycle();
+        state = State.Idle;
+    }
+
+    internal void SetStatePatrol()
+    {
+        ResetChargeCycle();
+        state = State.Patrol;
+    }
+
+    internal void SetStateChase()
+    {
+        ResetChargeCycle();
+        state = State.Chase;
+    }
+
     internal void SetStateCharge() => state = State.Charge;
 
     // GOAP action will call Patrol() later.
     public void Patrol()
     {
+        ResetChargeCycle();
+
         if (state != State.Dead)
             state = State.Patrol;
 
@@ -241,24 +296,8 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        if (patrolPoints != null && patrolPoints.Length >= 2)
+        if (TryPatrolAssignedPoints())
         {
-            Transform target = patrolPoints[Mathf.Clamp(patrolIndex, 0, patrolPoints.Length - 1)];
-            targetX = target.position.x;
-
-            float dx = targetX - transform.position.x;
-            if (Mathf.Abs(dx) <= 0.1f)
-            {
-                patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
-                idleUntilTime = Time.time + idleTimeAtPatrolPoint;
-                SetHorizontalVelocity(0f);
-                return;
-            }
-
-            float dir = Mathf.Sign(dx);
-            SetHorizontalVelocity(dir * moveSpeed);
-            lastMoveDir = dir;
-            FlipByVelocity(dir);
             return;
         }
 
@@ -267,7 +306,7 @@ public class EnemyController : MonoBehaviour
         targetX = patrolDirection > 0 ? right : left;
 
         float delta = targetX - transform.position.x;
-        if (Mathf.Abs(delta) <= 0.1f)
+        if (Mathf.Abs(delta) <= PatrolPointArrivalDistance)
         {
             patrolDirection *= -1;
             idleUntilTime = Time.time + idleTimeAtPatrolPoint;
@@ -280,9 +319,203 @@ public class EnemyController : MonoBehaviour
         FlipByVelocity(lastMoveDir);
     }
 
+    private bool TryPatrolAssignedPoints()
+    {
+        if (!TryGetPatrolPointBounds(out float minX, out float maxX, out int nearestIndex))
+        {
+            return false;
+        }
+
+        if (transform.position.x < minX - PatrolPointArrivalDistance ||
+            transform.position.x > maxX + PatrolPointArrivalDistance)
+        {
+            patrolIndex = nearestIndex;
+        }
+
+        patrolIndex = GetValidPatrolPointIndex(patrolIndex);
+        float targetX = patrolPointWorldXs[patrolIndex];
+        float dx = targetX - transform.position.x;
+
+        if (Mathf.Abs(dx) <= PatrolPointArrivalDistance)
+        {
+            patrolIndex = GetNextValidPatrolPointIndex(patrolIndex);
+            idleUntilTime = Time.time + idleTimeAtPatrolPoint;
+            SetHorizontalVelocity(0f);
+            return true;
+        }
+
+        float dir = Mathf.Sign(dx);
+        SetHorizontalVelocity(dir * moveSpeed);
+        lastMoveDir = dir;
+        FlipByVelocity(dir);
+        return true;
+    }
+
+    private bool TryGetPatrolPointBounds(out float minX, out float maxX, out int nearestIndex)
+    {
+        minX = 0f;
+        maxX = 0f;
+        nearestIndex = -1;
+
+        if (patrolPointWorldXs == null || validPatrolPointAnchors == null || patrolPointWorldXs.Length < 2)
+        {
+            return false;
+        }
+
+        int validCount = 0;
+        float nearestDistance = float.MaxValue;
+
+        for (int i = 0; i < patrolPointWorldXs.Length; i++)
+        {
+            if (!IsValidPatrolPointIndex(i))
+            {
+                continue;
+            }
+
+            float x = patrolPointWorldXs[i];
+            if (validCount == 0)
+            {
+                minX = x;
+                maxX = x;
+            }
+            else
+            {
+                minX = Mathf.Min(minX, x);
+                maxX = Mathf.Max(maxX, x);
+            }
+
+            float distance = Mathf.Abs(x - transform.position.x);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestIndex = i;
+            }
+
+            validCount++;
+        }
+
+        return validCount >= 2;
+    }
+
+    private int GetValidPatrolPointIndex(int startIndex)
+    {
+        if (patrolPointWorldXs == null || patrolPointWorldXs.Length == 0)
+        {
+            return 0;
+        }
+
+        int index = Mathf.Clamp(startIndex, 0, patrolPointWorldXs.Length - 1);
+        if (IsValidPatrolPointIndex(index))
+        {
+            return index;
+        }
+
+        for (int offset = 1; offset < patrolPointWorldXs.Length; offset++)
+        {
+            int forward = (index + offset) % patrolPointWorldXs.Length;
+            if (IsValidPatrolPointIndex(forward))
+            {
+                return forward;
+            }
+        }
+
+        return index;
+    }
+
+    private int GetNextValidPatrolPointIndex(int currentIndex)
+    {
+        if (patrolPointWorldXs == null || patrolPointWorldXs.Length == 0)
+        {
+            return 0;
+        }
+
+        for (int offset = 1; offset <= patrolPointWorldXs.Length; offset++)
+        {
+            int nextIndex = (currentIndex + offset) % patrolPointWorldXs.Length;
+            if (IsValidPatrolPointIndex(nextIndex))
+            {
+                return nextIndex;
+            }
+        }
+
+        return currentIndex;
+    }
+
+    private void CachePatrolPointAnchors()
+    {
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            patrolPointWorldXs = null;
+            validPatrolPointAnchors = null;
+            return;
+        }
+
+        patrolPointWorldXs = new float[patrolPoints.Length];
+        validPatrolPointAnchors = new bool[patrolPoints.Length];
+
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            Transform point = patrolPoints[i];
+            if (point == null)
+            {
+                continue;
+            }
+
+            patrolPointWorldXs[i] = point.position.x;
+            validPatrolPointAnchors[i] = true;
+        }
+    }
+
+    private bool IsValidPatrolPointIndex(int index)
+    {
+        return validPatrolPointAnchors != null &&
+               index >= 0 &&
+               index < validPatrolPointAnchors.Length &&
+               validPatrolPointAnchors[index];
+    }
+
+    private void ApplyMovementPhysicsMaterial()
+    {
+        if (!useNoFrictionMovementMaterial)
+        {
+            return;
+        }
+
+        if (selfCollider == null || selfCollider.isTrigger || selfCollider.sharedMaterial != null)
+        {
+            return;
+        }
+
+        if (noFrictionMovementMaterial == null)
+        {
+            noFrictionMovementMaterial = new PhysicsMaterial2D("Enemy Movement No Friction")
+            {
+                friction = 0f,
+                bounciness = 0f
+            };
+        }
+
+        selfCollider.sharedMaterial = noFrictionMovementMaterial;
+    }
+
+    private void RestoreMovementPhysicsMaterial()
+    {
+        if (selfCollider == null || noFrictionMovementMaterial == null)
+        {
+            return;
+        }
+
+        if (selfCollider.sharedMaterial == noFrictionMovementMaterial)
+        {
+            selfCollider.sharedMaterial = null;
+        }
+    }
+
     // GOAP action will call ChasePlayer() later.
     public void ChasePlayer()
     {
+        ResetChargeCycle();
+
         if (state != State.Dead)
             state = State.Chase;
 
@@ -312,8 +545,8 @@ public class EnemyController : MonoBehaviour
         FlipByVelocity(dir);
     }
 
-    // GOAP charge actions call this for fast, grounded pursuit. It intentionally
-    // does not call TryJumpToPlayerAbove so charger enemies remain non-jumpers.
+    // GOAP charge actions call this for a fixed windup -> burst -> recovery cycle.
+    // Direction is locked when the burst starts, so dodging after windup matters.
     public void ChargePlayer()
     {
         if (state != State.Dead)
@@ -321,29 +554,71 @@ public class EnemyController : MonoBehaviour
 
         if (player == null)
         {
+            ResetChargeCycle();
             state = State.Patrol;
             return;
         }
 
-        float distanceX = player.position.x - transform.position.x;
-
-        if (ShouldStopChasing(distanceX))
+        if (chargePhase == ChargePhase.None)
         {
-            SetHorizontalVelocity(0f);
-            return;
+            if (!chargeCycleStartAllowed)
+            {
+                SetHorizontalVelocity(0f);
+                SetChargeVisuals(false, false);
+                return;
+            }
+
+            if (Time.time < nextChargeAllowedTime)
+            {
+                SetHorizontalVelocity(0f);
+                SetChargeVisuals(false, false);
+                return;
+            }
+
+            BeginChargeWindup();
         }
 
-        float dir = Mathf.Sign(distanceX);
-        float speed = Mathf.Max(chargeSpeed, moveSpeed);
-        SetHorizontalVelocity(dir * speed);
-        lastMoveDir = dir;
-        FlipByVelocity(dir);
+        switch (chargePhase)
+        {
+            case ChargePhase.Windup:
+                UpdateChargeWindup();
+                break;
+
+            case ChargePhase.Charging:
+                UpdateFixedCharge();
+                break;
+
+            case ChargePhase.Recovery:
+                UpdateChargeRecovery();
+                break;
+        }
     }
 
     // GOAP action will call StopMoving() later.
     public void StopMoving()
     {
         SetHorizontalVelocity(0f);
+    }
+
+    public void CancelChargeCycle()
+    {
+        ResetChargeCycle();
+    }
+
+    public void SetChargeCycleStartAllowed(bool allowed)
+    {
+        chargeCycleStartAllowed = allowed;
+    }
+
+    public void SetChargeVisuals(bool chargeStarting, bool charging)
+    {
+        if (animationDriver == null)
+        {
+            return;
+        }
+
+        animationDriver.SetChargeStarting(chargeStarting);
+        animationDriver.SetCharging(charging);
     }
 
     public bool IsGrounded()
@@ -565,6 +840,98 @@ public class EnemyController : MonoBehaviour
         return d.isOverlapped || d.distance <= 0.001f;
     }
 
+    private void BeginChargeWindup()
+    {
+        chargePhase = ChargePhase.Windup;
+        chargePhaseEndTime = Time.time + Mathf.Max(0f, chargeStartDuration);
+        SetHorizontalVelocity(0f);
+        SetChargeVisuals(true, false);
+        FaceTarget(player);
+    }
+
+    private void UpdateChargeWindup()
+    {
+        SetHorizontalVelocity(0f);
+        SetChargeVisuals(true, false);
+
+        if (Time.time < chargePhaseEndTime)
+        {
+            return;
+        }
+
+        BeginFixedCharge();
+    }
+
+    private void BeginFixedCharge()
+    {
+        float dx = player != null ? player.position.x - transform.position.x : lastMoveDir;
+        if (Mathf.Abs(dx) > 0.001f)
+        {
+            chargeDirection = Mathf.Sign(dx);
+        }
+        else
+        {
+            chargeDirection = Mathf.Abs(lastMoveDir) < 0.001f ? 1f : Mathf.Sign(lastMoveDir);
+        }
+
+        chargeStartX = transform.position.x;
+        chargePhase = ChargePhase.Charging;
+        chargePhaseEndTime = Time.time + Mathf.Max(0.01f, chargeDuration);
+        SetChargeVisuals(false, true);
+        FlipByVelocity(chargeDirection);
+    }
+
+    private void UpdateFixedCharge()
+    {
+        SetChargeVisuals(false, true);
+
+        float speed = Mathf.Max(chargeSpeed, moveSpeed);
+        SetHorizontalVelocity(chargeDirection * speed);
+        lastMoveDir = chargeDirection;
+        FlipByVelocity(chargeDirection);
+
+        bool durationComplete = Time.time >= chargePhaseEndTime;
+        bool distanceComplete = chargeDistance > 0f && Mathf.Abs(transform.position.x - chargeStartX) >= chargeDistance;
+        if (durationComplete || distanceComplete)
+        {
+            BeginChargeRecovery();
+        }
+    }
+
+    private void BeginChargeRecovery()
+    {
+        chargePhase = ChargePhase.Recovery;
+        chargePhaseEndTime = Time.time + Mathf.Max(0f, chargeRecoveryDuration);
+        SetHorizontalVelocity(0f);
+        SetChargeVisuals(false, false);
+    }
+
+    private void UpdateChargeRecovery()
+    {
+        SetHorizontalVelocity(0f);
+        SetChargeVisuals(false, false);
+
+        if (Time.time >= chargePhaseEndTime)
+        {
+            chargePhase = ChargePhase.None;
+            nextChargeAllowedTime = Time.time + Mathf.Max(0f, chargeCooldownDuration);
+        }
+    }
+
+    private void ResetChargeCycle()
+    {
+        if (chargePhase == ChargePhase.None)
+        {
+            SetChargeVisuals(false, false);
+            return;
+        }
+
+        chargePhase = ChargePhase.None;
+        chargePhaseEndTime = 0f;
+        nextChargeAllowedTime = 0f;
+        SetChargeVisuals(false, false);
+    }
+
     private void SetHorizontalVelocity(float xVelocity)
     {
         if (rb == null)
@@ -642,6 +1009,7 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        ResetChargeCycle();
         state = State.Dead;
 
         if (rb != null)
@@ -649,6 +1017,7 @@ public class EnemyController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
         }
+        RestoreMovementPhysicsMaterial();
 
         ContactDamage[] damageSources = GetComponentsInChildren<ContactDamage>(true);
         for (int i = 0; i < damageSources.Length; i++)

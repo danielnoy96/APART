@@ -9,6 +9,8 @@ public class EnemyAnimationDriver : MonoBehaviour
     private int deathTriggerParam;
     private int popBoolParam;
     private int unpopBoolParam;
+    private int chargeStartBoolParam;
+    private int chargingBoolParam;
     private string deathStateName;
 
     [Header("Debug")]
@@ -18,6 +20,8 @@ public class EnemyAnimationDriver : MonoBehaviour
     [SerializeField] private bool debugIsMoving;
     [SerializeField] private bool debugPopping;
     [SerializeField] private bool debugUnpopping;
+    [SerializeField] private bool debugChargeStarting;
+    [SerializeField] private bool debugCharging;
 
     public void Initialize(Animator targetAnimator)
     {
@@ -44,6 +48,12 @@ public class EnemyAnimationDriver : MonoBehaviour
     {
         popBoolParam = ToOptionalHash(popBool);
         unpopBoolParam = ToOptionalHash(unpopBool);
+    }
+
+    public void ConfigureCharge(string chargeStartBool, string chargingBool)
+    {
+        chargeStartBoolParam = ToOptionalHash(chargeStartBool);
+        chargingBoolParam = ToOptionalHash(chargingBool);
     }
 
     public void SetMovement(float speedAbs)
@@ -117,6 +127,20 @@ public class EnemyAnimationDriver : MonoBehaviour
         SetOptionalBool(unpopBoolParam, active);
     }
 
+    public void SetChargeStarting(bool active)
+    {
+        debugChargeStarting = active;
+        RecordRequest($"ChargeStart {(active ? "on" : "off")}");
+        SetOptionalBool(chargeStartBoolParam, active);
+    }
+
+    public void SetCharging(bool active)
+    {
+        debugCharging = active;
+        RecordRequest($"Charge {(active ? "on" : "off")}");
+        SetOptionalBool(chargingBoolParam, active);
+    }
+
     public void ResetAll()
     {
         if (animator == null)
@@ -132,6 +156,8 @@ public class EnemyAnimationDriver : MonoBehaviour
 
         SetOptionalBool(popBoolParam, false);
         SetOptionalBool(unpopBoolParam, false);
+        SetOptionalBool(chargeStartBoolParam, false);
+        SetOptionalBool(chargingBoolParam, false);
 
         if (hurtTriggerParam != 0)
         {
@@ -148,6 +174,8 @@ public class EnemyAnimationDriver : MonoBehaviour
         debugIsMoving = false;
         debugPopping = false;
         debugUnpopping = false;
+        debugChargeStarting = false;
+        debugCharging = false;
         LogRequest(debugLastRequest);
     }
 

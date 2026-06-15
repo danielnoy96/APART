@@ -24,6 +24,7 @@ namespace Game.GOAP
         public bool DebugLog => debugLog;
         public EnemyController Controller => controller;
         public EnemyAwareness Awareness => awareness;
+        public bool CanStartNewChargeCycle => canStartNewChargeCycle;
         public bool IsRequestedGoal(Type goalType) => lastRequestedGoal == null || lastRequestedGoal == goalType;
 
         private Type lastRequestedGoal;
@@ -31,6 +32,7 @@ namespace Game.GOAP
         private bool loggedInitialPlan;
         private float nextStatusLogTime;
         private bool eventsHooked;
+        private bool canStartNewChargeCycle = true;
 
         private void Awake()
         {
@@ -203,6 +205,7 @@ namespace Game.GOAP
             if (actionProvider == null)
                 return;
 
+            SetChargeCycleStartAllowed(false);
             EnsureGoapReceiver();
             if (actionProvider.Receiver == null)
             {
@@ -213,7 +216,10 @@ namespace Game.GOAP
             // Don't permanently suppress requests: the resolver may initially fail due to missing
             // sensors/targets during scene startup. Allow re-requesting if there is no plan yet.
             if (lastRequestedGoal == typeof(PatrolGoal) && actionProvider.CurrentPlan != null)
+            {
+                controller?.Patrol();
                 return;
+            }
 
             bool isGoalChange = lastRequestedGoal != typeof(PatrolGoal);
             lastRequestedGoal = typeof(PatrolGoal);
@@ -221,6 +227,7 @@ namespace Game.GOAP
                 Debug.Log("[GOAP] RequestGoal: PatrolGoal", this);
             actionProvider.RequestGoal(new[] { typeof(PatrolGoal) });
             StopRunningActionOnGoalChange(isGoalChange);
+            controller?.Patrol();
         }
 
         public void RequestChase()
@@ -228,6 +235,7 @@ namespace Game.GOAP
             if (actionProvider == null)
                 return;
 
+            SetChargeCycleStartAllowed(false);
             EnsureGoapReceiver();
             if (actionProvider.Receiver == null)
             {
@@ -271,6 +279,12 @@ namespace Game.GOAP
                 Debug.Log("[GOAP] RequestGoal: ChargePlayerGoal", this);
             actionProvider.RequestGoal(new[] { typeof(ChargePlayerGoal) });
             StopRunningActionOnGoalChange(isGoalChange);
+        }
+
+        public void SetChargeCycleStartAllowed(bool allowed)
+        {
+            canStartNewChargeCycle = allowed;
+            controller?.SetChargeCycleStartAllowed(allowed);
         }
 
         public void StopCurrentAction()

@@ -13,6 +13,9 @@ namespace Game.GOAP
         [SerializeField] private float enterChargeRange = 6f;
         [Tooltip("Exit charge when distance is above this value (must be >= Enter Charge Range).")]
         [SerializeField] private float exitChargeRange = 7f;
+        [Header("Patrol")]
+        [Tooltip("If true, request PatrolGoal while the player is outside charge range instead of hiding/stopping.")]
+        [SerializeField] private bool patrolOutsideChargeRange = true;
 
         private bool charging;
         private bool hasLast;
@@ -33,6 +36,8 @@ namespace Game.GOAP
             if (awareness != null && awareness.IsAsleep)
             {
                 charging = false;
+                bridge.SetChargeCycleStartAllowed(false);
+                ResetCharge(bridge);
                 bridge.StopCurrentAction();
                 return;
             }
@@ -41,8 +46,9 @@ namespace Game.GOAP
             if (player == null)
             {
                 charging = false;
-                awareness?.Hide();
-                bridge.StopCurrentAction();
+                bridge.SetChargeCycleStartAllowed(false);
+                ResetCharge(bridge);
+                RequestPatrolOrHide(bridge, awareness);
                 return;
             }
 
@@ -54,7 +60,10 @@ namespace Game.GOAP
 
             if (!useHysteresis)
             {
-                bool shouldCharge = distance < enterChargeRange;
+                bool inChargeRange = distance < enterChargeRange;
+                bool shouldCharge = inChargeRange || (bridge.Controller != null && bridge.Controller.IsFixedChargeCycleActive);
+                bridge.SetChargeCycleStartAllowed(inChargeRange);
+
                 LogIfChanged(bridge, shouldCharge, distance);
 
                 if (shouldCharge)
@@ -63,8 +72,8 @@ namespace Game.GOAP
                 }
                 else
                 {
-                    awareness?.Hide();
-                    bridge.StopCurrentAction();
+                    ResetCharge(bridge);
+                    RequestPatrolOrHide(bridge, awareness);
                 }
 
                 return;
@@ -75,23 +84,28 @@ namespace Game.GOAP
             else if (charging && distance > exitChargeRange)
                 charging = false;
 
-            if (charging)
+            bool shouldKeepCommittedCharge = bridge.Controller != null && bridge.Controller.IsFixedChargeCycleActive;
+            bool shouldRequestCharge = charging || shouldKeepCommittedCharge;
+            bridge.SetChargeCycleStartAllowed(charging);
+
+            if (shouldRequestCharge)
             {
                 RequestChargeWhenAwake(bridge, awareness);
             }
             else
             {
-                awareness?.Hide();
-                bridge.StopCurrentAction();
+                ResetCharge(bridge);
+                RequestPatrolOrHide(bridge, awareness);
             }
 
-            LogIfChanged(bridge, charging, distance);
+            LogIfChanged(bridge, shouldRequestCharge, distance);
         }
 
         private void RequestChargeWhenAwake(EnemyGoapAgentBridge bridge, EnemyAwareness awareness)
         {
             if (awareness != null && !awareness.WakeAndReady())
             {
+                ResetCharge(bridge);
                 bridge.StopCurrentAction();
                 return;
             }
@@ -99,10 +113,42 @@ namespace Game.GOAP
             bridge.RequestCharge();
         }
 
+        private void RequestPatrolOrHide(EnemyGoapAgentBridge bridge, EnemyAwareness awareness)
+        {
+            if (!patrolOutsideChargeRange)
+            {
+                bridge.SetChargeCycleStartAllowed(false);
+                awareness?.Hide();
+                bridge.StopCurrentAction();
+                return;
+            }
+
+            RequestPatrolWhenAwake(bridge, awareness);
+        }
+
+        private void RequestPatrolWhenAwake(EnemyGoapAgentBridge bridge, EnemyAwareness awareness)
+        {
+            if (awareness != null && !awareness.WakeAndReady())
+            {
+                bridge.SetChargeCycleStartAllowed(false);
+                ResetCharge(bridge);
+                bridge.Controller?.StopMoving();
+                bridge.StopCurrentAction();
+                return;
+            }
+
+            bridge.RequestPatrol();
+        }
+
+        private void ResetCharge(EnemyGoapAgentBridge bridge)
+        {
+            bridge?.Controller?.CancelChargeCycle();
+        }
+
         private void LogIfChanged(EnemyGoapAgentBridge bridge, bool shouldCharge, float distance)
         {
             if (bridge.DebugLog && (!hasLast || lastCharging != shouldCharge))
-                Debug.Log($"[GOAP] ChargeGoalSelector: {(shouldCharge ? "Charge" : "Hide")} (d={distance:0.00}, enter={enterChargeRange:0.00}, exit={exitChargeRange:0.00})", bridge);
+                Debug.Log($"[GOAP] ChargeGoalSelector: {(shouldCharge ? "Charge" : (patrolOutsideChargeRange ? "Patrol" : "Hide"))} (d={distance:0.00}, enter={enterChargeRange:0.00}, exit={exitChargeRange:0.00})", bridge);
 
             hasLast = true;
             lastCharging = shouldCharge;
