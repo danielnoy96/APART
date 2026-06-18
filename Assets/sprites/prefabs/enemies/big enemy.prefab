@@ -10225,6 +10225,9 @@ MonoBehaviour:
   patrolPoints: []
   patrolDistance: 4
   idleTimeAtPatrolPoint: 0.35
+  usePatrolMovePause: 1
+  patrolMoveDuration: 1.2
+  patrolPauseDuration: 0.45
   moveBoolParam: isMoving
   speedFloatParam: 
   chargeStartBoolParam: isChargeStarting
