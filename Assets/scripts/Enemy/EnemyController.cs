@@ -84,6 +84,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float patrolMoveDuration = 1.5f;
     [Tooltip("Seconds to stay stopped during the periodic patrol pause.")]
     [SerializeField] private float patrolPauseDuration = 0.4f;
+    [Tooltip("If true, PatrolPauseStart and PatrolPauseEnd animation events control patrol pauses. This overrides the timed patrol pause above.")]
+    [SerializeField] private bool usePatrolAnimationEvents = false;
+    [Tooltip("Safety fallback: maximum seconds an animation-event patrol pause can hold if PatrolPauseEnd is missing. Set <= 0 to disable fallback.")]
+    [SerializeField] private float maxPatrolAnimationPauseSeconds = 1f;
 
     [Header("Animator Params (Optional)")]
     [Tooltip("Bool parameter for movement (e.g. isMoving). Leave empty if unused.")]
@@ -129,6 +133,9 @@ public class EnemyController : MonoBehaviour
     private bool patrolMoveTimerRunning;
     private float patrolMoveStartedTime;
     private float patrolPauseUntilTime;
+    private bool isPatrolMovePaused;
+    private bool isPatrolAnimationPaused;
+    private float patrolAnimationPauseFallbackTime;
     private const float PatrolPointArrivalDistance = 0.1f;
     private static PhysicsMaterial2D noFrictionMovementMaterial;
 
@@ -240,6 +247,8 @@ public class EnemyController : MonoBehaviour
 
         if (knockbackReceiver != null && knockbackReceiver.IsKnockbackActive)
         {
+            ResetPatrolPause();
+
             // Respect knockback: do not override velocity while being knocked back.
             if (logVelocityOverrides && rb != null)
             {
@@ -272,7 +281,7 @@ public class EnemyController : MonoBehaviour
     internal void SetStateIdle()
     {
         ResetChargeCycle();
-        ResetPatrolMovePause();
+        ResetPatrolPause();
         state = State.Idle;
     }
 
@@ -285,13 +294,13 @@ public class EnemyController : MonoBehaviour
     internal void SetStateChase()
     {
         ResetChargeCycle();
-        ResetPatrolMovePause();
+        ResetPatrolPause();
         state = State.Chase;
     }
 
     internal void SetStateCharge()
     {
-        ResetPatrolMovePause();
+        ResetPatrolPause();
         state = State.Charge;
     }
 
@@ -307,7 +316,7 @@ public class EnemyController : MonoBehaviour
 
         if (Time.time < idleUntilTime)
         {
-            ResetPatrolMovePause();
+            ResetPatrolPause();
             SetHorizontalVelocity(0f);
             return;
         }
@@ -326,12 +335,12 @@ public class EnemyController : MonoBehaviour
         {
             patrolDirection *= -1;
             idleUntilTime = Time.time + idleTimeAtPatrolPoint;
-            ResetPatrolMovePause();
+            ResetPatrolPause();
             SetHorizontalVelocity(0f);
             return;
         }
 
-        if (ShouldHoldForPatrolMovePause())
+        if (ShouldHoldForPatrolPause())
         {
             SetHorizontalVelocity(0f);
             return;
@@ -363,13 +372,13 @@ public class EnemyController : MonoBehaviour
         {
             patrolIndex = GetNextValidPatrolPointIndex(patrolIndex);
             idleUntilTime = Time.time + idleTimeAtPatrolPoint;
-            ResetPatrolMovePause();
+            ResetPatrolPause();
             SetHorizontalVelocity(0f);
             return true;
         }
 
         float dir = Mathf.Sign(dx);
-        if (ShouldHoldForPatrolMovePause())
+        if (ShouldHoldForPatrolPause())
         {
             SetHorizontalVelocity(0f);
             return true;
@@ -471,10 +480,47 @@ public class EnemyController : MonoBehaviour
         return currentIndex;
     }
 
+    private bool ShouldHoldForPatrolPause()
+    {
+        if (ShouldHoldForPatrolAnimationPause())
+        {
+            return true;
+        }
+
+        return ShouldHoldForPatrolMovePause();
+    }
+
+    private bool ShouldHoldForPatrolAnimationPause()
+    {
+        if (!usePatrolAnimationEvents)
+        {
+            ResetPatrolAnimationPause();
+            return false;
+        }
+
+        ResetPatrolMovePause();
+
+        if (!isPatrolAnimationPaused)
+        {
+            return false;
+        }
+
+        float fallbackSeconds = Mathf.Max(0f, maxPatrolAnimationPauseSeconds);
+        if (fallbackSeconds > 0f && Time.time >= patrolAnimationPauseFallbackTime)
+        {
+            ResetPatrolAnimationPause();
+            return false;
+        }
+
+        isPatrolMovePaused = true;
+        return true;
+    }
+
     private bool ShouldHoldForPatrolMovePause()
     {
-        if (!usePatrolMovePause)
+        if (!usePatrolMovePause || usePatrolAnimationEvents)
         {
+            ResetPatrolMovePause();
             return false;
         }
 
@@ -488,6 +534,7 @@ public class EnemyController : MonoBehaviour
 
         if (Time.time < patrolPauseUntilTime)
         {
+            isPatrolMovePaused = true;
             return true;
         }
 
@@ -496,6 +543,7 @@ public class EnemyController : MonoBehaviour
             patrolPauseUntilTime = 0f;
             patrolMoveStartedTime = Time.time;
             patrolMoveTimerRunning = true;
+            isPatrolMovePaused = false;
             return false;
         }
 
@@ -503,16 +551,19 @@ public class EnemyController : MonoBehaviour
         {
             patrolMoveStartedTime = Time.time;
             patrolMoveTimerRunning = true;
+            isPatrolMovePaused = false;
             return false;
         }
 
         if (Time.time - patrolMoveStartedTime < moveSeconds)
         {
+            isPatrolMovePaused = false;
             return false;
         }
 
         patrolMoveTimerRunning = false;
         patrolPauseUntilTime = Time.time + pauseSeconds;
+        isPatrolMovePaused = true;
         return true;
     }
 
@@ -521,6 +572,23 @@ public class EnemyController : MonoBehaviour
         patrolMoveTimerRunning = false;
         patrolMoveStartedTime = 0f;
         patrolPauseUntilTime = 0f;
+        isPatrolMovePaused = false;
+    }
+
+    private void ResetPatrolAnimationPause()
+    {
+        isPatrolAnimationPaused = false;
+        patrolAnimationPauseFallbackTime = 0f;
+        if (!isPatrolMovePaused || usePatrolAnimationEvents)
+        {
+            isPatrolMovePaused = false;
+        }
+    }
+
+    private void ResetPatrolPause()
+    {
+        ResetPatrolMovePause();
+        ResetPatrolAnimationPause();
     }
 
     private void CachePatrolPointAnchors()
@@ -597,7 +665,7 @@ public class EnemyController : MonoBehaviour
     public void ChasePlayer()
     {
         ResetChargeCycle();
-        ResetPatrolMovePause();
+        ResetPatrolPause();
 
         if (state != State.Dead)
             state = State.Chase;
@@ -632,7 +700,7 @@ public class EnemyController : MonoBehaviour
     // Direction is locked when the burst starts, so dodging after windup matters.
     public void ChargePlayer()
     {
-        ResetPatrolMovePause();
+        ResetPatrolPause();
 
         if (state != State.Dead)
             state = State.Charge;
@@ -682,8 +750,26 @@ public class EnemyController : MonoBehaviour
     // GOAP action will call StopMoving() later.
     public void StopMoving()
     {
-        ResetPatrolMovePause();
+        ResetPatrolPause();
         SetHorizontalVelocity(0f);
+    }
+
+    public void BeginPatrolAnimationPause()
+    {
+        if (!usePatrolAnimationEvents || state != State.Patrol || IsDead)
+        {
+            return;
+        }
+
+        ResetPatrolMovePause();
+        isPatrolAnimationPaused = true;
+        isPatrolMovePaused = true;
+        patrolAnimationPauseFallbackTime = Time.time + Mathf.Max(0f, maxPatrolAnimationPauseSeconds);
+    }
+
+    public void EndPatrolAnimationPause()
+    {
+        ResetPatrolAnimationPause();
     }
 
     public void CancelChargeCycle()
@@ -1080,6 +1166,11 @@ public class EnemyController : MonoBehaviour
         }
 
         float speedAbs = rb != null ? Mathf.Abs(rb.linearVelocity.x) : 0f;
+        if (isPatrolMovePaused && state == State.Patrol)
+        {
+            speedAbs = Mathf.Max(speedAbs, moveSpeed);
+        }
+
         animationDriver.SetMovement(speedAbs);
     }
 
@@ -1096,6 +1187,7 @@ public class EnemyController : MonoBehaviour
         }
 
         ResetChargeCycle();
+        ResetPatrolPause();
         state = State.Dead;
 
         if (rb != null)

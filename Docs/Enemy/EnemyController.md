@@ -19,7 +19,7 @@
 2. Default state is patrol.
 3. `FixedUpdate()` runs patrol/chase/idle movement unless dead or knockback is active.
 4. `Patrol()` moves between valid assigned patrol points when at least two are assigned, otherwise moves around spawn position using `patrolDistance`.
-5. Optional patrol move pauses can periodically stop normal patrol walking for a tunable duration before movement continues.
+5. Optional patrol pauses can stop patrol physics movement while keeping the patrol-walk animation active. Pauses can be timer-driven or controlled by walk-clip Animation Events.
 6. If assigned patrol points exist and the enemy has chased outside their horizontal span, patrol first returns it to the nearest patrol point, then resumes moving between the points.
 7. `ChasePlayer()` moves toward the player and may jump if the player is above.
 8. `ChargePlayer()` runs a fixed charger cycle: stand still for charge start, lock the player's horizontal direction, charge for the configured duration/distance, stand still for recovery, then wait for charge cooldown before another windup can start.
@@ -34,7 +34,9 @@
 - Obstacle checks need `wallCheck`, `wallCheckDistance`, and `obstacleLayer`.
 - Patrol can use `patrolPoints` or fallback to `patrolDistance`. Point arrays must have at least two non-null entries to override the fallback patrol range.
 - Assigned patrol point transforms are captured as world-position anchors during `Awake()`. This means marker objects can be children of the enemy for scene organization without the patrol target moving along with the enemy at runtime.
-- Enable `usePatrolMovePause` to make normal patrol walking stop and continue on a timer. `patrolMoveDuration` controls how long it walks before stopping; `patrolPauseDuration` controls how long it waits. Chase and charge ignore this pause.
+- Enable `usePatrolMovePause` to make normal patrol walking stop and continue on a timer. `patrolMoveDuration` controls how long it walks before stopping; `patrolPauseDuration` controls how long it waits. During this pause, the controller keeps movement animation active so the walk state does not restart. Chase and charge ignore this pause.
+- Enable `usePatrolAnimationEvents` to let walk-clip Animation Events control the pause timing instead. Add `PatrolPauseStart` where movement should stop and `PatrolPauseEnd` where movement should resume. This mode overrides the timed patrol pause. `maxPatrolAnimationPauseSeconds` is a safety fallback if the end event is missing.
+- Enemy patrol pause Animation Events should call methods on `EnemyAnimationEventRelay`, not directly on `EnemyController`.
 - Velocity-driven enemies apply a no-friction runtime material to their root movement collider when no explicit physics material is assigned. This keeps patrol/chase speed from being reduced by default floor friction. The runtime material is removed again on death so corpses use normal contact friction.
 - Charger enemies should set `chargeSpeed` above `moveSpeed` and tune `chargeStartDuration`, `chargeDuration`, `chargeDistance`, `chargeRecoveryDuration`, and `chargeCooldownDuration`. Set `chargeDistance <= 0` to use duration only.
 - Charger enemies should use a GOAP capability without jump actions.
