@@ -50,6 +50,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float chargeRecoveryDuration = 0.45f;
     [Tooltip("Extra seconds after recovery before a new charge windup can start.")]
     [SerializeField] private float chargeCooldownDuration = 0.5f;
+    [Tooltip("If true, player attacks still damage this enemy during the active charge burst, but do not apply knockback.")]
+    [SerializeField] private bool ignoreKnockbackDuringCharge = true;
 
     [Header("Jump")]
     [Tooltip("Upward velocity applied when the enemy jumps.")]
@@ -141,6 +143,7 @@ public class EnemyController : MonoBehaviour
 
     public KnockbackReceiver KnockbackReceiver => knockbackReceiver;
     public bool IsFixedChargeCycleActive => chargePhase != ChargePhase.None;
+    public bool CanReceiveAttackKnockback => !ignoreKnockbackDuringCharge || chargePhase != ChargePhase.Charging;
 
     private void Awake()
     {

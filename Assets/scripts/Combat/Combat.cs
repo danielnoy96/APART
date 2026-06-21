@@ -116,6 +116,11 @@ public class Combat : MonoBehaviour
             EnemyController enemyController = health.GetComponentInParent<EnemyController>();
             if (enemyController != null)
             {
+                if (!enemyController.CanReceiveAttackKnockback)
+                {
+                    continue;
+                }
+
                 knockback = enemyController.KnockbackReceiver;
             }
 

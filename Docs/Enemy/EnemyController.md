@@ -23,9 +23,10 @@
 6. If assigned patrol points exist and the enemy has chased outside their horizontal span, patrol first returns it to the nearest patrol point, then resumes moving between the points.
 7. `ChasePlayer()` moves toward the player and may jump if the player is above.
 8. `ChargePlayer()` runs a fixed charger cycle: stand still for charge start, lock the player's horizontal direction, charge for the configured duration/distance, stand still for recovery, then wait for charge cooldown before another windup can start.
-9. `TryJump()` applies upward velocity when grounded and jump cooldown allows it.
-10. `TryJumpToPlayerAbove()` consumes one player-above jump opportunity so the enemy does not keep jumping every cooldown while the same above condition remains true.
-11. On death, movement stops, the runtime movement material is cleared from the root collider, contact damage sources are disabled, and the controller disables itself.
+9. During the active charge burst, `ignoreKnockbackDuringCharge` can let player attacks damage the enemy without interrupting its velocity.
+10. `TryJump()` applies upward velocity when grounded and jump cooldown allows it.
+11. `TryJumpToPlayerAbove()` consumes one player-above jump opportunity so the enemy does not keep jumping every cooldown while the same above condition remains true.
+12. On death, movement stops, the runtime movement material is cleared from the root collider, contact damage sources are disabled, and the controller disables itself.
 
 ## Inspector Wiring
 - Required for movement: `Rigidbody2D`.
@@ -39,6 +40,7 @@
 - Enemy patrol pause Animation Events should call methods on `EnemyAnimationEventRelay`, not directly on `EnemyController`.
 - Velocity-driven enemies apply a no-friction runtime material to their root movement collider when no explicit physics material is assigned. This keeps patrol/chase speed from being reduced by default floor friction. The runtime material is removed again on death so corpses use normal contact friction.
 - Charger enemies should set `chargeSpeed` above `moveSpeed` and tune `chargeStartDuration`, `chargeDuration`, `chargeDistance`, `chargeRecoveryDuration`, and `chargeCooldownDuration`. Set `chargeDistance <= 0` to use duration only.
+- Keep `ignoreKnockbackDuringCharge` enabled for unstoppable chargers. Player attacks still deal damage during the active charge burst, but `Combat` skips attack knockback.
 - Charger enemies should use a GOAP capability without jump actions.
 
 ## Important Rules
